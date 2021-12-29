@@ -1,0 +1,81 @@
+<template>
+  <q-page class="q-pa-sm">
+     <q-btn position="right" class="float-right" color="primary" label="Nueva Categoria"  @click="AddCategoria"/>
+     <br>
+    <table-custom-grid class="q-mt-lg"  :itemCategoria="itemCategoria"    ></table-custom-grid>
+
+  </q-page>
+</template>
+
+<script>
+import {defineComponent, defineAsyncComponent} from 'vue';
+
+export default defineComponent({
+  name: "Tables",
+  components: {  
+    TableCustomGrid: defineAsyncComponent(() => import('components/tables/TableCustomGrid')),
+   
+  },
+  data(){
+    return{
+        itemCategoria:[],
+        modelo:{
+          id_categoria:0,
+          nombre_categoria:'',
+          estado:1,
+        }
+    }
+  },
+  mounted(){
+    this.Get();
+  },
+  methods:{
+    AddCategoria(){
+        this.$q.dialog({
+        title: 'Nueva Categoria',
+          message: 'Ingrese Nombre de categoria (Minimo 3 caracteres)',
+          prompt: {
+            model: '',
+            isValid: val => val.length > 2, // << here is the magic
+            type: 'text' // optional
+          },
+          cancel: true,
+          persistent: true
+        }).onOk(data => {  
+           this.Store(data);      
+      })
+    },
+    Store(nombre){
+       let me =this;
+       me.modelo.nombre_categoria=nombre;
+       let url ="http://localhost/ApiCafeteria/Controller/CategoriaController.php";
+       const data = me.modelo;
+        this.$axios({
+        method: "POST",
+        url: url,
+        data: data,       
+      })
+        .then(function(response) {
+          alert("Registrado");
+          me.Get();
+        })
+        .catch((error) => {
+          console.log(error);
+         
+        });
+    },
+    Get(){
+        this.$axios.get('http://localhost/ApiCafeteria/Controller/CategoriaController.php').then(response => {                    
+             this.itemCategoria = response.data;                 
+            }).catch(function (error) {
+                console.log(error);
+        }) .finally(() => {                     
+        })
+    }
+  }
+})
+</script>
+
+<style>
+
+</style>
