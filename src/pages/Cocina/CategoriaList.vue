@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
      <q-btn position="right" class="float-right" color="primary" label="Nueva Categoria"  @click="AddCategoria"/>
-     <br>
+     <br> 
     <table-custom-grid class="q-mt-lg"  :itemCategoria="itemCategoria"    ></table-custom-grid>
 
   </q-page>
@@ -56,12 +56,17 @@ export default defineComponent({
         data: data,       
       })
         .then(function(response) {
-          alert("Registrado");
-          me.Get();
+         // console.log(response);
+          let result =response.data.resultado;
+          if (result=="Regigstrado") {
+               alert("Registrado");
+               me.Get();
+          }else{          
+               me.Existe();
+          }          
         })
         .catch((error) => {
-          console.log(error);
-         
+          console.log(error);         
         });
     },
     Get(){
@@ -71,6 +76,19 @@ export default defineComponent({
                 console.log(error);
         }) .finally(() => {                     
         })
+    },
+    Existe(){
+         this.$q.dialog({
+        dark: true,
+        title: 'Ups',
+        message: 'Nombre de categoria ya existe'
+      }).onOk(() => {
+        // console.log('OK')
+      }).onCancel(() => {
+        // console.log('Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
     }
   }
 })

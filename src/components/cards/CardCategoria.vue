@@ -17,14 +17,11 @@
     </q-card-section>   
   </q-card>
 </template>
-
-
-
 <script>
 
 export default {
   name: "CardCategoria",
-  props: ['avatar', 'name'],
+  props: ['id_categoria', 'name'],
   components: {    
 
   },
@@ -36,17 +33,15 @@ export default {
   created() {
 		
 	},
-  computed: {
- 
+  computed: { 
   },
-  mounted() {
-   
+  mounted() {   
   },
   methods: {
-    Detalle(){
-        alert("click")
-    }
-    
+     Detalle(){   
+      var id_categoria =this.id_categoria;
+      this.$router.push({name:"ProductoList",params:{id_categoria} });
+     }    
   },
 };
 </script>

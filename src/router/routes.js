@@ -27,6 +27,12 @@ const routes = [{
         component: () =>
             import('src/pages/Cocina/CategoriaList.vue')
     },
+    {
+        path: '/ProductoList',
+        name:'ProductoList',
+        component: () =>
+            import('src/pages/Cocina/ProductoList.vue')
+    },
 
         // Not completed yet
         // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},
