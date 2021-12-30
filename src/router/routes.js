@@ -28,8 +28,9 @@ const routes = [{
             import('src/pages/Cocina/CategoriaList.vue')
     },
     {
-        path: '/ProductoList',
+        path: '/ProductoList/:id_categoria',      
         name:'ProductoList',
+        props:true,
         component: () =>
             import('src/pages/Cocina/ProductoList.vue')
     },
