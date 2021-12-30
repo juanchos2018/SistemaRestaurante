@@ -2,8 +2,13 @@
   <q-page class="q-pa-sm">
      <q-btn position="right" class="float-right" color="primary" label="Nuevo Producto"  @click="AddCategoria"/>
      <br> 
-  
-
+     <br>
+      <br>
+   <div class="row q-col-gutter-sm">
+    <div    class="col-md-4 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemProducto" :key="item.id">
+            <card-producto  :id_producto="item.id_producto" :nombre="item.nombre_producto" ></card-producto>
+          </div>
+                </div> 
   </q-page>
 </template>
 
@@ -14,12 +19,12 @@ export default defineComponent({
   name: "Tables",
   props:['id_categoria'],
   components: {  
-    TableCustomGrid: defineAsyncComponent(() => import('components/tables/TableCustomGrid')),
+    CardProducto: defineAsyncComponent(() => import('components/cards/CardProducto')),
    
   },
   data(){
     return{
-        itemCategoria:[],
+        itemProducto:[],
         modelo:{
           id_categoria:0,
           nombre_categoria:'',
@@ -71,8 +76,8 @@ export default defineComponent({
         });
     },
     Get(){
-        this.$axios.get('http://localhost/ApiCafeteria/Controller/CategoriaController.php').then(response => {                    
-             this.itemCategoria = response.data;                 
+        this.$axios.get('http://localhost/ApiCafeteria/Controller/ProductoController.php?id_categoria=1').then(response => {                    
+             this.itemProducto = response.data;                 
             }).catch(function (error) {
                 console.log(error);
         }) .finally(() => {                     

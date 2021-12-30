@@ -2,7 +2,14 @@
   <q-page class="q-pa-sm">
 
     <card-social icon_position="left" />
-    <h5>tablbwe we </h5>
+    <h5>incio dashboard </h5>
+
+        <q-btn color="primary" label="Primary"  @click="Sonido" />
+
+            <button @click="play">Play a sound</button>
+
+      
+
     <q-table :rows="rows" row-key="name" />
 
     <div class="row q-col-gutter-sm  q-pb-sm">
@@ -98,7 +105,11 @@ const rows = [
   },
 ];
 
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent, defineAsyncComponent ,ref} from "vue";
+//import A1 from "~/music/timbre.mp3";
+
+import useSound from 'vue-use-sound'
+import buttonSfx from '../assets/timbre.mp3'
 
 export default defineComponent({
   name: "PageIndex",
@@ -123,57 +134,18 @@ export default defineComponent({
     ),
   },
   setup() {
-    return {
+     const [play] = useSound(buttonSfx)
+    return {      
+      play,
       mode: "list",
-      rows,
-      messages: [
-        {
-          id: 5,
-          name: "Pratik Patel",
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            "            weekend. Do you want to grab brunch?",
-          avatar: "https://avatars2.githubusercontent.com/u/34883558?s=400&v=4",
-          time: "10:42 PM",
-        },
-        {
-          id: 6,
-          name: "Winfield Stapforth",
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            "            weekend. Do you want to grab brunch?",
-          avatar: "https://cdn.quasar.dev/img/avatar6.jpg",
-          time: "11:17 AM",
-        },
-        {
-          id: 1,
-          name: "Boy",
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            "            weekend. Do you want to grab brunch?",
-          avatar: "https://cdn.quasar.dev/img/boy-avatar.png",
-          time: "5:17 AM",
-        },
-        {
-          id: 2,
-          name: "Jeff Galbraith",
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            "            weekend. Do you want to grab brunch?",
-          avatar: "https://cdn.quasar.dev/team/jeff_galbraith.jpg",
-          time: "5:17 AM",
-        },
-        {
-          id: 3,
-          name: "Razvan Stoenescu",
-          msg:
-            " -- I'll be in your neighborhood doing errands this\n" +
-            "            weekend. Do you want to grab brunch?",
-          avatar: "https://cdn.quasar.dev/team/razvan_stoenescu.jpeg",
-          time: "5:17 AM",
-        },
-      ],
+      rows,     
     };
   },
+  methods: {
+    Sonido(){
+      const audio = new Audio('assets/timbre.mp3')
+            audio.play()
+    }
+  }
 });
 </script>
