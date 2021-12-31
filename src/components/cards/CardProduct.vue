@@ -1,27 +1,21 @@
 <template>
-  <q-card class="" @click="aggrear(data.id,data.title,data.amount)">
-    <q-img :src="data.img" height="220px">
-      <q-chip v-if="data.chip" :class="data.chip_class" :color="data.chip_color" :label="data.chip"></q-chip>
+  <q-card class="" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_producto,data.id_categoria)">
+    <q-img src="../../assets/products/c-d-x-PDX_a_82obo-unsplash.jpg" height="170px">
+
     </q-img>
 
     <q-card-section>
-      <q-btn
-        fab
-         color="teal-7"
-        :label="data.amount"
-        class="absolute"
-        style="top: 0; right: 12px; transform: translateY(-50%);"
-      />
+      <q-btn fab color="teal-7" :label="data.precio_producto" class="absolute" style="top: 0; right: 12px; transform: translateY(-50%);" />
     </q-card-section>
 
     <q-card-section>
       <div class="text-h6">
-        {{ data.title }}
+        {{ data.nombre_producto }}
       </div>
       <div class="text-subtitle1 text-justify q-mt-sm">
-        {{ data.caption }}
+        {{ data.nombre_categoria }}
       </div>
-     
+
     </q-card-section>
     <!-- <q-card-section>
       <div class="col-12">
@@ -35,31 +29,48 @@
 </template>
 
 <script>
-import {inject,defineComponent} from 'vue'
+import { inject, defineComponent } from "vue";
 
 export default defineComponent({
   name: "CardProduct",
-  props: ['data'],
-  setup(){
-    
-   const arrayva=inject('arrayvacio')
-   const aggrear=(id,title,preci)=>{
-     const objeto={
-       id:id,producto:title,cantidad:1,precio: parseInt(preci)
-     }
-    // console.log(objeto);
-     arrayva.value.push(objeto)
-   }
-    return{aggrear}
+  props: ["data"],
+  setup() {
+    const arrayva = inject("arrayvacio");
+    const aggrear = (id_producto, title, preci,id_categoria) => {
+
+      let obj = arrayva.value.find((x) => x.id_producto == id_producto);
+
+      if (obj) {
+          let position = arrayva.value.findIndex((x) => x.id_producto == id_producto);
+          let cantidad_pedido = obj.cantidad_pedido;
+          let precio =obj.precio;
+          arrayva.value[position].cantidad_pedido = cantidad_pedido + 1; 
+          arrayva.value[position].total = precio * arrayva.value[position].cantidad_pedido;    
+      }
+      else{
+        const objeto = {
+          id_producto: id_producto,
+          producto: title,
+          cantidad_pedido: 1,
+          id_categoria:id_categoria,
+          precio: parseInt(preci),
+          total: parseInt(preci) 
+        };     
+        arrayva.value.push(objeto);
+      }   
+    };
+    return { aggrear };
   },
-   methods:{
-    detail(id,title,preci){
-      this.$emit("additem",id,title,1,parseInt( preci))
+  methods: {
+    detail(id, title, preci) {
+      this.$emit("additem", id, title, 1, parseInt(preci));
+    },
+    calcula(){
+       this.$emit('calcula',  canPrec);
     }
-  }
-})
+  },
+});
 </script>
 
 <style scoped>
-
 </style>

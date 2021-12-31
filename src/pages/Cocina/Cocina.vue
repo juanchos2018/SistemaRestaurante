@@ -1,10 +1,11 @@
 <template>
   <q-page class="q-pa-sm">
     <h5>COCINA SOCKET </h5>
-
+     <button @click="playe">Play a sound</button>
+          
     <div class="row q-col-gutter-sm">
-      <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in cards_data" :key="item.id">
-        <card-product :data="item"></card-product>
+      <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemCocina" :key="item.id_pedido">
+        <card-pedido :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :detalle="item.detalle" ></card-pedido>
       </div>
     </div>
   </q-page>
@@ -12,62 +13,29 @@
 
 <script>
 import { useQuasar } from "quasar";
-import CardProduct from "components/cards/CardPedido.vue";
+import CardPedido from "components/cards/CardPedido.vue";
+
+import useSound from 'vue-use-sound'
+import timbre from '../../assets/timbre.mp3'
+import { ref } from "vue";
 export default {
   name: "Cocina",
   components: {
-    CardProduct,
+    CardPedido,
   },
-  data() {
-    return {
+  setup() {
+    let itemCocina=ref([])
+    const [play] = useSound(timbre)
+      const enviar=()=>{
+
+      }
+     return {
+      play,
       msg: "Test  Meesage",
       name: "jkun",
       conn: new WebSocket("ws://localhost:8090"),
       msgA: [],
-      cards_data: [
-        {
-          id: 1,
-          img: "https://placeimg.com/500/300/nature?t=" + Math.random(),
-          type: "free",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          title: "Title 1",
-        },
-        {
-          id: 2,
-          img: "https://placeimg.com/500/300/nature?t=" + Math.random(),
-          type: "paid",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          title: "Title 2",
-        },
-        {
-          id: 3,
-          img: "https://placeimg.com/500/300/nature?t=" + Math.random(),
-          type: "free",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          title: "Title 3",
-        },
-        {
-          id: 4,
-          img: "https://placeimg.com/500/300/nature?t=" + Math.random(),
-          type: "free",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          title: "Title 4",
-        },
-        {
-          id: 4,
-          img: "https://placeimg.com/500/300/nature?t=" + Math.random(),
-          type: "paid",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          title: "Title 5",
-        },
-        {
-          id: 5,
-          img: "https://placeimg.com/500/300/nature?t=" + Math.random(),
-          type: "free",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          title: "Title 6",
-        },
-      ],
+      itemCocina,     
       type: "All",
       page: 1,
       currentPage: 1,
@@ -84,6 +52,7 @@ export default {
     this.conn.onmessage = (e) => {
       this.rcv(e.data);
       this.noti2();
+      this.play.value;
     };
   },
   computed: {
@@ -99,9 +68,9 @@ export default {
       this.$axios
         .get("http://localhost/ApiCafeteria/Controller/PedidoController.php")
         .then((response) => {
-          //  me.listaMiembros = response.data;
-          console.log(response.data);
-          //  this.msgA=response.data;
+          this.itemCocina = response.data;
+        //  console.log(response.data);
+      
         })
         .catch(function (error) {
           console.log(error);
@@ -114,10 +83,17 @@ export default {
     },
     noti2(use) {
       this.$q.notify({
-        message: "Te Llego una nuevo pedido we",
+        message: "Tienes un Nuevo Pedido !",
         color: "negative",
         position: "top-right",
       });
+    },
+    playe(){
+     // let {play} =this
+    // const [play, { sound }] = useSound('../../assets/timbre.mp3')
+      const [play] = useSound('../../assets/timbre.mp3')
+      
+      
     },
     getData() {
       if (this.type == "All") {

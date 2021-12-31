@@ -1,17 +1,15 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
-        
+      <q-toolbar>        
         <q-tabs v-model="tab" shrink>
           <!-- <i class="fas fa-table"></i> -->
            <q-route-tab
-            icon="fas fa-table"
-            to="/mesas"
+            icon="fas fa-cookie-bite"
+            to="/Atender"
             exact
-            label="Mesas"
-          />
-        <q-tab name="tab1" icon="mail"  label="otr" />
+            label="Cafeteria"
+          /> 
 
          <q-route-tab
             icon="fas fa-mug-hot"
@@ -38,8 +36,7 @@
             @click="$q.fullscreen.toggle()"
             v-if="$q.screen.gt.sm"
           >
-          </q-btn>
-         
+          </q-btn>        
         
           <q-btn round dense flat color="white" icon="notifications">
             <q-badge color="red" text-color="white" floating> 5 </q-badge>
@@ -65,9 +62,7 @@
           </q-btn>
         </div>
       </q-toolbar>
-    </q-header>
-
-  
+    </q-header>  
 
     <q-page-container class="bg-grey-2">
       <router-view />

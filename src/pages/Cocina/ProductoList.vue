@@ -5,7 +5,7 @@
       class="float-right"
       color="primary"
       label="Nuevo Producto"
-      @click="AddCategoria"
+      @click="AddProducto"
     />
     <br />
     <br />
@@ -18,13 +18,17 @@
       >
         <card-producto
           :id_producto="item.id_producto"
-          :nombre="item.nombre_producto"
+          :nombre_producto="item.nombre_producto"
+          :descripcion="item.descripcion"
+          :precio_producto="item.precio_producto"
+           :nombre_categoria="item.nombre_categoria"
+
         ></card-producto>
       </div>
     </div>
 
 
-       <dialogo-add-producto @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="id_categoria" ></dialogo-add-producto>
+       <dialogo-add-producto @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="id_categoria"  v-on:GetProductos="Get"></dialogo-add-producto>
 
 
   </q-page>
@@ -35,7 +39,12 @@ import { defineComponent, defineAsyncComponent } from "vue";
 
 export default defineComponent({
   name: "Tables",
-  props: ["id_categoria"],
+  props: { id_categoria: {       
+                type: Number,
+                required: true,
+                default: 0,        
+            },},
+  
   components: {
     CardProducto: defineAsyncComponent(() =>
       import("components/cards/CardProducto")
@@ -57,10 +66,11 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.Get();
+    this.Get(this.id_categoria);
+    console.log("iid es :"+this.id_categoria)
   },
   methods: {
-    AddCategoria() {
+    AddProducto() {
         this.DialogoAddProducto=true;
     },
     Store(nombre) {
@@ -77,9 +87,9 @@ export default defineComponent({
         .then(function (response) {
           // console.log(response);
           let result = response.data.resultado;
-          if (result == "Regigstrado") {
-            alert("Registrado");
-            me.Get();
+          if (result == "Registrado") {
+          //  alert("Registrado");
+            this.Get();
           } else {
             me.Existe();
           }
@@ -88,10 +98,10 @@ export default defineComponent({
           console.log(error);
         });
     },
-    Get() {
+    Get(idcategoria) {
       this.$axios
         .get(
-          "http://localhost/ApiCafeteria/Controller/ProductoController.php?id_categoria=1"
+          "http://localhost/ApiCafeteria/Controller/ProductoController.php?id_categoria="+idcategoria
         )
         .then((response) => {
           this.itemProducto = response.data;

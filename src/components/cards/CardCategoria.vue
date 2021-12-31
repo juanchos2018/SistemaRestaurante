@@ -9,7 +9,7 @@
 
     <q-card-section class="q-pt-none text-center ">
       <div class="text-h6  text-grey-8">
-        {{ name }}
+        {{ name }}-{{id_categoria}}
       </div>
       <!-- <div class="text-caption text-grey-8">
         {{ des }}
@@ -21,7 +21,17 @@
 
 export default {
   name: "CardCategoria",
-  props: ['id_categoria', 'name'],
+//  props: ['id_categoria', 'name'],
+    props: { id_categoria: {       
+                type: Number,
+                required: true,
+                default: 0,        
+            },
+            name:{
+                type: String,
+                required: true,
+                default: '', 
+            }},
   components: {    
 
   },
@@ -39,8 +49,8 @@ export default {
   },
   methods: {
      Detalle(){   
-      var id_categoria =this.id_categoria;
-      this.$router.push({name:"ProductoList",params:{id_categoria} });
+      var id_categoria = parseInt(this.id_categoria);
+      this.$router.push({name:"ProductoList",params:{ id_categoria} });
      }    
   },
 };
