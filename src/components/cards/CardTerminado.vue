@@ -21,22 +21,7 @@
           <q-item-label caption class="text-white">{{item.descripcion}}</q-item-label>
         </q-item-section>
       </q-item>       
-    </q-list>
-    <!-- <q-card-actions align="around"> -->
-      <q-stepper v-model="step" header-nav ref="stepper" :class="color" style="border-style: none;border-style:hidden"    done-color="deep-orange"
-      active-color="purple"
-      inactive-color="secondary"  animated @click="Editar(step)" >
-     
-      <q-step :name="1" title="Procesar" icon="settings" :done="estado>0" >      
-      </q-step>
-
-      <q-step :name="2" title="Listo" icon="settings" :done="estado>1">          
-      </q-step>
-
-      <q-step :name="3" title="Atendido" icon="settings" :done="estado>2">            
-      </q-step>
-    </q-stepper>
-    <!-- </q-card-actions> -->
+    </q-list>   
   </q-card>
 </template>
 <script>
@@ -52,12 +37,7 @@ export default {
     }
   },
   methods: {
-    Editar(step){
-     
-      let data =step+"-"+this.id_pedido
-      this.$emit("update",data)
-
-    }
+  
   }
 };
 </script>

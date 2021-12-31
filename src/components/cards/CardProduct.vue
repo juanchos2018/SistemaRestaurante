@@ -3,9 +3,9 @@
     <q-img src="../../assets/products/c-d-x-PDX_a_82obo-unsplash.jpg" height="170px">
 
     </q-img>
-
+<!-- parseFloat(data.precio_producto).toFixed(2) -->
     <q-card-section>
-      <q-btn fab color="teal-7" :label="data.precio_producto" class="absolute" style="top: 0; right: 12px; transform: translateY(-50%);" />
+      <q-btn fab color="teal-7" :label="parseFloat(data.precio_producto).toFixed(2)" class="absolute" style="top: 0; right: 12px; transform: translateY(-50%);" />
     </q-card-section>
 
     <q-card-section>
@@ -47,6 +47,8 @@ export default defineComponent({
           arrayva.value[position].cantidad_pedido = cantidad_pedido + 1; 
           arrayva.value[position].total = precio * arrayva.value[position].cantidad_pedido;    
       }
+      //parseFloat(preci).toFixed(2) 
+       //parseFloat(preci).toFixed(2) 
       else{
         const objeto = {
           id_producto: id_producto,
@@ -54,7 +56,8 @@ export default defineComponent({
           cantidad_pedido: 1,
           id_categoria:id_categoria,
           precio: parseInt(preci),
-          total: parseInt(preci) 
+          total: parseInt(preci) ,
+          descripcion:''
         };     
         arrayva.value.push(objeto);
       }   

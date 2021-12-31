@@ -6,37 +6,34 @@
           <!-- <i class="fas fa-table"></i> -->
            <q-route-tab
             icon="fas fa-cookie-bite"
-            to="/Atender"
+            to="/Sistema/Cafeteria"
             exact
             label="Cafeteria"
           /> 
 
          <q-route-tab
             icon="fas fa-mug-hot"
-            to="/Cocina"
+            to="/Sistema/Cocina"
             exact
             label="Cocina"
           />
 
           <q-route-tab
             icon="fab fa-get-pocket"
-            to="/Categoria"
+            to="/Sistema/Categoria"
             exact
             label="Categoria"
           />
+           <!-- <q-route-tab
+            icon="fab fa-get-pocket"
+            to="/Sistema/Step"
+            exact
+            label="Step"
+          /> -->
         </q-tabs>
         <q-space />
         <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn
-            round
-            dense
-            flat
-            color="white"
-            :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-            @click="$q.fullscreen.toggle()"
-            v-if="$q.screen.gt.sm"
-          >
-          </q-btn>        
+               
         
           <q-btn round dense flat color="white" icon="notifications">
             <q-badge color="red" text-color="white" floating> 5 </q-badge>
@@ -59,6 +56,20 @@
             <q-avatar size="26px">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
+
+            <q-menu
+          transition-show="jump-down"
+          transition-hide="jump-up"
+        >
+          <q-list style="min-width: 100px">
+            <q-item clickable>
+              <q-item-section  @click="Salir">Salir</q-item-section>
+            </q-item>
+           
+        
+            
+          </q-list>
+        </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -123,5 +134,10 @@ export default defineComponent({
       ],
     };
   },
+  methods: {
+    Salir(){
+       this.$router.push({path:'/'})
+    }
+  }
 });
 </script>

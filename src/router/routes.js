@@ -1,61 +1,36 @@
-const routes = [{
+import Login from 'pages/Login.vue';
+
+const routes = [
+  {
     path: '/',
-    component: () =>
-        import('layouts/MainLayout.vue'),
-    children: [{
-        path: '',
-        component: () =>
-            import('pages/Dashboard.vue')
-    },
-    {
-        path: '/Atender',
-        component: () =>
-            import('pages/Atender.vue')
-    },
-    {
-        path: '/mesas',
-        component: () =>
-            import('pages/Mesas.vue')
-    },
-    {
-        path: '/Cocina',
-        component: () =>
-            import('src/pages/Cocina/Cocina.vue')
-    },
-    {
-        path: '/Categoria',
-        component: () =>
-            import('src/pages/Cocina/CategoriaList.vue')
-    },
-    {
-        path: '/ProductoList/:id_categoria',      
-        name:'ProductoList',
-        props:true,
-        component: () =>
-            import('src/pages/Cocina/ProductoList.vue')
-    },
-
-        // Not completed yet
-        // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},
-    ]
-},
-
-// Always leave this as last one,
-// but you can also remove it
-{
+    name:'login',
+    component: Login
+  },
+  {
     path: '/:catchAll(.*)*',
-    component: () =>
-        import('pages/Error404.vue')
-},
+    component: () => import('pages/Error404.vue')
+  }, 
+  {
+    path: '/Sistema',
+    name:'Sistema',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { name: "Sistema/Cafeteria",path: 'Cafeteria', component: () => import('pages/Cafeteria/Cafeteria.vue') },
+      { name: "Sistema/Categoria",path: 'Categoria', component: () => import('pages/Cocina/CategoriaList.vue') },
+      { name: "Sistema/Cocina",path: 'Cocina', component: () => import('pages/Cocina/Cocina.vue') },
+      { name: "/ProductoList",path: 'ProductoList/:id_categoria',props:true, component: () => import('pages/Cocina/ProductoList.vue') },
+      { name: "Sistema/Step",path: 'Step', component: () => import('pages/step.vue') },
 
+     
 
+      
 
-{
-    path: '/Login-1',
-    component: () =>
-        import('pages/Login-1.vue')
-},
-
+    ]
+  },   
+ 
 ]
+
+
+ 
 
 export default routes
