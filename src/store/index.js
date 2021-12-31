@@ -1,27 +1,26 @@
-import { store } from 'quasar/wrappers'
-import { createStore } from 'vuex'
+import Vuex from "vuex";
 
-// import example from './module-example'
+// Use a new variable and export values to change default behaviour.
+let store = null;
 
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Store instance.
- */
+//Vue.use(Vuex);
 
-export default store(function (/* { ssrContext } */) {
-  const Store = createStore({
-    modules: {
-      // example
-    },
+// .. other code
 
-    // enable strict mode (adds overhead!)
-    // for dev mode and --debug builds only
-    strict: process.env.DEBUGGING
-  })
+export default function () {
+  const Store = new Vuex.Store({
+    namespaced: true,
+    name: "global",
+    state: {  url_base: 'http://192.168.3.219/ApiCafeteria', },
+    // mutations / getters / plugins/ other code
+  });
 
-  return Store
-})
+  // add this so that we export store
+  store = Store;
+
+  // Quasar default
+  return Store;
+}
+
+// add this line to access store wherever you need
+export { store };

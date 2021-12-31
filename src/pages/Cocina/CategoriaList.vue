@@ -9,6 +9,7 @@
 
 <script>
 import {defineComponent, defineAsyncComponent} from 'vue';
+import { mapState } from 'vuex'
 
 export default defineComponent({
   name: "Tables",
@@ -26,9 +27,13 @@ export default defineComponent({
         }
     }
   },
+   computed: {
+    ...mapState(['url_base'])   
+  }, 
   mounted(){
     this.Get();
   },
+ 
   methods:{
     AddCategoria(){
         this.$q.dialog({
@@ -48,11 +53,11 @@ export default defineComponent({
     Store(nombre){
        let me =this;
        me.modelo.nombre_categoria=nombre;
-       let url ="http://localhost/ApiCafeteria/Controller/CategoriaController.php";
+       let url ="/Controller/CategoriaController.php";
        const data = me.modelo;
         this.$axios({
         method: "POST",
-        url: url,
+        url: me.url_base+ url,
         data: data,       
       })
         .then(function(response) {
@@ -70,7 +75,8 @@ export default defineComponent({
         });
     },
     Get(){
-        this.$axios.get('http://localhost/ApiCafeteria/Controller/CategoriaController.php').then(response => {                    
+        let url="/Controller/CategoriaController.php";
+        this.$axios.get(this.url_base+ url).then(response => {                    
              this.itemCategoria = response.data;                 
             }).catch(function (error) {
                 console.log(error);

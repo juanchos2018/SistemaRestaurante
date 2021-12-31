@@ -1,6 +1,5 @@
 <template>
-  <q-page class="q-pa-sm">
-    <h5>COCINA SOCKET</h5>
+  <q-page class="q-pa-sm"> 
 
     <q-tabs
       v-model="tab"
@@ -16,6 +15,8 @@
       <q-tab-panel name="mails">
 
         <div class="row q-col-gutter-sm">
+
+          <!-- <p>{{itemCocina}}</p> -->
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
             v-for="item in itemCocina"
@@ -68,6 +69,7 @@ import CardTerminado from "components/cards/CardTerminado.vue";
 import useSound from "vue-use-sound";
 import buttonSfx from "../../assets/timbre.mp3";
 import { ref } from "vue";
+import { mapState } from "vuex";
 
 export default {
   name: "Cocina",
@@ -83,7 +85,7 @@ export default {
       play,
       msg: "Test  Meesage",
       name: "jkun",
-      conn: new WebSocket("ws://localhost:8090"),
+      conn: new WebSocket("ws://192.168.3.219:8090"),
       msgA: [],
       itemCocina,
       itemTerminado,
@@ -111,6 +113,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["url_base"]),
     getData2() {
       return this.getData().slice(
         (this.page - 1) * this.totalPages,
@@ -121,11 +124,12 @@ export default {
   methods: {
     get() {
       let tipo="nuevo";
+      let url="/Controller/PedidoController.php?tipo="+tipo;
       this.$axios
-        .get("http://localhost/ApiCafeteria/Controller/PedidoController.php?tipo="+tipo)
+        .get(this.url_base+url)
         .then((response) => {
           this.itemCocina = response.data;
-          //  console.log(response.data);
+         
         })
         .catch(function (error) {
           console.log(error);
@@ -133,9 +137,10 @@ export default {
         .finally(() => {});
     },
     getTerminados() {
-      let tipo="terminado";      
+      let tipo="terminado";     
+      let url= "/Controller/PedidoController.php?tipo="+tipo
       this.$axios
-        .get("http://localhost/ApiCafeteria/Controller/PedidoController.php?tipo="+tipo)
+        .get(this.url_base+url)
         .then((response) => {
           this.itemTerminado = response.data;
           //  console.log(response.data);
@@ -178,11 +183,11 @@ export default {
       };
       let me = this;
 
-      let url = "http://localhost/ApiCafeteria/Controller/PedidoController.php";
+      let url = "/Controller/PedidoController.php";
       const data = modelo;
       this.$axios({
         method: "PUT",
-        url: url,
+        url:me.url_base+ url,
         data: data,
       })
         .then(function (response) {
@@ -190,6 +195,7 @@ export default {
           let result = response.data.resultado;
           if (result == "Registrado") {
             me.get();
+            me.getTerminados();  
             me.$q.notify({
               message: "Modificado!",
               color: "accent",

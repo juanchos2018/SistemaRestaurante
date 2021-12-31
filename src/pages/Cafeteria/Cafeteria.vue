@@ -192,7 +192,7 @@
               </center>
             </div>
             <div
-              class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
+              class="col-md-3 col-lg-3 col-sm-12 col-xs-12"
               v-for="item in FilterList"
               :key="item.id_producto"
             >
@@ -277,7 +277,7 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancelar" v-close-popup />
-          <q-btn flat label="Enviar"  @click="StorePedido" />
+          <q-btn flat label="Enviar Pedido"  @click="StorePedido" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -307,14 +307,12 @@ const rows = [
 const maxSize = 30;
 const heavyList = [];
 
-for (let i = 0; i < maxSize; i++) {
-  heavyList.push({
-    label: "Option " + (i + 1),
-  });
-}
 
 import { provide, defineComponent, defineAsyncComponent } from "vue";
 //import {ref} from 'vue'
+
+import { mapState } from "vuex";
+
 export default {
   name: "Atender",
   components: {
@@ -332,7 +330,7 @@ export default {
     provide("arrayvacio", arrayvacio);
     const search = ref("");
     return {
-      conn: new WebSocket("ws://localhost:8090"),
+      conn: new WebSocket("ws://192.168.3.219:8090"),
       itemCategoria,
       itemProducto,
       nombrecategoria: ref(""),
@@ -385,8 +383,9 @@ export default {
 
   methods: {
     GetCategoria() {
+      let url ="/Controller/CategoriaController.php"
       this.$axios
-        .get("http://localhost/ApiCafeteria/Controller/CategoriaController.php")
+        .get(this.url_base+url)
         .then((response) => {
           this.itemCategoria = response.data;
           this.GetProduct(this.itemCategoria[0].id_categoria);
@@ -399,11 +398,9 @@ export default {
     },
     GetProduct(id_categoria, nombre) {
       this.nombrecategoria = nombre;
+      let url= "/Controller/ProductoController.php?id_categoria=" + id_categoria;
       this.$axios
-        .get(
-          "http://localhost/ApiCafeteria/Controller/ProductoController.php?id_categoria=" +
-            id_categoria
-        )
+        .get(this.url_base+url)
         .then((response) => {
           this.itemProducto = response.data;
         })
@@ -477,7 +474,8 @@ export default {
       //envia al socket  php
       console.log(data)
       this.conn.send(JSON.stringify(data));
-      alert("Registrado");
+      this.Enviado();
+      this.prompt = false;
       this.Cancelar();
     },
     MensajeEnviar() {
@@ -514,11 +512,11 @@ export default {
       this.modelUser.detallePedido = lista;
       this.modelUser.TotalPedido = this.SumTotal;
 
-      let url = "http://localhost/ApiCafeteria/Controller/PedidoController.php";
+      let url = "/Controller/PedidoController.php";
       const data = this.modelUser;
       this.$axios({
         method: "POST",
-        url: url,
+        url: this.url_base+ url,
         data: data,
       })
         .then(function (response) {
@@ -534,8 +532,21 @@ export default {
           console.log(error);
         });
     },
+    Enviado(){
+          this.$q.dialog({
+        title: 'Mensaje',
+        message: 'Se ha Enviado tu Pedido'
+      }).onOk(() => {
+        // console.log('OK')
+      }).onCancel(() => {
+        // console.log('Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    }
   },
   computed: {
+    ...mapState(["url_base"]),
     getData3() {
       return this.getData().slice(
         (this.page - 1) * this.cantfilas.length,

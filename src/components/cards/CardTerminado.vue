@@ -2,7 +2,7 @@
   <q-card :class="color">
     <q-item>
       <q-item-section>
-        <div class="text-h6 text-white">{{des_auxiliar}}</div>
+        <div class="text-subtitle2 text-white">{{des_auxiliar}}</div>
         <div class="text-subtitle2 text-white">{{area}}</div>
       </q-item-section>
       <q-item-section side>
@@ -17,7 +17,7 @@
           <q-icon color="primary" name="local_bar" />
         </q-item-section>
         <q-item-section>
-          <q-item-label class="text-h6 text-white">{{item.nombre_producto}} -  {{item.cantidad_pedido}} </q-item-label>
+          <q-item-label class="text-subtitle2 text-white">{{item.nombre_producto}} -  {{item.cantidad_pedido}} </q-item-label>
           <q-item-label caption class="text-white">{{item.descripcion}}</q-item-label>
         </q-item-section>
       </q-item>       

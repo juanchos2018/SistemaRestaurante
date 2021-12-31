@@ -1,6 +1,6 @@
 <template>
   <q-card class="" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_producto,data.id_categoria)">
-    <q-img src="../../assets/products/c-d-x-PDX_a_82obo-unsplash.jpg" height="170px">
+    <q-img src="../../assets/products/c-d-x-PDX_a_82obo-unsplash.jpg" height="150px">
 
     </q-img>
 <!-- parseFloat(data.precio_producto).toFixed(2) -->

@@ -2,7 +2,7 @@
   <q-card :class="color">
     <q-item>
       <q-item-section>
-        <div class="text-h6 text-white">{{des_auxiliar}}</div>
+        <div class="text-subtitle2 text-white">{{des_auxiliar}}</div>
         <div class="text-subtitle2 text-white">{{area}}</div>
       </q-item-section>
       <q-item-section side>
@@ -17,26 +17,30 @@
           <q-icon color="primary" name="local_bar" />
         </q-item-section>
         <q-item-section>
-          <q-item-label class="text-h6 text-white">{{item.nombre_producto}} -  {{item.cantidad_pedido}} </q-item-label>
+          <q-item-label class="text-subtitle2 text-white">{{item.nombre_producto}} -  {{item.cantidad_pedido}} </q-item-label>
           <q-item-label caption class="text-white">{{item.descripcion}}</q-item-label>
         </q-item-section>
       </q-item>       
     </q-list>
-    <!-- <q-card-actions align="around"> -->
-      <q-stepper v-model="step" header-nav ref="stepper" :class="color" style="border-style: none;border-style:hidden"    done-color="deep-orange"
+    <!-- alternative-labels  -->
+      <q-stepper v-model="step" contracted   header-nav ref="stepper" :class="color" style="border-style: none;border-style:hidden; "    done-color="deep-orange"
       active-color="purple"
       inactive-color="secondary"  animated @click="Editar(step)" >
      
-      <q-step :name="1" title="Procesar" icon="settings" :done="estado>0" >      
+      <q-step :name="1"  icon="settings" title="Tarea" :done="estado>0" class="no-margin no-padding" >  
+           
+        <q-tooltip>
+          Some text
+        </q-tooltip>
+    
       </q-step>
 
-      <q-step :name="2" title="Listo" icon="settings" :done="estado>1">          
+      <q-step :name="2"  icon="settings" :done="estado>1" class="no-margin no-padding">          
       </q-step>
 
-      <q-step :name="3" title="Atendido" icon="settings" :done="estado>2">            
+      <q-step :name="3"  icon="settings" :done="estado>2">            
       </q-step>
     </q-stepper>
-    <!-- </q-card-actions> -->
   </q-card>
 </template>
 <script>

@@ -118,7 +118,7 @@ export default {
     Store() {
       let me = this;
       let url =
-        "http://localhost/ApiCafeteria/Controller/ProductoController.php";
+        "http://192.168.3.219/ApiCafeteria/Controller/ProductoController.php";
 
       me.modelo.id_categoria = me.id_categoria;
       let data = me.modelo;
