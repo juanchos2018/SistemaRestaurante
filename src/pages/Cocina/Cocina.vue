@@ -1,8 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
-    <h5>COCINA SOCKET </h5>
-     <button @click="playe">Play a sound</button>
-          
+    <h5>COCINA SOCKET </h5>          
     <div class="row q-col-gutter-sm">
       <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemCocina" :key="item.id_pedido">
         <card-pedido :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :detalle="item.detalle" ></card-pedido>
@@ -16,7 +14,7 @@ import { useQuasar } from "quasar";
 import CardPedido from "components/cards/CardPedido.vue";
 
 import useSound from 'vue-use-sound'
-import timbre from '../../assets/timbre.mp3'
+import buttonSfx from '../../assets/timbre.mp3'
 import { ref } from "vue";
 export default {
   name: "Cocina",
@@ -25,7 +23,7 @@ export default {
   },
   setup() {
     let itemCocina=ref([])
-    const [play] = useSound(timbre)
+    const [play] = useSound(buttonSfx)
       const enviar=()=>{
 
       }
@@ -47,12 +45,12 @@ export default {
   mounted() {
     this.get();
     this.conn.onopen = (e) => {
-      console.log("conectdo we");
+      console.log("conectado : "+e);
     };
     this.conn.onmessage = (e) => {
       this.rcv(e.data);
       this.noti2();
-      this.play.value;
+      this.Sonido();
     };
   },
   computed: {
@@ -88,12 +86,8 @@ export default {
         position: "top-right",
       });
     },
-    playe(){
-     // let {play} =this
-    // const [play, { sound }] = useSound('../../assets/timbre.mp3')
-      const [play] = useSound('../../assets/timbre.mp3')
-      
-      
+    Sonido(){
+      this.play()
     },
     getData() {
       if (this.type == "All") {
