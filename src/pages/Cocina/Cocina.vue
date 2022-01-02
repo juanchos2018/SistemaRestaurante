@@ -12,10 +12,8 @@
       <q-tab name="alarms" icon="fas fa-tasks" label="Enviado" />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="mails">
-
+      <q-tab-panel name="mails">   
         <div class="row q-col-gutter-sm">
-
           <!-- <p>{{itemCocina}}</p> -->
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
@@ -85,7 +83,7 @@ export default {
       play,
       msg: "Test  Meesage",
       name: "jkun",
-      conn: new WebSocket("ws://192.168.3.219:8090"),
+      conn: new WebSocket("ws://localhost:8090"),
       msgA: [],
       itemCocina,
       itemTerminado,
@@ -94,8 +92,8 @@ export default {
       currentPage: 1,
       nextPage: null,
       totalPages: 4,
-
       tab: ref("mails"),
+      
     };
   },
   created() {},

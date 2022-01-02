@@ -97,16 +97,31 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useQuasar } from 'quasar'
+import { onBeforeUnmount } from 'vue'
 import { ref } from "vue";
 
 export default defineComponent({
-  name: "LockScreen",
+  name: "Login",
 
   setup() {
+    const $q = useQuasar();
+    let timer;
+     onBeforeUnmount(() => {
+      if (timer !== void 0) {
+        clearTimeout(timer)
+        $q.loading.hide()
+      }
+    })
     return {
       username: ref(""),
       password: ref(""),
       isPwd: ref("password"),
+       showLoading () {
+
+      
+      }
+
 
     };
   },
@@ -115,7 +130,19 @@ export default defineComponent({
 
       var tip="este si va we";
       var hol ="";     
-      this.$router.push({path:'/Sistema/Cafeteria'})
+      let timer;
+        this.$q.loading.show({
+          message: 'Un Momento <b>process</b> Cargando.<br/><span class="text-primary">Un...</span>',
+          html: true
+        })
+
+        // hiding in 3s
+        timer = setTimeout(() => {
+          this.$q.loading.hide()
+          timer = void 0
+          this.$router.push({path:'/Sistema/Cafeteria'})
+        }, 3000)
+  //    
 
 
     },

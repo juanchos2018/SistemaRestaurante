@@ -6,13 +6,14 @@ let store = null;
 //Vue.use(Vuex);
 
 // .. other code
+//Clinica url_base: 'http://192.168.3.219/ApiCafeteria', 
 
 export default function () {
   const Store = new Vuex.Store({
     namespaced: true,
     name: "global",
-    state: {  url_base: 'http://192.168.3.219/ApiCafeteria', },
-    // mutations / getters / plugins/ other code
+    state: {  url_base: 'http://192.168.1.209/ApiCafeteria', },
+    
   });
 
   // add this so that we export store

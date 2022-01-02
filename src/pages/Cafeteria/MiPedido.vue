@@ -1,7 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
-    <h5>step dos</h5>
-
+<label for="">Mis Pedidos</label>
      <div class="row q-col-gutter-sm">     
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
@@ -20,56 +19,12 @@
             ></card-mi-pedido>
           </div>
         </div>
-
-    <q-stepper v-model.number="step" vertical color="primary" animated>
-      <q-step :name="0" title="Recibido" icon="settings" :done="step > 0">
-      </q-step>
-      <q-step :name="1" title="Proceso" icon="settings" :done="step > 1">
-      </q-step>
-      <q-step :name="4" title="Listo" icon="settings" :done="step > 1">
-      </q-step>
-      <div>
-          <h5>peiddo</h5>
-      </div>
-    </q-stepper>
-
-<div style="width:28%">
-  <q-card class="my-card">
-      <q-card-section horizontal>          
-        <q-list dense bordered padding class="rounded-borders">
-             <q-item clickable >
-        <q-item-section avatar>
-          <q-icon color="primary" name="local_bar" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label class="text-subtitle2 ">nomrt ltjgjhghgkmhg hjhjhjhjhjh </q-item-label>
-          <q-item-label caption >hghghg</q-item-label>
-        </q-item-section>
-      </q-item>         
-    </q-list>
-  <div class="float: right">
-
-        <q-stepper v-model.number="step" vertical color="primary" animated style="border-style: none;border-style:hidden; " >
-            <q-step :name="0" title="Recibido" icon="settings" :done="step > 0">
-            </q-step>
-            <q-step :name="1" title="Proceso" icon="settings" :done="step > 1">
-            </q-step>
-            <q-step :name="4" title="Listo" icon="settings" :done="step > 1">
-            </q-step>            
-            </q-stepper>
-              </div>
-        
-      </q-card-section>
-    </q-card>
-</div>
-    
-
   </q-page>
 </template>
 
 <script>
 import { defineComponent, ref } from "vue";
-import CardMiPedido from "components/cards/CardMiPedido.vue";
+import CardMiPedido from "components/cards/CardMiPedidos.vue";
 import { mapState } from "vuex";
 
 export default defineComponent({

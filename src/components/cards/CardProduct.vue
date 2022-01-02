@@ -30,15 +30,17 @@
 
 <script>
 import { inject, defineComponent } from "vue";
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: "CardProduct",
   props: ["data"],
   setup() {
+    const $q = useQuasar()
     const arrayva = inject("arrayvacio");
     const aggrear = (id_producto, title, preci,id_categoria) => {
 
-      let obj = arrayva.value.find((x) => x.id_producto == id_producto);
+    let obj = arrayva.value.find((x) => x.id_producto == id_producto);
 
       if (obj) {
           let position = arrayva.value.findIndex((x) => x.id_producto == id_producto);
@@ -60,6 +62,11 @@ export default defineComponent({
           descripcion:''
         };     
         arrayva.value.push(objeto);
+        $q.notify({
+              message: "Agregado!",
+              color: "accent",
+              position: "top",
+            });
       }   
     };
     return { aggrear };

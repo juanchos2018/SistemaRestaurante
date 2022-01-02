@@ -19,8 +19,7 @@ module.exports = configure(function( /* ctx */ ) {
         // app boot file (/src/boot)
         // --> boot files are part of "main.js"
         // https://quasar.dev/quasar-cli/boot-files
-        boot: [
-            'i18n',
+        boot: [          
             'axios',
         ],
 
@@ -81,7 +80,8 @@ module.exports = configure(function( /* ctx */ ) {
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
         framework: {
             config: {
-                notify: { /* look at QuasarConfOptions from the API card */ }
+                notify: { /* look at QuasarConfOptions from the API card */ },
+                loading: { /* look at QuasarConfOptions from the API card */ }
             },
 
             // iconSet: 'material-icons', // Quasar icon set
@@ -98,7 +98,8 @@ module.exports = configure(function( /* ctx */ ) {
             plugins: [
                 'AppFullscreen',
                 'Dialog',
-                'Notify'
+                'Notify',
+                'Loading'
             ]
         },
 
