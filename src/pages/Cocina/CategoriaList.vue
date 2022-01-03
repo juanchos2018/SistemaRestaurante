@@ -8,8 +8,10 @@
 </template>
 
 <script>
-import {defineComponent, defineAsyncComponent} from 'vue';
+import {defineComponent, defineAsyncComponent,ref,reactive} from 'vue';
 import { mapState } from 'vuex'
+import { useQuasar } from 'quasar'
+
 
 export default defineComponent({
   name: "Tables",
@@ -17,15 +19,22 @@ export default defineComponent({
     TableCustomGrid: defineAsyncComponent(() => import('components/tables/TableCustomGrid')),
    
   },
-  data(){
+  setup(){
+    const modelo = reactive({ id_categoria: 0,nombre_categoria:'',estado:0 })
+      const $q = useQuasar();
     return{
-        itemCategoria:[],
-        modelo:{
-          id_categoria:0,
-          nombre_categoria:'',
-          estado:1,
-        }
+        itemCategoria:ref([]),
+        modelo
     }
+  },
+  created(){
+  //  let existe =  this.$q.sessionStorage.isEmpty()
+    let  existe2= this.$q.sessionStorage.has("Qsesion")
+    //console.log(existe2);
+    if (!existe2) {
+         this.$router.push({ path: "/" });
+    }
+   
   },
    computed: {
     ...mapState(['url_base'])   
@@ -61,9 +70,9 @@ export default defineComponent({
         data: data,       
       })
         .then(function(response) {
-         // console.log(response);
+         console.log(response);
           let result =response.data.resultado;
-          if (result=="Regigstrado") {
+          if (result=="Registrado") {
                alert("Registrado");
                me.Get();
           }else{          
@@ -77,7 +86,8 @@ export default defineComponent({
     Get(){
         let url="/Controller/CategoriaController.php";
         this.$axios.get(this.url_base+ url).then(response => {                    
-             this.itemCategoria = response.data;                 
+             this.itemCategoria = response.data;         
+            // console.log(response.data)        
             }).catch(function (error) {
                 console.log(error);
         }) .finally(() => {                     

@@ -99,7 +99,9 @@ module.exports = configure(function( /* ctx */ ) {
                 'AppFullscreen',
                 'Dialog',
                 'Notify',
-                'Loading'
+                'Loading',
+                'LocalStorage',
+                'SessionStorage'
             ]
         },
 

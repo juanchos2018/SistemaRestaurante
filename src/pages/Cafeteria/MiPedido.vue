@@ -14,7 +14,7 @@
               :area="item.area"
               :color="item.color"
               :detalle="item.detalle"
-              :estado="item.estado_pedido"
+              :estado_pedido="item.estado_pedido"
             
             ></card-mi-pedido>
           </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref,reactive } from "vue";
 import CardMiPedido from "components/cards/CardMiPedidos.vue";
 import { mapState } from "vuex";
 
@@ -34,25 +34,46 @@ export default defineComponent({
     const done1 = ref(false);
     const done2 = ref(false);
     const done3 = ref(false);
-     let itemCocina = ref([]);
+    let itemCocina = ref([]);
+    const modelo = reactive({ COD_AUXILIAR: "045530", DES_AUXILIAR: "" });
     return {
+      conn: new WebSocket("ws://localhost:8090"),
       step: ref(0),
       done1,
       done2,
       done3,
-      itemCocina
+      itemCocina,
+      modelo
     };
-  },
+   },
+   created(){ 
+      let existe = this.$q.sessionStorage.has("Qsesion");
+      if (!existe) {
+         this.$router.push({ path: "/" });
+      }
+   },
    mounted() {
-    this.get();    
+    let obj = this.$q.sessionStorage.getItem("Qsesion");
+    this.modelo.DES_AUXILIAR = obj.DES_AUXILIAR;
+    this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
+
+    this.get();   
+      this.conn.onopen = (e) => {
+       console.log("conectado Mi : " + e);
+    };
+    this.conn.onmessage = (e) => {
+      this.rcv(e.data);
+      console.log("scoket");
+    
+    };
   },
   computed: {
     ...mapState(["url_base"]),  
   },
-  methods: {
+  methods: {   
     get(){
-      let tipo="nuevo";
-      let url="/Controller/PedidoController.php?tipo="+tipo;
+      let tipo="mio";
+      let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
         .get(this.url_base+url)
         .then((response) => {
@@ -63,8 +84,8 @@ export default defineComponent({
         })
         .finally(() => {});
     },    
-    alerta(name) {
-      alert(name);
+    rcv(str) {
+       this.get();
     },
   },
 });

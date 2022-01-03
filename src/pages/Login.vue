@@ -2,6 +2,7 @@
   <q-layout class="bg-image" v-cloak>
     <q-page-container>
       <q-page class="flex flex-center">
+         <q-form action="https://some-url.com" method="post" @submit.prevent="Validate">
         <q-card
           v-if="!$q.screen.lt.sm"
           class="bg-transparent no-border no-shadow"
@@ -19,15 +20,15 @@
                 <q-input
                   dark
                   color="white"
-                  v-model="username"
+                  v-model="modelo.COD_USUARIO"
                   label="Usuario"
                 />
                 <q-input
                   dark
-                  v-model="password"
+                  v-model="modelo.DES_PASSWORD"
                   color="white"
                   :type="isPwd ? 'password' : 'text'"
-                  placeholder="Enter Password"
+                  placeholder="Escriba su Constraseña"
                 >
                   <template v-slot:append>
                     <q-icon
@@ -42,7 +43,7 @@
             </q-item-section>
             <q-item-section side center>
               <q-btn
-               @click="Ingresar"
+               type="submit"
                 round
                 flat
                 color="white"
@@ -52,6 +53,8 @@
             </q-item-section>
           </q-item>
         </q-card>
+   </q-form>
+    <q-form action="https://some-url.com" method="post" @submit.prevent="Validate">
         <q-card
           v-if="$q.screen.lt.sm"
           class="bg-transparent no-border no-shadow"
@@ -64,24 +67,24 @@
           <q-card-section class="text-center">
             <div class="text-h6 text-white">Inicio de Sesion</div>
 
-            <q-input dark color="white" v-model="username" label="Usuario" />
+            <q-input dark color="white" v-model="modelo.COD_USUARIO" label="Usuario" />
             <q-input
               dark
-              v-model="password"
+              v-model="modelo.DES_PASSWORD"
               color="white"
               :type="isPwd ? 'password' : 'text'"
-              placeholder="Enter Password"
+              placeholder="Escriba su Constraseña"
             >
               <template v-slot:append>
                 <q-icon
                   :name="isPwd ? 'visibility_off' : 'visibility'"
                   class="cursor-pointer"
-                  @click="isPwd = !isPwd"
+                   @click="isPwd = !isPwd"
                 />
               </template>
             </q-input>
             <q-btn
-           @click="Ingresar"
+            type="submit"
               round
               flat
               color="white"
@@ -90,6 +93,7 @@
             ></q-btn>
           </q-card-section>
         </q-card>
+         </q-form>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -99,7 +103,8 @@
 import { defineComponent } from "vue";
 import { useQuasar } from 'quasar'
 import { onBeforeUnmount } from 'vue'
-import { ref } from "vue";
+import { ref,reactive  } from "vue";
+import { mapState } from 'vuex'
 
 export default defineComponent({
   name: "Login",
@@ -107,47 +112,108 @@ export default defineComponent({
   setup() {
     const $q = useQuasar();
     let timer;
+    let   validate=ref(false)
      onBeforeUnmount(() => {
       if (timer !== void 0) {
         clearTimeout(timer)
         $q.loading.hide()
       }
-    })
-    return {
-      username: ref(""),
-      password: ref(""),
-      isPwd: ref("password"),
-       showLoading () {
-
-      
+    })     
+    const modelo = reactive({ COD_USUARIO: '',DES_PASSWORD:'' })
+    const  errors= {
+        COD_USUARIO: ref(false),
+        DES_PASSWORD: ref(false)            
       }
-
-
-    };
+    
+    return {
+      isPwd: ref('password'),
+      validate,
+      modelo,
+      errors
+      };
   },
+   computed: {
+    ...mapState(['url_base'])   
+  }, 
   methods: {
-    Ingresar(){
-
-      var tip="este si va we";
-      var hol ="";     
-      let timer;
-        this.$q.loading.show({
+    Ingresar(){  
+        let me =this;
+        me.$q.loading.show({
           message: 'Un Momento <b>process</b> Cargando.<br/><span class="text-primary">Un...</span>',
           html: true
+        })      
+       let url ="/Controller/LoginController.php";
+       const data = me.modelo;
+        this.$axios({
+        method: "POST",
+        url: me.url_base+ url,
+        data: data,       
+      })
+        .then(function(response) {
+       //    console.log(response);
+         me.$q.loading.hide()   
+        let result =response.data;
+        if (result.EXISTE=="Si") {         
+            me.$router.push({path:'/Sistema/Cafeteria'})
+            let objeto ={COD_AUXILIAR:result.COD_AUXILIAR,
+                        COD_MEDICO:result.COD_MEDICO,
+                        DES_AUXILIAR:result.DES_AUXILIAR,
+                        LOGUEO:'Qsesion'}
+             me.$q.sessionStorage.set("Qsesion", objeto)
+
+        }else{
+            me.$q.dialog({
+              dark: true,
+              title: 'Ups',
+              message: 'No existe Tu Usuario'
+            }).onOk(() => {            
+            }).onCancel(() => {       
+            }).onDismiss(() => {             
+            })
+           }             
+                
         })
-
-        // hiding in 3s
-        timer = setTimeout(() => {
-          this.$q.loading.hide()
-          timer = void 0
-          this.$router.push({path:'/Sistema/Cafeteria'})
-        }, 3000)
-  //    
-
-
+        .catch((error) => {
+          console.log(error);         
+        });      
     },
     Salir(){
 
+    },
+    Validate(){
+      this.errors.COD_USUARIO = this.modelo.COD_USUARIO == "" ? true : false;
+      this.errors.DES_PASSWORD = this.modelo.DES_PASSWORD == "" ? true : false;   
+      if (this.errors.COD_USUARIO) {
+            this.validate = true;
+            this.$q.dialog({
+              dark: true,
+              title: 'Ups',
+              message: 'Falta Llenar campos'
+            }).onOk(() => {            
+            }).onCancel(() => {       
+            }).onDismiss(() => {             
+            })
+          return false;
+        } else {
+          this.validate = false;
+        }
+         if (this.errors.DES_PASSWORD) {
+          this.validate = true;
+          this.$q.dialog({
+              dark: true,
+              title: 'Ups',
+              message: 'Falta Llenar campos'
+            }).onOk(() => {            
+            }).onCancel(() => {       
+            }).onDismiss(() => {             
+            })
+          return false;
+        } else {
+          this.validate = false;
+        }   
+        if (!this.validate) {
+            this.Ingresar();
+        }
     }
   }
 });

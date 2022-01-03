@@ -12,7 +12,7 @@ export default function () {
   const Store = new Vuex.Store({
     namespaced: true,
     name: "global",
-    state: {  url_base: 'http://192.168.1.209/ApiCafeteria', },
+    state: {  url_base: 'http://192.168.3.219/ApiCafeteria', },
     
   });
 

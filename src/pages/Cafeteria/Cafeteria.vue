@@ -1,46 +1,25 @@
 <template>
   <q-page class="q-pa-sm">
-    <q-layout
-      view="lhh LpR lfr"
-      container
-      style="height: 90vh"
-      class="shadow-2 rounded-borders"
-    >
-      <q-drawer
-        side="right"
-        show-if-above
-        v-model="rightDrawerOpen"
-        bordered
-        
-        :breakpoint="500"
-        :width="drawerWidth"
-        class="no-margin no-padding"
-      >
+    <q-layout view="lhh LpR lfr" container style="height: 90vh" class="shadow-2 rounded-borders">
+      <q-drawer side="right" show-if-above v-model="rightDrawerOpen" bordered :breakpoint="500" :width="drawerWidth" class="no-margin no-padding">
         <div class="q-pa-sm no-margin no-padding">
 
+          <q-bar style="min-width: 250px;" class="bg-teal text-white rounded-borders">
+            <div class="cursor-pointer non-selectable">
+              Mi Pedido
+            </div>
 
+            <q-space />
+            <label for="" style="font-size: 20px">{{  parseFloat(SumTotal).toFixed(2) }}</label>
+          </q-bar>
+          <!-- <q-item-label header>Mi Pedido</q-item-label> -->
 
-       <q-bar style="min-width: 250px;" class="bg-teal text-white rounded-borders">
-        <div class="cursor-pointer non-selectable">
-          Mi Pedido        
-        </div>      
-        
-        <q-space />       
-          <label for="" style="font-size: 20px">{{  parseFloat(SumTotal).toFixed(2) }}</label>
-      </q-bar>
-          <!-- <q-item-label header>Mi Pedido</q-item-label> -->     
-          
-           <!-- <q-item-section header>
+          <!-- <q-item-section header>
             <q-item-label >Mi Pedido</q-item-label>
             <q-item-label >5 min ago</q-item-label>
           </q-item-section> -->
-<br>
-          <q-list
-            class="no-margin no-padding"
-            separator
-            v-for="item in getDatas"
-            :key="item.id_producto"
-          >
+          <br>
+          <q-list class="no-margin no-padding" separator v-for="item in getDatas" :key="item.id_producto">
             <q-item>
               <q-item-section top>
                 <q-item-label lines="1">
@@ -49,101 +28,40 @@
                 <q-item-label caption lines="1">
                   {{ item.descripcion }}
                 </q-item-label>
-                <q-popup-edit
-                  v-model="item.descripcion"
-                  :title="item.producto"
-                  auto-save
-                  v-slot="scope"
-                >
-                  <q-input
-                    v-model="scope.value"
-                    dense
-                    autofocus
-                    counter
-                    @keyup.enter="scope.set"
-                  />
+                <q-popup-edit v-model="item.descripcion" :title="item.producto" auto-save v-slot="scope">
+                  <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
                 </q-popup-edit>
-                <q-item-label
-                  lines="1"
-                  class="
+                <q-item-label lines="1" class="
                     q-mt-xs
                     text-body2 text-weight-bold text-primary text-uppercase
-                  "
-                >
-                  <span class="cursor-pointer"
-                    >S/ {{ item.precio }} x {{ item.cantidad_pedido }}</span
-                  >
+                  ">
+                  <span class="cursor-pointer">S/ {{ item.precio }} x {{ item.cantidad_pedido }}</span>
                 </q-item-label>
               </q-item-section>
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
                   <!--    <q-btn class="gt-xs" size="12px" flat dense round icon="delete" /> -->
-                  <q-btn
-                    size="12px"
-                    flat
-                    dense
-                    round
-                    icon="fas fa-minus"
-                    @click="MinusProduct(item.id_producto)"
-                  />
-                  <q-btn
-                    size="12px"
-                    flat
-                    dense
-                    round
-                    icon="fas fa-plus"
-                    @click="MoreProduct(item.id_producto)"
-                  />
-                  <q-btn
-                    size="12px"
-                    flat
-                    dense
-                    round
-                    icon="delete"
-                    @click="DeleteItem(item.id_producto)"
-                  />
+                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto)" />
+                  <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto)" />
                 </div>
               </q-item-section>
             </q-item>
           </q-list>
           <div class="q-pa-lg flex flex-center">
-            <q-pagination
-              v-model="page"
-              :min="current"
-              :max="Math.ceil(arrayvacio.length / totalPages)"
-              :input="true"
-              input-class="text-orange-10"
-            >
+            <q-pagination v-model="page" :min="current" :max="Math.ceil(arrayvacio.length / totalPages)" :input="true" input-class="text-orange-10">
             </q-pagination>
           </div>
 
           <q-banner inline-actions class="text-white bg-red absolute-bottom">
-         <q-btn
-                color="bg-positive"
-                glossy
-                push
-                label="Enviar"
-                @click="MensajeEnviar"
-              />
+            <q-btn color="bg-positive" glossy push label="Enviar" @click="MensajeEnviar" />
             <template v-slot:action>
-            <q-btn
-                color="deep-orange"
-                push
-                label="Cancelar"
-                @click="Cancelar"
-              />
+              <q-btn color="deep-orange" push label="Cancelar" @click="Cancelar" />
             </template>
           </q-banner>
         </div>
         <div class="absolute" style="top: 27px; left: -12px">
-          <q-btn
-            dense
-            round
-            unelevated
-            color="accent"
-            icon="chevron_right"
-            @click="toggleRightDrawer"
-          />
+          <q-btn dense round unelevated color="accent" icon="chevron_right" @click="toggleRightDrawer" />
         </div>
       </q-drawer>
       <q-page-container>
@@ -151,20 +69,10 @@
           <div>
             <q-card class="no-border no-shadow bg-transparent">
               <q-card-section class="q-pa-sm">
-                <q-input
-                  rounded
-                  v-model="search"
-                  outlined
-                  placeholder="Buscar Producto"
-                >
+                <q-input rounded v-model="search" outlined placeholder="Buscar Producto">
                   <template v-slot:append>
                     <q-icon v-if="search === ''" name="search" />
-                    <q-icon
-                      v-else
-                      name="clear"
-                      class="cursor-pointer"
-                      @click="search = ''"
-                    />
+                    <q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
                   </template>
                 </q-input>
               </q-card-section>
@@ -173,15 +81,11 @@
 
           <div class="row q-col-gutter-sm">
             <div v-if="!itemProducto.length">
-          
-                <h5>SIN PRODUCTOS</h5>
-              
+
+              <h5>SIN PRODUCTOS</h5>
+
             </div>
-            <div
-              class="col-md-3 col-lg-3 col-sm-12 col-xs-12"
-              v-for="item in FilterList"
-              :key="item.id_producto"
-            >
+            <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12" v-for="item in FilterList" :key="item.id_producto">
               <card-product :data="item"></card-product>
             </div>
           </div>
@@ -190,28 +94,17 @@
             <q-toolbar>
               <!-- <q-btn flat round dense icon="map" />
               <q-toolbar-title>{{ nombrecategoria }}</q-toolbar-title> -->
-              <q-tabs  shrink>
+              <q-tabs shrink>
                 <!-- <i class="fas fa-table"></i> -->
                 <div v-for="item in itemCategoria" :key="item.id_categoria">
-                  <q-route-tab
-                    icon="fas fa-cocktail"
-                    @click="
+                  <q-route-tab icon="fas fa-cocktail" @click="
                       GetProduct(item.id_categoria, item.nombre_categoria)
-                    "
-                    exact
-                    :label="item.nombre_categoria"
-                  />
+                    " exact :label="item.nombre_categoria" />
                 </div>
               </q-tabs>
               <q-space />
               <div class="q-gutter-sm row items-center no-wrap">
-                <q-btn
-                  dense
-                  flat
-                  round
-                  icon="menu"
-                  @click="toggleRightDrawer"
-                />
+                <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
               </div>
             </q-toolbar>
           </q-page-sticky>
@@ -222,32 +115,19 @@
     <q-dialog v-model="prompt" persistent>
       <q-card style="min-width: 390px">
         <q-card-section>
-          <div class="text-h6">Juan Carlos Panty Sihuayro</div>
+          <div class="text-h6">{{modelo.DES_AUXILIAR}}</div>
           <div class="text-subtitle2">Especialidad</div>
         </q-card-section>
 
         <div class="row">
           <div class="col-6">
             <q-item>
-              <q-input
-                dense
-                outlined
-                class="full-width"
-                type="number"
-                label="Piso Area"
-                v-model="modelUser.piso_especialidad"
-              />
+              <q-input dense outlined class="full-width" type="number" label="Piso Area" v-model="modelUser.piso_especialidad" />
             </q-item>
           </div>
           <div class="col-6">
             <q-item>
-              <q-input
-                dense
-                outlined
-                class="full-width"
-                label="Area"
-                v-model="modelUser.area"
-              />
+              <q-input dense outlined class="full-width" label="Area" v-model="modelUser.area" />
             </q-item>
           </div>
         </div>
@@ -277,9 +157,9 @@ const columns = [
   { name: "icon", label: "icon", field: "icon" },
 ];
 
-import { provide, defineAsyncComponent, ref } from "vue";
-
+import { provide, defineAsyncComponent, ref,reactive } from "vue";
 import { mapState } from "vuex";
+import { useQuasar } from "quasar";
 
 export default {
   name: "Cafeteria",
@@ -291,7 +171,7 @@ export default {
 
   setup() {
     let itemRefs = [];
-
+    const $q = useQuasar();
     const arrayvacio = ref([]);
     const itemCategoria = ref([]);
     const itemProducto = ref([]);
@@ -299,10 +179,28 @@ export default {
     const search = ref("");
     let rightDrawerOpen = ref(false);
     const drawerWidth = ref(340);
-
+    const otherValue = $q.sessionStorage.getItem("Qsesion");
+    const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
+    const  modelUser =  reactive({
+        tipo:'Store',
+        fecha_pedido: "",
+        hora_pedido: "10f4",
+        estado_pedido: 0,
+        cod_auxiliar: "",
+        especialidad: "especi",
+        area: "",
+        piso_especialidad: "",
+        des_auxiliar: "",
+        detallePedido: [],
+        TotalPedido: 0,
+        color: "bg-positive", });    
     return {
+      $q,
+      modelo,
+      modelUser,
       conn: new WebSocket("ws://localhost:8090"),
       rightDrawerOpen,
+      otherValue,
       drawerWidth,
       toggleRightDrawer() {
         rightDrawerOpen.value = !rightDrawerOpen.value;
@@ -323,30 +221,28 @@ export default {
       nextPage: ref(null),
       totalPages: ref(6),
       itemRefs,
-    
+
       arrayvacio,
       search,
       pagination: {
         rowsPerPage: 6,
       },
-
-      modelUser: {
-        fecha_pedido: "",
-        hora_pedido: "10f4",
-        estado_pedido: 0,
-        cod_auxiliar: "024107",
-        especialidad: "especi",
-        area: "",
-        piso_especialidad: "2",
-        des_auxiliar: "juan",
-        detallePedido: [],
-        TotalPedido: 0,
-        color: "bg-positive",
-      },
     };
   },
-
+  created() {
+    let existe = this.$q.sessionStorage.has("Qsesion");
+    if (!existe) {
+      this.$router.push({ path: "/" });
+    }
+  },
   mounted() {
+    // console.log(this.otherValue);
+    let obj = this.$q.sessionStorage.getItem("Qsesion");
+    this.modelo.DES_AUXILIAR = obj.DES_AUXILIAR;
+    this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
+    this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
+    this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
+
     this.GetCategoria();
     this.conn.onopen = (e) => {
       console.log("conectado we");
@@ -354,6 +250,7 @@ export default {
     this.conn.onmessage = (e) => {
       // this.rcv(e.data);
       //this.noti2();
+    //  console.log(e);
     };
   },
 
@@ -392,7 +289,6 @@ export default {
     getData() {
       return this.arrayvacio;
     },
-
     DeleteItem(id_producto) {
       const indx = this.arrayvacio.findIndex(
         (v) => v.id_producto === id_producto
@@ -439,8 +335,8 @@ export default {
       this.modelUser.TotalPedido = this.SumTotal;
 
       let data = this.modelUser;
-      //envia al socket  php
-      console.log(data);
+      //envia al socket  php no borrar
+   //   console.log(data);
       this.conn.send(JSON.stringify(data));
       this.Enviado();
       this.prompt = false;

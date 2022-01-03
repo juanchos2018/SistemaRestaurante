@@ -20,7 +20,7 @@
       </div>
       <div class="col-5">
         <q-stepper
-          v-model.number="step"
+          v-model.number="estado_pedido"
           vertical        
           animated
           style="border-style: none; border-style: hidden; margin-left: auto"
@@ -30,13 +30,13 @@
             :name="0"
             title="Recibido"
             icon="settings"
-            :done="step > 0"
+            :done="estado_pedido > 0"
             class="no-marginno-margin no-padding"
           >
           </q-step>
-          <q-step :name="1" title="Proceso" icon="settings" :done="step > 1">
+          <q-step :name="1" title="Proceso" icon="settings" :done="estado_pedido > 1">
           </q-step>
-          <q-step :name="4" title="Listo" icon="settings" :done="step > 1">
+          <q-step :name="4" title="Listo" icon="settings" :done="estado_pedido > 1">
           </q-step>
         </q-stepper>
       </div>
@@ -45,7 +45,7 @@
 </template>
 <script>
 export default {
-  name:'card-mi-medido',
+  name:'card-mi-medidos',
   props: [
     "id_pedido",
     "des_auxiliar",
@@ -53,9 +53,9 @@ export default {
     "area",
     "detalle",
     "color",
-    "estado",
+    "estado_pedido",
   ],
-  data() {
+  setup() {
     return {
       step: 0,
       done1: false,
@@ -64,10 +64,7 @@ export default {
     };
   },
   methods: {
-    Editar(step) {
-      let data = step + "-" + this.id_pedido;
-      this.$emit("update", data);
-    },
+   
   },
 };
 </script>

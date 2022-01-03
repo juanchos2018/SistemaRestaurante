@@ -30,23 +30,24 @@
      <q-card-section horizontal >
           <q-list dense bordered  class="rounded-borders q-pt-xs">
             <br>
-     <q-item clickable  v-for="item in detalle" :key="item.id_pedido_detalle">
+          <q-item clickable  v-for="item in detalle" :key="item.id_pedido_detalle">
         <!-- <q-item-section avatar>
           <q-icon color="primary" name="local_bar" />
         </q-item-section> -->
         <q-item-section>
-          <q-item-label class="text-subtitle2 ">{{item.nombre_producto}} -  {{item.cantidad_pedido}}</q-item-label>
+          <!--  <q-item-label class="text-subtitle2 ">{{item.nombre_producto}} -  {{item.estado_pedido}}</q-item-label> -->
+          <q-item-label class="text-subtitle2 ">estado -  {{estado_pedido}}</q-item-label>
           <q-item-label caption >{{item.descripcion}}</q-item-label>
         </q-item-section>
       </q-item>         
     </q-list>
       <!-- no-margin no-padding -->
-        <q-stepper v-model.number="step" vertical color="primary" animated style="border-style: none;border-style:hidden;  margin-left: auto;  " class=" no-padding"  >
-        <q-step :name="0" title="Recibido" icon="settings" :done="step > 0" class="no-margin no-padding" >
+        <q-stepper v-model.number="estado_pedido" vertical color="primary" animated style="border-style: none;border-style:hidden;  margin-left: auto;  " class=" no-padding"  >
+        <q-step :name="0" title="Recibido" icon="settings" :done="estado_pedido > 0" class="no-margin no-padding" >
         </q-step>
-        <q-step :name="1" title="Proceso" icon="settings" :done="step > 1">
+        <q-step :name="1" title="Proceso" icon="settings" :done="estado_pedido > 1">
         </q-step>
-        <q-step :name="4" title="Listo" icon="settings" :done="step > 1">
+        <q-step :name="4" title="Listo" icon="settings" :done="estado_pedido > 1">
         </q-step>            
         </q-stepper>   
       </q-card-section>
@@ -55,7 +56,7 @@
 </template>
 <script>
 export default {
-  props: ["id_pedido","des_auxiliar", "piso_especialidad","area", "detalle","color","estado"],
+  props: ["id_pedido","des_auxiliar", "piso_especialidad","area", "detalle","color","estado_pedido"],
   data(){
     return{   
       step: 0,
