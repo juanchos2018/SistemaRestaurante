@@ -49,7 +49,7 @@ export default {
   },
   methods: {
      Detalle(){   
-      var id_categoria = parseInt(this.id_categoria);
+      const id_categoria = parseInt(this.id_categoria);
       this.$router.push({name:"/ProductoList",params:{ id_categoria} });
     //   this.$router.push({path:'/Sistema/Cafeteria'})
      }    

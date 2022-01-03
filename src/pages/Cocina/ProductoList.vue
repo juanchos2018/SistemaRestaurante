@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <dialogo-add-producto @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="id_categoria" v-on:GetProductos="Get"></dialogo-add-producto>
+    <dialogo-add-producto @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get"></dialogo-add-producto>
 
   </q-page>
 </template>
@@ -20,10 +20,10 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { mapState } from "vuex";
 
 export default defineComponent({
-  name: "Tables",
+  name: "ProductoList",
   props: {
     id_categoria: {
-      type: Number,
+      type: String,
       required: true,
       default: 0,
     },
@@ -52,8 +52,10 @@ export default defineComponent({
     ...mapState(["url_base"]),
   },
   mounted() {
-    this.Get(this.id_categoria);
-    console.log("iid es :" + this.id_categoria);
+  
+    //console.log("iid es :" + this.id_categoria);
+    this.modelo.id_categoria = parseInt(this.id_categoria);
+      this.Get(this.modelo.id_categoria);
   },
   methods: {
     AddProducto() {
