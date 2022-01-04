@@ -22,7 +22,7 @@
     <q-separator />
 
     <q-card-actions>
-      <q-btn flat round icon="fas fa-edit">
+      <q-btn flat round icon="fas fa-edit" @click="UpdateProduct">
         <q-tooltip anchor="top middle" self="bottom middle" class="bg-amber text-white shadow-4" :offset="[10, 10]">
           Editar
         </q-tooltip>
@@ -66,7 +66,9 @@ export default {
     }
   },
   methods:{
-    
+      UpdateProduct(){      
+        this.$emit("UpdateProduct",this.id_producto);
+      }
   }
 };
 </script>

@@ -4,7 +4,7 @@
       <q-card style="width: 500px; max-width: 80vw;">
         <q-form  @submit.prevent="Validate">
           <q-card-section>
-            <div class="text-h6">Agregar Producto</div>
+            <div class="text-h6">Modificar Producto</div>
           </q-card-section>
           <q-separator />
           <div class="row">
@@ -15,7 +15,7 @@
             </div>
             <div class="col-12">
               <q-item>
-                <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
+                <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
               </q-item>
             </div>
             <div class="col-6">
@@ -25,13 +25,13 @@
             </div>
             <div class="col-6">
               <q-item>
-                <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
+                <q-checkbox v-model="Estado" label="Estado" />
               </q-item>
             </div>
           </div>
           <q-card-actions align="right">
             <q-btn flat label="Cerrar" color="primary" v-close-popup />
-            <q-btn color="primary" label="Registrar" type="submit" />
+            <q-btn color="primary" label="Editar" type="submit" />
           </q-card-actions>
         </q-form>
       </q-card>
@@ -44,29 +44,26 @@
 import moment from "moment";
 import Vue from "vue";
 import { mapState } from "vuex";
+import { useQuasar } from 'quasar'
 
 export default {
   name: "dialogo-add-producto",
   props: {
-    DialogoAddProducto: {
+    DialogoEditProducto: {
       type: Boolean,
       required: true,
       default: false,
-    },
-    id_categoria: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+    },  
   },
   data() {
-    return {    
-      Estado: true,
-      NombreEstado:'Activo',
+    return { 
+      Estado: false,
       isLoading: false,
-      Show: this.DialogoTareaEditar,
+      Show: this.DialogoEditProducto, 
+  
       fecha_actual: moment().format("DD/MM/YYYY"),
       hora_actual: moment().format("HH:mm:ss"),
+
       validate: false,
       modelo: {
         id_producto: 0,
@@ -88,45 +85,54 @@ export default {
     };
   },
   mounted: function () {
-    //    this.rango=this.porcentaje;
+  
   },
   watch: {
-    DialogoAddProducto() {
-      this.Show = this.DialogoAddProducto;
-    },
-    porcentaje() {
-      this.rango = this.porcentaje;
-    },
+    DialogoEditProducto() {
+      this.Show = this.DialogoEditProducto;      
+    }, 
   },
   created() {},
- computed: {
+  computed: {
     ...mapState(["url_base"]), 
   },
-  methods: {
-    Store() {
+  methods: {   
+    View(id) {
       let me = this;
-      let url ="/Controller/ProductoController.php";
-      me.modelo.id_categoria = me.id_categoria;      
-      me.modelo.estado = me.estado==true?1:0;
+      let url ="/Controller/ProductoController.php?id_producto="+id;
+      this.$axios({
+        method: "GET",
+        url: me.url_base+url,      
+      })
+        .then(function (response) {
+           // console.log(response);        
+            me.modelo=response.data;        
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    Update(){     
+      let me = this;
+      let url ="/Controller/ProductoController.php";    
       let data = me.modelo;
       this.$axios({
-        method: "POST",
-        url: me.url_base+ url,
+        method: "PUT",
+        url: me.url_base+url,
         data: data,
       })
         .then(function (response) {
-          //  console.log(response);
-          let result = response.data.resultado;
-          if (result == "Registrado") {
-            // alert("Registrado");
-            me.Limpiar();
+           //console.log(response);
+          let result = response.data;
+          if (result.afect>0) {             
+          //  me.Limpiar();
             me.ListarProductos(me.modelo.id_categoria);
             me.CerrarModal();
-             me.$q.notify({
-              message: "Producto Agregado!",
+            me.$q.notify({
+              message: "Producto Editado!",
               color: "accent",
               position: "top",
-            });  
+            });        
           } else {
             /// me.Existe();
           }
@@ -134,16 +140,11 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+   
     },
     ListarProductos(id_categoria) {
       this.$emit("GetProductos", id_categoria);
-    },
-    onChange(value) {
-      console.log("change: ", value);
-    },
-    onAfterChange(value) {
-      console.log("afterChange: ", value);
-    },
+    },  
     CerrarModal() {
       this.$emit("CerrarModal");
     },
@@ -189,7 +190,6 @@ export default {
           this.validate = false;
         }
 
-
           if (this.errors.precio_producto) {
           this.validate = true;
           this.$q.dialog({
@@ -207,13 +207,13 @@ export default {
    
         if (!this.validate) {
            this.$q.dialog({        
-            title: 'Mensaneje',
-            message: 'Desea Registrar?',
+            title: 'Mensaje',
+            message: 'Desea Editar ?',
             cancel: true,
             persistent: true
           }).onOk(() => {
             // console.log('>>>> OK')
-            this.Store();
+            this.Update();
           }).onOk(() => {
             // console.log('>>>> second OK catcher')
           }).onCancel(() => {

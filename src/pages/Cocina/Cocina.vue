@@ -146,10 +146,17 @@ export default {
       console.log("conectado Co : " + e);
     };
     this.conn.onmessage = (e) => {
-      this.rcv(e.data);
-      this.Sonido();
-      this.noti2();
-      this.Sonido();
+     // console.log(e.data)     
+      let jsonre =   JSON.parse(e.data);  
+      //console.log(aa.tipo);     
+      if (jsonre.tipo=="Store") {
+         this.rcv(e.data);
+         this.Sonido();
+         this.noti2();
+         this.Sonido();
+      }
+
+     
     };
   },
   computed: {

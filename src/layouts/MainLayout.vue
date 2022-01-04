@@ -9,7 +9,7 @@
 
           <q-route-tab icon="fas fa-mug-hot" to="/Sistema/Cocina" exact label="Cocina" />
 
-          <q-route-tab icon="fab fa-get-pocket" to="/Sistema/Prueba" exact label="Categoria" />
+          <q-route-tab icon="fab fa-get-pocket" to="/Sistema/Categoria" exact label="Categoria" />
           <!-- <q-route-tab
             icon="fab fa-get-pocket"
             to="/Sistema/Step"
