@@ -11,7 +11,7 @@
           <q-list>
             <q-item clickable v-close-popup>
               <q-item-section>
-                <q-item-label>Rechazar</q-item-label>
+                <q-item-label @click="Editar(4)" >Rechazar</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -51,20 +51,18 @@
         title="Tarea"
         :done="estado > 0"
         class="no-margin no-padding"
-      >
-        <q-tooltip> Some text </q-tooltip>
+      >    
       </q-step>
-
       <q-step
         :name="2"
         icon="settings"
+        title="Tarea"
         :done="estado > 1"
         class="no-margin no-padding"
       >
       </q-step>
-
-      <q-step :name="3" icon="settings" :done="estado > 2"> </q-step>
-    </q-stepper>
+      <q-step :name="3" icon="settings"   title="Tarea" :done="estado > 2"> </q-step>
+      </q-stepper>
   </q-card>
 </template>
 <script>
@@ -87,9 +85,35 @@ export default {
     };
   },
   methods: {
-    Editar(step) {
-      let data = step + "-" + this.id_pedido;
-      this.$emit("update", data);
+    Editar(step) { 
+      console.log(step)
+//4   -1 2 3
+    if (step==4  && this.estado>0) {     
+                this.$q.dialog({
+            dark: true,
+            title: "Ups",
+            message: "No Puedes Efectuar esta Accion",
+          })
+          .onOk(() => {
+            // console.log('OK')
+          })
+          .onCancel(() => {
+            // console.log('Cancel')
+          })
+          .onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          });
+        
+      }else{
+         
+          const datas={
+        estado_pedido:step,
+        id_pedido:this.id_pedido,
+        lista:[],
+        tipo:'Update'
+        }
+        this.$emit("update", datas);
+       }   
     },
   },
 };

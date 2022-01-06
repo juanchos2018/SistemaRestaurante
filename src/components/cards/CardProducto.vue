@@ -13,7 +13,7 @@
           {{descripcion}}
         </div>
         <div class="text-subtitle1 text-green-9 text-bold">
-          S/ {{precio_producto}}
+          S/ {{precio_venta}}
         </div>
       </q-card-section>
 
@@ -50,7 +50,7 @@ export default {
                 required: true,
                 default: '', 
             },
-             precio_producto:{
+             precio_venta:{
                 type: String,
                 required: true,
                 default: '', 

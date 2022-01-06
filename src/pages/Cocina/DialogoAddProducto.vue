@@ -18,12 +18,27 @@
                 <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
               </q-item>
             </div>
-            <div class="col-6">
+            <div class="col-4">
               <q-item>
-                <q-input dense outlined class="full-width" type="number" label="Precio Venta" v-model="modelo.precio_producto" />
+                  <q-input
+                  filled
+                  v-model="modelo.precio_producto"
+                  label="Precio *"
+                  mask="#.##"
+                  fill-mask="0"
+                  reverse-fill-mask
+                  dense
+                  autogrow
+                  input-class="text-right"
+                />    
               </q-item>
             </div>
-            <div class="col-6">
+             <div class="col-4">
+              <q-item>                 
+                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock" />                 
+              </q-item>
+            </div>
+            <div class="col-4">
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
               </q-item>
@@ -73,9 +88,9 @@ export default {
         nombre_producto: "",
         descripcion: "",
         id_categoria: 0,
-        precio_producto: 0,
+        precio_producto: null,
         estado: 1,
-        cantidad_producto: 1,
+        stock: 1,
         fecha: "",
         imagen: "",
       },
@@ -88,7 +103,7 @@ export default {
     };
   },
   mounted: function () {
-    //    this.rango=this.porcentaje;
+   
   },
   watch: {
     DialogoAddProducto() {
@@ -107,7 +122,7 @@ export default {
       let me = this;
       let url ="/Controller/ProductoController.php";
       me.modelo.id_categoria = me.id_categoria;      
-      me.modelo.estado = me.estado==true?1:0;
+      me.modelo.estado = me.Estado==true?1:0;
       let data = me.modelo;
       this.$axios({
         method: "POST",
@@ -137,13 +152,8 @@ export default {
     },
     ListarProductos(id_categoria) {
       this.$emit("GetProductos", id_categoria);
-    },
-    onChange(value) {
-      console.log("change: ", value);
-    },
-    onAfterChange(value) {
-      console.log("afterChange: ", value);
-    },
+    },  
+  
     CerrarModal() {
       this.$emit("CerrarModal");
     },
@@ -157,7 +167,7 @@ export default {
    
       this.errors.nombre_producto = this.modelo.nombre_producto == "" ? true : false;
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
-      this.errors.precio_producto = this.modelo.precio_producto == 0? true : false;
+      this.errors.precio_producto = this.modelo.precio_producto == null? true : false;
 
         if (this.errors.nombre_producto) {
             this.validate = true;

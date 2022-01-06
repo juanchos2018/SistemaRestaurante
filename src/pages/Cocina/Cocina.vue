@@ -1,13 +1,13 @@
 <template>
   <q-page class="q-pa-sm">
-
     <q-tabs v-model="tab" dense align="justify" class="bg-primary text-white shadow-2" :breakpoint="0">
       <q-tab name="mails" icon="alarm" label="Proceso" />
       <q-tab name="alarms" icon="fas fa-tasks" label="Enviado" />
+      <q-tab name="reject" icon="fas fa-exclamation-triangle" label="Rechazado" />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="mails">
-
+        <!-- <p>{{itemCocina}}</p> -->
         <q-table grid :card-container-class="cardContainerClass" title="Pedido" :rows="itemCocina" :columns="columns" row-key="name" :filter="filter" hide-header v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions">
           <template v-slot:top-right>
             <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
@@ -23,29 +23,17 @@
             </div>
           </template>
         </q-table>
-
-        <!-- <div
-            class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
-            v-for="item in itemCocina"
-            :key="item.id_pedido"
-          >
-            <card-pedido
-              :id_pedido="item.id_pedido"
-              :des_auxiliar="item.des_auxiliar"
-              :piso_especialidad="item.piso_especialidad"
-              :area="item.area"
-              :color="item.color"
-              :detalle="item.detalle"
-              :estado="item.estado_pedido"
-              v-on:update="modificar"
-            ></card-pedido>
-          </div> -->
-
       </q-tab-panel>
-
       <q-tab-panel name="alarms">
         <div class="row q-col-gutter-sm">
           <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemTerminado" :key="item.id_pedido">
+            <card-terminado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :detalle="item.detalle" :estado="item.estado_pedido"></card-terminado>
+          </div>
+        </div>
+      </q-tab-panel>
+      <q-tab-panel name="reject">
+        <div class="row q-col-gutter-sm">
+          <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemRejected" :key="item.id_pedido">
             <card-terminado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :detalle="item.detalle" :estado="item.estado_pedido"></card-terminado>
           </div>
         </div>
@@ -75,6 +63,7 @@ export default {
     const $q = useQuasar();
     let itemCocina = ref([]);
     let itemTerminado = ref([]);
+    let itemRejected = ref([]);
     const [play] = useSound(buttonSfx);
     const otherValue = $q.sessionStorage.getItem("Qsesion");
     function getItemsPerPage() {
@@ -103,12 +92,13 @@ export default {
       play,
       msg: "Test  Meesage",
       name: "jkun",
-      conn: new WebSocket("ws://localhost:8090"),
+      conn: new WebSocket("ws://192.168.3.219:8090"),
       msgA: [],
       filter,
       pagination,
       itemCocina,
       itemTerminado,
+      itemRejected,
       type: "All",
       page: 1,
       currentPage: 1,
@@ -135,13 +125,14 @@ export default {
   },
   created() {
     let existe = this.$q.sessionStorage.has("Qsesion");
-    if (!existe) {
+    if (existe==false) {
       this.$router.push({ path: "/" });
     }
   },
   mounted() {
     this.get();
     this.getTerminados();
+    this.getRjecteds();
     this.conn.onopen = (e) => {
       console.log("conectado Co : " + e);
     };
@@ -149,14 +140,16 @@ export default {
      // console.log(e.data)     
       let jsonre =   JSON.parse(e.data);  
       //console.log(aa.tipo);     
-      if (jsonre.tipo=="Store") {
-         this.rcv(e.data);
+      if (jsonre.tipo=="Store") {      
          this.Sonido();
          this.noti2();
-         this.Sonido();
-      }
-
-     
+         this.Sonido();         
+         this.rcv(e.data);     
+      }else if (jsonre.tipo=="Update") {
+         this.get();
+         this.getTerminados();
+         this.getRjecteds();
+      }     
     };
   },
   computed: {
@@ -196,11 +189,27 @@ export default {
         })
         .finally(() => {});
     },
+    getRjecteds() {
+      let tipo = "rejectedcock";
+      let url = "/Controller/PedidoController.php?tipo=" + tipo;
+      this.$axios
+        .get(this.url_base + url)
+        .then((response) => {
+          this.itemRejected = response.data;
+          //  console.log(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
     rcv(str) {
       this.get();
+      this.getRjecteds();      
     },
     noti2(use) {
       this.$q.notify({
+        group: false,
         message: "Tienes un Nuevo Pedido !",
         color: "negative",
         position: "top-right",
@@ -219,43 +228,21 @@ export default {
         });
       }
     },
-    modificar(datos) {
-      let dato = datos.split("-");
-      let step = dato[0];
-      let id_pedido = dato[1];
-      let modelo = {
-        estado_pedido: step,
-        id_pedido: id_pedido,
-        tipo:'Update'
-      };
-    
-      const data = modelo;
-      this.conn.send(JSON.stringify(data));
-
-      // let me = this;
-      // let url = "/Controller/PedidoController.php";
-      // this.$axios({
-      //   method: "PUT",
-      //   url: me.url_base + url,
-      //   data: data,
-      // })
-      //   .then(function (response) {
-      //     // console.log(response);
-      //     let result = response.data.resultado;
-      //     if (result == "Registrado") {
-      //       me.get();
-      //       me.getTerminados();
-      //       me.$q.notify({
-      //         message: "Modificado!",
-      //         color: "accent",
-      //         position: "top",
-      //       });
-      //     } else {            
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
+    modificar(datos) {             
+     let  indice  =this.itemCocina.findIndex(x=>x.id_pedido== datos.id_pedido);   
+     if (datos.estado==4) {
+         const array = this.itemCocina[indice].detalle.filter(function(element){
+            return element.id_pedido == datos.id_pedido;
+         });   
+      array.forEach((element) => {
+          datos.lista.push({         
+            id_producto: element.id_producto,
+            cantidad_pedido: element.cantidad_pedido        
+          });
+        });
+     } 
+     //console.log(datos);
+     this.conn.send(JSON.stringify(datos));     
     },
   },
 };

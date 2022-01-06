@@ -1,31 +1,27 @@
 <template>
-  <q-card class="" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_producto,data.id_categoria)">
-    <q-img src="../../assets/products/c-d-x-PDX_a_82obo-unsplash.jpg" height="150px">
-
-    </q-img>
-<!-- parseFloat(data.precio_producto).toFixed(2) -->
-    <q-card-section>
-      <q-btn fab color="teal-7" :label="parseFloat(data.precio_producto).toFixed(2)" class="absolute" style="top: 0; right: 12px; transform: translateY(-50%);" />
-    </q-card-section>
-
-    <q-card-section>
-      <div class="text-h6">
-        {{ data.nombre_producto }}
-      </div>
-      <div class="text-subtitle1 text-justify q-mt-sm">
-        {{ data.nombre_categoria }}
-      </div>
-
-    </q-card-section>
-    <!-- <q-card-section>
-      <div class="col-12">
-        <span class="text-h6">{{ data.amount }}</span>
-        <span class="text-h6 float-right">
-          <q-btn label="See Details" rounded color="secondary" outline></q-btn>
-        </span>
-      </div>
-    </q-card-section> -->
-  </q-card>
+  <q-card class="my-card" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_venta,data.id_categoria,data.stock)">
+      <q-img src="../../assets/imgprueba.jpg" />
+      <q-card-section>      
+        <q-badge fab color="primary" :label="data.stock>0?'Disponible':'Agotado'"   class="absolute"   style="top: 0; right: 12px; transform: translateY(-50%);"/>
+        <div class="row no-wrap items-center">
+          <div class="col text-h6 ellipsis">
+            {{ data.nombre_producto }}
+          </div>
+          <div class="col-auto text-green  text-bold	 text-caption q-pt-md row no-wrap items-center">         
+          S/   {{data.precio_ventas}}
+          </div>
+        </div>  
+      </q-card-section>
+      <q-card-section class="q-pt-none">
+        <div class="text-subtitle1">
+      stock :   {{ data.stock }}
+        </div>
+        <div class="text-caption text-grey">
+         {{data.descripcion}}
+        </div>
+      </q-card-section>
+      <q-separator />   
+    </q-card> 
 </template>
 
 <script>
@@ -38,38 +34,56 @@ export default defineComponent({
   setup() {
     const $q = useQuasar()
     const arrayva = inject("arrayvacio");
-    const aggrear = (id_producto, title, preci,id_categoria) => {
-
-    let obj = arrayva.value.find((x) => x.id_producto == id_producto);
-
+    const fin=()=>{
+          $q
+        .dialog({
+          dark: true,
+          title: "Ups",
+          message: "Se ha agotado :(",
+        })
+        .onOk(() => {
+          // console.log('OK')
+        })
+        .onCancel(() => {
+          // console.log('Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    }
+    const aggrear = (id_producto, title, preci,id_categoria,stock) => {
+     if (stock==0) {
+       fin()
+     } else{
+        let obj = arrayva.value.find((x) => x.id_producto == id_producto);
       if (obj) {
           let position = arrayva.value.findIndex((x) => x.id_producto == id_producto);
           let cantidad_pedido = obj.cantidad_pedido;
           let precio =obj.precio;
           arrayva.value[position].cantidad_pedido = cantidad_pedido + 1; 
           arrayva.value[position].total = precio * arrayva.value[position].cantidad_pedido;    
-      }
-      //parseFloat(preci).toFixed(2) 
-       //parseFloat(preci).toFixed(2) 
+      }      
       else{
         const objeto = {
           id_producto: id_producto,
           producto: title,
           cantidad_pedido: 1,
           id_categoria:id_categoria,
-          precio: parseInt(preci),
-          total: parseInt(preci) ,
+          precio: parseFloat(preci),
+          total: parseFloat(preci) ,
           descripcion:''
         };     
-        arrayva.value.push(objeto);
-        $q.notify({
-              message: "Agregado!",
+        arrayva.value.push(objeto);        
+       }   
+       $q.notify({
+              message: "Agregado "+ title,
               color: "accent",
               position: "top",
-            });
-      }   
+        });
+     }
+     
     };
-    return { aggrear };
+    return { aggrear,fin };
   },
   methods: {
     detail(id, title, preci) {
@@ -77,7 +91,23 @@ export default defineComponent({
     },
     calcula(){
        this.$emit('calcula',  canPrec);
-    }
+    },
+    SinStock() {
+      this.$q
+        .dialog({
+          title: "Ups",
+          message: "Se ha agotado :(",
+        })
+        .onOk(() => {
+          // console.log('OK')
+        })
+        .onCancel(() => {
+          // console.log('Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    },
   },
 });
 </script>

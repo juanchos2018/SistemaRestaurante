@@ -10,7 +10,7 @@
             </div>
 
             <q-space />
-            <label for="" style="font-size: 20px">{{  parseFloat(SumTotal).toFixed(2) }}</label>
+            <label for="" style="font-size: 20px">S/ {{  parseFloat(SumTotal).toFixed(2) }}</label>
           </q-bar>
           <!-- <q-item-label header>Mi Pedido</q-item-label> -->
 
@@ -67,6 +67,7 @@
       <q-page-container>
         <q-page style="padding-top: 80px" class="q-pa-md">
           <div>
+            <!-- <p>{{modelUser}}</p> -->
             <q-card class="no-border no-shadow bg-transparent">
               <q-card-section class="q-pa-sm">
                 <q-input rounded v-model="search" outlined placeholder="Buscar Producto">
@@ -81,9 +82,7 @@
 
           <div class="row q-col-gutter-sm">
             <div v-if="!itemProducto.length">
-
               <h5>SIN PRODUCTOS</h5>
-
             </div>
             <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12" v-for="item in FilterList" :key="item.id_producto">
               <card-product :data="item"></card-product>
@@ -116,7 +115,7 @@
       <q-card style="min-width: 390px">
         <q-card-section>
           <div class="text-h6">{{modelo.DES_AUXILIAR}}</div>
-          <div class="text-subtitle2">Especialidad</div>
+          <!-- <div class="text-subtitle2">Area</div> -->
         </q-card-section>
 
         <div class="row">
@@ -175,6 +174,7 @@ export default {
     const arrayvacio = ref([]);
     const itemCategoria = ref([]);
     const itemProducto = ref([]);
+    let id_categoria=ref(0);   
     provide("arrayvacio", arrayvacio);
     const search = ref("");
     let rightDrawerOpen = ref(false);
@@ -198,7 +198,8 @@ export default {
       $q,
       modelo,
       modelUser,
-      conn: new WebSocket("ws://localhost:8090"),
+      id_categoria,   
+      conn: new WebSocket("ws://192.168.3.219:8090"),
       rightDrawerOpen,
       otherValue,
       drawerWidth,
@@ -213,15 +214,12 @@ export default {
       prompt: ref(false),
       address: ref(""),
       Estado: ref(false),
-
       columns,
-
       page: ref(1),
       current: ref(1),
       nextPage: ref(null),
       totalPages: ref(6),
       itemRefs,
-
       arrayvacio,
       search,
       pagination: {
@@ -230,30 +228,28 @@ export default {
     };
   },
   created() {
-    let existe = this.$q.sessionStorage.has("Qsesion");
-    if (!existe) {
-      this.$router.push({ path: "/" });
+    let existe = this.$q.sessionStorage.has("Qsesion"); 
+    if (existe==false) {       
+         this.$router.push("/")      
     }
   },
-  mounted() {
-    // console.log(this.otherValue);
-    let obj = this.$q.sessionStorage.getItem("Qsesion");
-    this.modelo.DES_AUXILIAR = obj.DES_AUXILIAR;
-    this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
-    this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
-    this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
-
+  mounted() { 
+    let existe = this.$q.sessionStorage.has("Qsesion"); 
+    if (existe==true) {     
+        let obj = this.$q.sessionStorage.getItem("Qsesion");
+        this.modelo.DES_AUXILIAR = obj.DES_AUXILIAR;
+        this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
+        this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
+        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
+    } 
     this.GetCategoria();
     this.conn.onopen = (e) => {
-      console.log("conectado we");
+         console.log("conectado WebSocket");
     };
     this.conn.onmessage = (e) => {
-      // this.rcv(e.data);
-      //this.noti2();
-    //  console.log(e);
+       this.rcv(e.data);      
     };
   },
-
   methods: {
     GetCategoria() {
       let url = "/Controller/CategoriaController.php";
@@ -263,6 +259,7 @@ export default {
           this.itemCategoria = response.data;
           this.GetProduct(this.itemCategoria[0].id_categoria);
           this.nombrecategoria = this.itemCategoria[0].nombre_categoria;
+          this.id_categoria=this.itemCategoria[0].id_categoria;
         })
         .catch(function (error) {
           console.log(error);
@@ -282,6 +279,22 @@ export default {
           console.log(error);
         })
         .finally(() => {});
+    },
+    GetProducto2(){
+   //   this.nombrecategoria = nombre;
+      let url = "/Controller/ProductoController.php?id_categoria=" + this.id_categoria;
+      this.$axios
+        .get(this.url_base + url)
+        .then((response) => {
+          this.itemProducto = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
+    rcv(data){
+      this.GetProducto2();
     },
     Cancelar() {
       this.arrayvacio = [];
@@ -335,12 +348,12 @@ export default {
       this.modelUser.TotalPedido = this.SumTotal;
 
       let data = this.modelUser;
-      //envia al socket  php no borrar
-   //   console.log(data);
+      //envia al socket  php no borrar  
       this.conn.send(JSON.stringify(data));
       this.Enviado();
       this.prompt = false;
       this.Cancelar();
+
     },
     MensajeEnviar() {
       if (this.arrayvacio.length > 0) {

@@ -3,6 +3,7 @@
     <q-page-container>
       <q-page class="flex flex-center">
          <q-form action="https://some-url.com" method="post" @submit.prevent="Validate">
+              <q-btn color="white" text-color="black" label="Standard" @click="Menasaje" />
         <q-card
           v-if="!$q.screen.lt.sm"
           class="bg-transparent no-border no-shadow"
@@ -16,6 +17,7 @@
 
             <q-item-section class="text-white">
               <q-item-label>Inicio de Sesion</q-item-label>
+                 <q-select  dark color="white" outlined v-model="modelo.TIPO_USUARIO" :options="options" label="Seleccione" />
               <q-item-label caption>
                 <q-input
                   dark
@@ -101,7 +103,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useQuasar } from 'quasar'
+import { useQuasar,QSpinnerFacebook,QSpinnerCube } from 'quasar'
 import { onBeforeUnmount } from 'vue'
 import { ref,reactive  } from "vue";
 import { mapState } from 'vuex'
@@ -119,7 +121,7 @@ export default defineComponent({
         $q.loading.hide()
       }
     })     
-    const modelo = reactive({ COD_USUARIO: '',DES_PASSWORD:'' })
+    const modelo = reactive({ COD_USUARIO: 'YNUÑEZ',DES_PASSWORD:'',TIPO_USUARIO:'' })
     const  errors= {
         COD_USUARIO: ref(false),
         DES_PASSWORD: ref(false)            
@@ -129,7 +131,10 @@ export default defineComponent({
       isPwd: ref('password'),
       validate,
       modelo,
-      errors
+      errors,
+      options: [
+        'Medico', 'Cocina',
+      ]
       };
   },
    computed: {
@@ -149,17 +154,27 @@ export default defineComponent({
         url: me.url_base+ url,
         data: data,       
       })
-        .then(function(response) {
-       //    console.log(response);
-         me.$q.loading.hide()   
+        .then(function(response) {     
+        me.$q.loading.hide()   
         let result =response.data;
-        if (result.EXISTE=="Si") {         
-            me.$router.push({path:'/Sistema/Cafeteria'})
+        if (result.existe=="Si") {         
+         
             let objeto ={COD_AUXILIAR:result.COD_AUXILIAR,
                         COD_MEDICO:result.COD_MEDICO,
                         DES_AUXILIAR:result.DES_AUXILIAR,
-                        LOGUEO:'Qsesion'}
+                        LOGUEO:'Qsesion',
+                        TIPO_USUARIO:me.modelo.TIPO_USUARIO}
+
+           //  me.$q.localStorage.set("Qsesion", objeto)
+             me.$store.dispatch("guardarDatos",objeto);  
+              //const value = $q.localStorage.getItem(key)
              me.$q.sessionStorage.set("Qsesion", objeto)
+
+             if (me.modelo.TIPO_USUARIO=="Cocina") {
+                  me.$router.push({path:'/Sistema/Cocina'})
+             }else{
+                  me.$router.push({path:'/Sistema/Cafeteria'})
+             }
 
         }else{
             me.$q.dialog({
@@ -174,11 +189,22 @@ export default defineComponent({
                 
         })
         .catch((error) => {
-          console.log(error);         
+          console.log(error); 
+          me.$q.loading.hide()           
         });      
     },
     Salir(){
-
+        
+    },
+    Menasaje()
+    {//QSpinnerCube
+      let me =this;
+        me.$q.loading.show({
+          message: 'Un Momento <b>process</b> Cargando.<br/><span class="text-primary">Un...</span>',
+          html: true,
+            spinnerColor: 'indigo',
+         spinner: QSpinnerCube,
+        })  
     },
     Validate(){
       this.errors.COD_USUARIO = this.modelo.COD_USUARIO == "" ? true : false;

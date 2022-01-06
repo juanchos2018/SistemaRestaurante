@@ -7,19 +7,39 @@ let store = null;
 
 // .. other code
 //Clinica url_base: 'http://192.168.3.219/ApiCafeteria', 
-
+import { useQuasar } from 'quasar'
 export default function () {
   const Store = new Vuex.Store({
     namespaced: true,
     name: "global",
-    state: {  url_base: 'http://192.168.1.209/ApiCafeteria', },
+    state: {  url_base: 'http://192.168.3.219/ApiCafeteria',DatosUsuario:{} },
+    mutations: {   
+      setUsuario(state,obj){
+        state.DatosUsuario=obj
+      },  
+    },
+    getters: {
+      TipoUsuario(state){
+        return state.user
+      },
+      
+    },
+    actions: {    
+        guardarDatos({commit},obj){
+        commit("setUsuario",obj)        
+       // localStorage.setItem("nombre", nombre)
+        //this.$useQuasar.localStorage.set("Qsesion", objeto)
+        const parsed = JSON.stringify(obj);
+        localStorage.setItem("Qsesion", parsed)
+        },
+      // this.cats = JSON.parse(localStorage.getItem('cats'));
+      
+    },
+
     
   });
-
   // add this so that we export store
-  store = Store;
-
-  // Quasar default
+  store = Store;  
   return Store;
 }
 

@@ -1,20 +1,28 @@
 <template>
   <q-page class="q-pa-sm">
       <q-btn-group push>
-      <q-btn push  icon="fas fa-table" />
-      <q-btn push icon="fas fa-id-card" />
+        <q-btn push icon="fas fa-id-card" @click="TipoVista=true" />
+      <q-btn push  icon="fas fa-table"  @click="TipoVista=false"/>
+      
     </q-btn-group>
-
+    
     <q-btn position="right" class="float-right" color="primary" label="Nuevo Producto" @click="AddProducto" />
     <br />
     <br />
     <br />
-    <div class="row q-col-gutter-sm">
+
+    <div v-if="TipoVista">
+       <div class="row q-col-gutter-sm">
       <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemProducto" :key="item.id">
-        <card-producto :id_producto="item.id_producto" :nombre_producto="item.nombre_producto" :descripcion="item.descripcion" :precio_producto="item.precio_producto" :nombre_categoria="item.nombre_categoria" v-on:UpdateProduct="UpdateProduct"></card-producto>
+        <card-producto :id_producto="item.id_producto" :nombre_producto="item.nombre_producto" :descripcion="item.descripcion" :precio_venta="item.precio_ventas" :nombre_categoria="item.nombre_categoria" v-on:UpdateProduct="UpdateProduct"></card-producto>
       </div>
     </div>
-
+    </div>
+   
+    <div v-else > 
+          <tables-basic :data="itemProducto"  v-on:UpdateProduct="UpdateProduct"></tables-basic>
+    </div>
+   
     <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get"></dialogo-add-producto>
     <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto"  ref="dialogoupdaute" v-on:GetProductos="Get"></dialogo-update-producto>
 
@@ -45,11 +53,13 @@ export default defineComponent({
     DialogoUpdateProducto: defineAsyncComponent(() =>
       import("./DialogoUpdateProducto")
     ),
+    TablesBasic: defineAsyncComponent(() => import('components/tables/TableBasic'))
+
   },
   data() {
     return {
       itemProducto: [],
-      TipoVista:false,
+      TipoVista:true,
       modelo: {
         id_categoria: 0,
         nombre_categoria: "",
@@ -78,6 +88,7 @@ export default defineComponent({
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
+          console.log(response);
           this.itemProducto = response.data;
         })
         .catch(function (error) {

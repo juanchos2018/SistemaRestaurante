@@ -18,14 +18,28 @@
                 <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
               </q-item>
             </div>
-            <div class="col-6">
+            <div class="col-4">
               <q-item>
-                <q-input dense outlined class="full-width" type="number" label="Precio Venta" v-model="modelo.precio_producto" />
+              <q-input
+                  filled
+                  v-model="modelo.precio_venta"
+                  label="2 decimales"
+                  mask="#.##"
+                  fill-mask="0"
+                  reverse-fill-mask
+                  dense
+                  autogrow
+                  input-class="text-right"
+                />                  </q-item>
+            </div>
+            <div class="col-4">
+              <q-item>                 
+                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock" />                 
               </q-item>
             </div>
-            <div class="col-6">
+            <div class="col-4">
               <q-item>
-                <q-checkbox v-model="Estado" label="Estado" />
+                <q-checkbox v-model="Estado" :label="Estado==true? 'Activo':'Inactivo'" />
               </q-item>
             </div>
           </div>
@@ -70,9 +84,9 @@ export default {
         nombre_producto: "",
         descripcion: "",
         id_categoria: 0,
-        precio_producto: 0,
+        precio_venta: 0,
         estado: 1,
-        cantidad_producto: 1,
+        stock: 1,
         fecha: "",
         imagen: "",
       },
@@ -106,7 +120,8 @@ export default {
       })
         .then(function (response) {
            // console.log(response);        
-            me.modelo=response.data;        
+            me.modelo=response.data;     
+            me.Estado=me.modelo.estado==1?true:false;   
         })
         .catch((error) => {
           console.log(error);
@@ -114,15 +129,17 @@ export default {
     },
     Update(){     
       let me = this;
-      let url ="/Controller/ProductoController.php";    
+      let url ="/Controller/ProductoController.php?tipo=editpro";   
+      me.modelo.estado=me.Estado==true?1:0;   
       let data = me.modelo;
+
       this.$axios({
         method: "PUT",
         url: me.url_base+url,
         data: data,
       })
         .then(function (response) {
-           //console.log(response);
+          // console.log(response);
           let result = response.data;
           if (result.afect>0) {             
           //  me.Limpiar();

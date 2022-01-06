@@ -77,6 +77,14 @@ export default defineComponent({
     return {
       todos
     }
+  },
+  methods:{
+    sabver(){
+      var tipo=1;
+      console.log(typeof tipo);
+    }
+    
+
   }
 })
 </script>
