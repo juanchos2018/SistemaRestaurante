@@ -6,7 +6,7 @@
           <q-card-section>
             <div class="text-h6">Agregar Producto</div>
           </q-card-section>
-          <q-separator />
+          <q-separator />         
           <div class="row">
             <div class="col-12">
               <q-item>
@@ -15,7 +15,18 @@
             </div>
             <div class="col-12">
               <q-item>
-                <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
+                <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion"  />
+              </q-item>
+            </div>
+            <div class="col-3">
+              <q-item>
+                <q-checkbox v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
+              </q-item>
+            </div>
+            <div class="col-4">
+              <q-item>                 
+                <!-- disable readonly  -->
+                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock"  min="1" :readonly="Stock==true ? false : true"/>                 
               </q-item>
             </div>
             <div class="col-4">
@@ -33,11 +44,7 @@
                 />    
               </q-item>
             </div>
-             <div class="col-4">
-              <q-item>                 
-                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock" />                 
-              </q-item>
-            </div>
+             
             <div class="col-4">
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
@@ -77,6 +84,7 @@ export default {
   data() {
     return {    
       Estado: true,
+      Stock:true,
       NombreEstado:'Activo',
       isLoading: false,
       Show: this.DialogoTareaEditar,
@@ -90,9 +98,12 @@ export default {
         id_categoria: 0,
         precio_producto: null,
         estado: 1,
-        stock: 1,
+        stock: 0,
         fecha: "",
         imagen: "",
+        usastock:0,
+        estrellas:0
+
       },
       errors: {
         nombre_producto: false,
@@ -116,13 +127,32 @@ export default {
   created() {},
  computed: {
     ...mapState(["url_base"]), 
+      estadoStock: function () {
+       if (this.Stock) {
+          return this.modelo.stock=0
+       }else{
+          return this.estadoStock
+       }
+
+      }
+
   },
   methods: {
+    toggleCheckboxes(event){    
+      if (this.stock==false) {
+          //this.modelo.stock=0;
+      }else{
+        this.modelo.stock=0;
+      }
+    },
     Store() {
       let me = this;
       let url ="/Controller/ProductoController.php";
       me.modelo.id_categoria = me.id_categoria;      
       me.modelo.estado = me.Estado==true?1:0;
+      me.modelo.usastock = me.Stock==true?1:0;
+      
+
       let data = me.modelo;
       this.$axios({
         method: "POST",

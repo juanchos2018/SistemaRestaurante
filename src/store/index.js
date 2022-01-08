@@ -12,7 +12,7 @@ export default function () {
   const Store = new Vuex.Store({
     namespaced: true,
     name: "global",
-    state: {  url_base: 'http://192.168.3.219/ApiCafeteria',DatosUsuario:{} },
+    state: {  url_base: 'http://192.168.3.219/ApiCafeteria',DatosUsuario:{},url_izipay:'http://192.168.3.219/pasarela' },
     mutations: {   
       setUsuario(state,obj){
         state.DatosUsuario=obj

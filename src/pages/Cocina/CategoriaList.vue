@@ -38,6 +38,9 @@ export default defineComponent({
   },
    computed: {
     ...mapState(['url_base'])   
+   
+
+    
   }, 
   mounted(){
     this.Get();

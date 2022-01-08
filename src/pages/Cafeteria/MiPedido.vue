@@ -21,6 +21,7 @@
               :color="item.color"
               :detalle="item.detalle"
               :estado_pedido="item.estado_pedido"
+              :total="item.totalpedido"
             
             ></card-mi-pedido>
           </div>

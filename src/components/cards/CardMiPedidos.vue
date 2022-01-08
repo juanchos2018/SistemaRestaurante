@@ -16,14 +16,17 @@
               <q-item-label caption>{{ item.descripcion }}</q-item-label>
             </q-item-section>
           </q-item>
-        </q-list>
+        </q-list>       
+          <q-card-section class="col-5 flex flex-left">
+           <div>Total: S/ {{total}} </div>
+        </q-card-section>
       </div>
       <div class="col-5">
         <q-stepper
           v-model.number="estado_pedido"
           vertical        
           animated
-          style="border-style: none; border-style: hidden; margin-left: auto"
+          style="border-style: none; border-style: hidden; margin-left: auto;height:100%"
           class=" text-red no-padding no-margin"
         >
           <q-step
@@ -40,6 +43,7 @@
           </q-step>
         </q-stepper>
       </div>
+     
     </div>
   </q-card>
 </template>
@@ -54,6 +58,7 @@ export default {
     "detalle",
     "color",
     "estado_pedido",
+    "total"
   ],
   setup() {
     return {

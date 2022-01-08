@@ -41,8 +41,8 @@
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
                   <!--    <q-btn class="gt-xs" size="12px" flat dense round icon="delete" /> -->
-                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto)" />
-                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock)" />
                   <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto)" />
                 </div>
               </q-item-section>
@@ -78,8 +78,20 @@
                 </q-input>
               </q-card-section>
             </q-card>
+            <p>{{Token}}</p>
+             <div class="kr-embedded"
+                kr-popin
+                :kr-form-token="Token">
+                  <!-- payment form fields -->
+                  <div class="kr-pan"></div>
+                  <div class="kr-expiry"></div>
+                  <div class="kr-security-code"></div>  
+                  <!-- payment form submit button -->
+                   <!--    <button class="kr-payment-button"  value="200"></button> -->    
+                  <q-btn  value="200" label="Pagar"/>               
+                  <div class="kr-form-error"></div>
+             </div> 
           </div>
-
           <div class="row q-col-gutter-sm">
             <div v-if="!itemProducto.length">
               <h5>SIN PRODUCTOS</h5>
@@ -88,7 +100,6 @@
               <card-product :data="item"></card-product>
             </div>
           </div>
-
           <q-page-sticky position="top" expand class="bg-dark text-white">
             <q-toolbar>
               <!-- <q-btn flat round dense icon="map" />
@@ -110,14 +121,12 @@
         </q-page>
       </q-page-container>
     </q-layout>
-
     <q-dialog v-model="prompt" persistent>
       <q-card style="min-width: 390px">
         <q-card-section>
           <div class="text-h6">{{modelo.DES_AUXILIAR}}</div>
           <!-- <div class="text-subtitle2">Area</div> -->
         </q-card-section>
-
         <div class="row">
           <div class="col-6">
             <q-item>
@@ -128,6 +137,21 @@
             <q-item>
               <q-input dense outlined class="full-width" label="Area" v-model="modelUser.area" />
             </q-item>
+            <p>{{Token}}</p>
+          </div>
+            <div class="col-6">
+            <div class="kr-embedded"
+                kr-popin
+                :kr-form-token="Token">
+                  <!-- payment form fields -->
+                  <div class="kr-pan"></div>
+                  <div class="kr-expiry"></div>
+                  <div class="kr-security-code"></div>  
+                  <!-- payment form submit button -->
+                  <button class="kr-payment-button"  value="200"></button>
+                  <!-- error zone -->
+                  <div class="kr-form-error"></div>
+             </div> 
           </div>
         </div>
         <!-- <q-card-section class="q-pt-none">
@@ -197,6 +221,7 @@ export default {
     return {
       $q,
       modelo,
+      Token:ref(''),
       modelUser,
       id_categoria,   
       conn: new WebSocket("ws://192.168.3.219:8090"),
@@ -248,7 +273,12 @@ export default {
     };
     this.conn.onmessage = (e) => {
        this.rcv(e.data);      
-    };
+    }; 
+
+    // let recaptchaScript2= document.createElement('script')
+    // recaptchaScript2.setAttribute('src', "https://api.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js  kr-public-key='58045315:testpublickey_1Q9ePN9mK8XtXfW7ex48ur1KEpkjqr4nVweRH3fw6pO5Z'  kr-post-url-success='http://192.168.3.219/pasarela/paid.php'")
+    // document.head.appendChild(recaptchaScript2)
+
   },
   methods: {
     GetCategoria() {
@@ -273,6 +303,7 @@ export default {
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
+          console.log(response)
           this.itemProducto = response.data;
         })
         .catch(function (error) {
@@ -281,7 +312,7 @@ export default {
         .finally(() => {});
     },
     GetProducto2(){
-   //   this.nombrecategoria = nombre;
+       //   this.nombrecategoria = nombre;
       let url = "/Controller/ProductoController.php?id_categoria=" + this.id_categoria;
       this.$axios
         .get(this.url_base + url)
@@ -308,16 +339,45 @@ export default {
       );
       this.arrayvacio.splice(indx, 1);
     },
-    MoreProduct(id_producto) {
-      let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
-      let position = this.arrayvacio.findIndex(
-        (x) => x.id_producto == id_producto
-      );
-      let cantidad_pedido = obj.cantidad_pedido;
-      let precio = obj.precio;
-      this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
-      this.arrayvacio[position].total =
-        precio * this.arrayvacio[position].cantidad_pedido;
+    MoreProduct(id_producto,stock,usastock) {      
+      if (usastock==1) {
+            let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
+            let position = this.arrayvacio.findIndex(
+              (x) => x.id_producto == id_producto
+            );
+            let cantidad_pedido = obj.cantidad_pedido;
+            if (cantidad_pedido==stock) {
+                this.Mucho();
+            }else{
+              let precio = obj.precio;
+              let producto =obj.producto;
+              this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+              this.arrayvacio[position].total =
+              precio * this.arrayvacio[position].cantidad_pedido;
+              this.AgregaoItem(producto);
+            }
+      }else{  
+          let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
+            let position = this.arrayvacio.findIndex(
+              (x) => x.id_producto == id_producto
+            );
+              let cantidad_pedido = obj.cantidad_pedido;           
+              let precio = obj.precio;
+              let producto =obj.producto;
+              this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+              this.arrayvacio[position].total =
+              precio * this.arrayvacio[position].cantidad_pedido;
+              this.AgregaoItem(producto);
+            
+      }     
+     
+    },
+    AgregaoItem(title){
+       this.$q.notify({
+              message: "Agregado "+ title,
+              color: "accent",
+              position: "top",
+        });
     },
     MinusProduct(id_producto) {
       let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
@@ -425,9 +485,48 @@ export default {
           // console.log('I am triggered on both OK and Cancel')
         });
     },
+    Mucho(){
+       this.$q
+        .dialog({
+          dark: true,
+          title: "Ups",
+          message: "No tenemos Tanto Stock :(",
+        })
+        .onOk(() => {
+          // console.log('OK')
+        })
+        .onCancel(() => {
+          // console.log('Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    },
+    GenerarPago(){
+       let me =this;            
+       let url ="/GenerarPago.php";
+        const data={
+          amount:50,
+          currency:'PE'
+           }
+            this.$axios({
+            method: "POST",
+            url: me.url_izipay+ url,
+            data:data,              
+          })
+            .then(function(response) {     
+              console.log(response);
+              me.prompt = true;
+              me.Token=response.data.token;
+        })
+        .catch((error) => {
+          console.log(error); 
+              
+        }); 
+    },
   },
   computed: {
-    ...mapState(["url_base"]),
+    ...mapState(["url_base",'url_izipay']),
     getData3() {
       return this.getData().slice(
         (this.page - 1) * this.cantfilas.length,
