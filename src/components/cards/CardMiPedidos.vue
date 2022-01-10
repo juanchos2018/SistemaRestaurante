@@ -1,5 +1,27 @@
 <template>
   <q-card class="my-card">
+
+     <q-item>
+      <q-item-section>
+        <q-item-label>{{ nombreDia }} - {{ fecha_pedido }}</q-item-label>
+        <q-item-label caption>
+          {{ hora_pedido }}
+        </q-item-label>
+      </q-item-section>
+        <q-item-section side top>
+           
+            <q-item-label v-if="estado_pedido==0">
+              RECIBIDO
+           </q-item-label>
+            <q-item-label v-else-if="estado_pedido==1">
+              PROCESO
+           </q-item-label>
+           <q-item-label v-else-if="estado_pedido==2" class="text-green text-bold">
+              LISTO
+           </q-item-label>
+        </q-item-section>
+    </q-item>
+        <q-separator />
     <div class="row">
       <div class="col-7">
         <q-list class="rounded-borders q-pt-xs">
@@ -24,7 +46,8 @@
               <q-item-label>{{ item.nombre_producto }} </q-item-label>
               <q-item-label caption lines="2">{{item.descripcion}}</q-item-label>
               <q-item-label caption lines="1">
-                Cant. : {{ item.cantidad_pedido }}</q-item-label
+                Cant. : {{ item.cantidad_pedido }} x    <span class="text-green text-bold"> {{item.precio_venta}}</span>
+               </q-item-label
               >
             </q-item-section>
           </q-item>
@@ -75,6 +98,8 @@
   </q-card>
 </template>
 <script>
+import moment from "moment";
+import "moment/locale/es";
 export default {
   name: "card-mi-medidos",
   props: [
@@ -86,6 +111,8 @@ export default {
     "color",
     "estado_pedido",
     "total",
+    "fecha_pedido",
+    "hora_pedido",
   ],
   setup() {
     return {
@@ -94,6 +121,11 @@ export default {
       done2: false,
       done3: false,
     };
+  },
+   computed: {
+    nombreDia: function () {
+      return moment(this.fecha_pedido).format("dddd");
+    },
   },
   methods: {},
 };

@@ -1,16 +1,27 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="bg-red-1">
         <q-tabs v-model="tab" shrink>      
-          <q-route-tab  v-if="!esCocinero" icon="fas fa-cookie-bite" to="/Sistema/Cafeteria" exact label="Cafeteria" />
-          <q-route-tab  v-if="!esCocinero" icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="MiPedido" />
-          <q-route-tab  v-if="!esCocinero" icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="MisPedidos" />
-          <q-route-tab  v-if="esCocinero" icon="fas fa-mug-hot" to="/Sistema/Cocina" exact label="Cocina" />
+          <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/Cafeteria" exact label="Cafeteria" />
+          <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="MiPedido" />
+          <q-route-tab   icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="MisPedidos" />
+
+          <!-- v-if="!esCocinero"
+v-if="!esCocinero"
+v-if="!esCocinero" -->
+          <!-- <q-route-tab  v-if="esCocinero" icon="fas fa-mug-hot" to="/Sistema/Cocina" exact label="Cocina" />
           <q-route-tab  v-if="esCocinero" icon="fab fa-get-pocket" to="/Sistema/Categoria" exact label="Categoria" />      
-          <q-route-tab  v-if="esCocinero" icon="fab fa-get-pocket" to="/Sistema/Historial" exact label="Historial" />     
+          <q-route-tab  v-if="esCocinero" icon="fab fa-get-pocket" to="/Sistema/Historial" exact label="Historial" />      -->
         </q-tabs>
         <q-space />
+         <q-btn
+          class="q-mr-xs"
+          flat
+          round
+          @click="$q.dark.toggle()"
+          :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
+        /> 
         <div class="q-gutter-sm row items-center no-wrap">       
           <q-btn round flat>
             <q-avatar size="26px">
@@ -22,7 +33,7 @@
                 <q-item clickable v-close-popup>
                   <q-item-section>
                     <q-item-label>{{modelo.DES_AUXILIAR}}</q-item-label>
-                    <q-item-label caption>Usuario</q-item-label>
+                    <!-- <q-item-label caption>Usuario</q-item-label> -->
                   </q-item-section>
                 </q-item>
 
@@ -40,8 +51,8 @@
         </div>
       </q-toolbar>
     </q-header>
-
-    <q-page-container >
+   <!-- class="bg-grey-2" -->
+    <q-page-container class="bg-grey-2">
       <router-view />
     </q-page-container>
   </q-layout>

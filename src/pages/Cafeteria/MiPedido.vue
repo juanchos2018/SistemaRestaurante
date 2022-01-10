@@ -21,6 +21,8 @@
               :color="item.color"
               :detalle="item.detalle"
               :estado_pedido="item.estado_pedido"
+              :fecha_pedido="item.fecha_pedido"
+              :hora_pedido="item.hora_pedido"
               :total="item.totalpedido"
             
             ></card-mi-pedido>
@@ -39,7 +41,8 @@
             :estado="item.estado_pedido"
             :fecha_pedido="item.fecha_pedido"
             :hora_pedido="item.hora_pedido"
-            :total="item.totalpedido">
+            :total="item.totalpedido"
+            v-on:updateStart="UpdateStart"       >
             </card-success>
           </div>
         </div>
@@ -182,6 +185,31 @@ export default defineComponent({
           console.log(error);
         })
         .finally(() => {});
+    },
+      UpdateStart(obj){
+   //  console.log(obj);
+      let me = this;
+      let url ="/Controller/PedidoController.php";         
+      let data = obj;
+      this.$axios({
+        method: "PUT",
+        url: me.url_base+url,
+        data: data,
+      })
+        .then(function (response) {
+         //  console.log(response);
+          let result = response.data;
+          me.get();
+              me.$q.notify({
+              message: "Calificado ",
+              color: "accent",
+              position: "top",
+        });
+        
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     rcv(str) {
        this.get();

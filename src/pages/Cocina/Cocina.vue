@@ -1,16 +1,43 @@
 <template>
   <q-page class="q-pa-sm">
-    <q-tabs v-model="tab" dense align="justify" class="bg-primary text-white shadow-2" :breakpoint="0">
+    <q-tabs
+      v-model="tab"
+      dense
+      align="justify"
+      class="bg-red-1 text-white shadow-2"
+      :breakpoint="0"
+    >
       <q-tab name="mails" icon="alarm" label="Proceso" />
       <q-tab name="alarms" icon="fas fa-tasks" label="Enviado" />
-      <q-tab name="reject" icon="fas fa-exclamation-triangle" label="Anulados" />
+      <q-tab
+        name="reject"
+        icon="fas fa-exclamation-triangle"
+        label="Anulados"
+      />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="mails">
         <!-- <p>{{itemCocina}}</p> -->
-        <q-table grid :card-container-class="cardContainerClass" title="Pedido" :rows="itemCocina" :columns="columns" row-key="name" :filter="filter" hide-header v-model:pagination="pagination" :rows-per-page-options="rowsPerPageOptions">
+        <q-table
+          grid
+          :card-container-class="cardContainerClass"
+          title="Pedido"
+          :rows="itemCocina"
+          :columns="columns"
+          row-key="name"
+          :filter="filter"
+          hide-header
+          v-model:pagination="pagination"
+          :rows-per-page-options="rowsPerPageOptions"
+        >
           <template v-slot:top-right>
-            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+            <q-input
+              borderless
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Search"
+            >
               <template v-slot:append>
                 <q-icon name="search" />
               </template>
@@ -19,34 +46,70 @@
 
           <template v-slot:item="props">
             <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-              <card-pedido :id_pedido="props.row.id_pedido" :des_auxiliar="props.row.des_auxiliar" :piso_especialidad="props.row.piso_especialidad" :area="props.row.area" :color="props.row.color" :detalle="props.row.detalle" :estado="props.row.estado_pedido" v-on:update="modificar"></card-pedido>
+              <card-pedido
+                :id_pedido="props.row.id_pedido"
+                :des_auxiliar="props.row.des_auxiliar"
+                :piso_especialidad="props.row.piso_especialidad"
+                :area="props.row.area"
+                :color="props.row.color"
+                :detalle="props.row.detalle"
+                :fecha_pedido="props.row.fecha_pedido"
+                :hora_pedido="props.row.hora_pedido"
+                :estado="props.row.estado_pedido"
+                :total="props.row.totalpedido"
+                v-on:update="modificar"
+              ></card-pedido>
             </div>
           </template>
         </q-table>
       </q-tab-panel>
       <q-tab-panel name="alarms">
-         <q-toolbar class="bg-secondary text-white q-my-md shadow-2">
-   <div class="text-h5  text-white text-bold">
-       {{ nombreDia }} - {{FechaHoy}}
-      </div>
+        <q-toolbar class="bg-secondary text-white q-my-md shadow-2">
+          <div class="text-h5 text-white text-bold">
+            {{ nombreDia }} - {{ FechaHoy }}
+          </div>
 
-      <q-space />
+          <q-space />
 
-      <div class="text-h5  text-white text-bold">
-       S/ {{ SumTotal }}
-      </div>
-    </q-toolbar>
-   
+          <div class="text-h5 text-white text-bold">S/ {{ SumTotal }}</div>
+        </q-toolbar>
+
         <div class="row q-col-gutter-sm">
-          <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemTerminado" :key="item.id_pedido">
-            <card-terminado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color"  :totalpedido="item.totalpedido"  :detalle="item.detalle" :estado="item.estado_pedido"></card-terminado>
+          <div
+            class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
+            v-for="item in itemTerminado"
+            :key="item.id_pedido"
+          >
+            <card-terminado
+              :id_pedido="item.id_pedido"
+              :des_auxiliar="item.des_auxiliar"
+              :piso_especialidad="item.piso_especialidad"
+              :area="item.area"
+              :color="item.color"
+              :totalpedido="item.totalpedido"
+              :detalle="item.detalle"
+              :estado="item.estado_pedido"
+            ></card-terminado>
           </div>
         </div>
       </q-tab-panel>
       <q-tab-panel name="reject">
         <div class="row q-col-gutter-sm">
-          <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemRejected" :key="item.id_pedido">
-            <card-anulado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :totalpedido="item.totalpedido"  :detalle="item.detalle" :estado="item.estado_pedido"></card-anulado>
+          <div
+            class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
+            v-for="item in itemRejected"
+            :key="item.id_pedido"
+          >
+            <card-anulado
+              :id_pedido="item.id_pedido"
+              :des_auxiliar="item.des_auxiliar"
+              :piso_especialidad="item.piso_especialidad"
+              :area="item.area"
+              :color="item.color"
+              :totalpedido="item.totalpedido"
+              :detalle="item.detalle"
+              :estado="item.estado_pedido"
+            ></card-anulado>
           </div>
         </div>
       </q-tab-panel>
@@ -61,7 +124,6 @@ import CardPedido from "components/cards/CardPedido.vue";
 import CardTerminado from "components/cards/CardTerminado.vue";
 import CardAnulado from "components/cards/CardAnulado.vue";
 
-
 import useSound from "vue-use-sound";
 import buttonSfx from "../../assets/timbre.mp3";
 import { ref, watch, computed } from "vue";
@@ -73,7 +135,7 @@ export default {
   components: {
     CardPedido,
     CardTerminado,
-    CardAnulado
+    CardAnulado,
   },
   setup() {
     const $q = useQuasar();
@@ -106,9 +168,9 @@ export default {
       otherValue,
       $q,
       play,
-      con:null,
+      con: null,
       msg: "Test  Meesage",
-      name: "jkun",   
+      name: "jkun",
       msgA: [],
       filter,
       pagination,
@@ -133,7 +195,7 @@ export default {
         { name: "des_auxiliar", label: "des_auxiliar", field: "des_auxiliar" },
         {
           name: "piso_especialidad",
-          label: "Calories (g)",
+          label: "Area",
           field: "piso_especialidad",
         },
       ],
@@ -143,12 +205,12 @@ export default {
   },
   created() {
     let existe = this.$q.sessionStorage.has("Qsesion");
-    if (existe==false) {
+    if (existe == false) {
       this.$router.push({ path: "/" });
     }
   },
   mounted() {
-    this.conn= new WebSocket(this.url_socket);
+    this.conn = new WebSocket(this.url_socket);
     this.get();
     this.getTerminados();
     this.getRjecteds();
@@ -156,23 +218,26 @@ export default {
       console.log("conectado Co : " + e);
     };
     this.conn.onmessage = (e) => {
-     // console.log(e.data)     
-      let jsonre =   JSON.parse(e.data);  
-      //console.log(aa.tipo);     
-      if (jsonre.tipo=="Store") {      
-         this.Sonido();
-         this.noti2();
-         this.Sonido();         
-         this.rcv(e.data);     
-      }else if (jsonre.tipo=="Update") {
-         this.get();
-         this.getTerminados();
-         this.getRjecteds();
-      }     
+      // console.log(e.data)
+      let jsonre = JSON.parse(e.data);
+      //console.log(aa.tipo);
+      if (jsonre.tipo == "Store") {
+        if (this.esCocinero) {
+             this.Sonido();
+             this.noti2();
+             this.Sonido();
+        }
+       
+        this.rcv(e.data);
+      } else if (jsonre.tipo == "Update") {
+        this.get();
+        this.getTerminados();
+        this.getRjecteds();
+      }
     };
   },
   computed: {
-    ...mapState(["url_base",'url_izipay','url_socket']),
+    ...mapState(["url_base", "url_izipay", "url_socket"]),
     getData2() {
       return this.getData().slice(
         (this.page - 1) * this.totalPages,
@@ -185,8 +250,15 @@ export default {
       }, 0);
       return result.toFixed(2);
     },
-     nombreDia: function () {
+    nombreDia: function () {
       return moment(this.FechaHoy).format("dddd");
+    },
+    esCocinero(){
+       let existe = this.$q.sessionStorage.has("Qsesion");
+        if (existe==true) {
+            let datos = JSON.parse(localStorage.getItem('Qsesion'));
+            return    datos.AREA=='COCINA';
+        }      
     },
   },
   methods: {
@@ -196,7 +268,7 @@ export default {
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
-        //  console.log(response);
+  console.log(response);
           this.itemCocina = response.data;
         })
         .catch(function (error) {
@@ -234,7 +306,7 @@ export default {
     },
     rcv(str) {
       this.get();
-      this.getRjecteds();      
+      this.getRjecteds();
     },
     noti2(use) {
       this.$q.notify({
@@ -257,27 +329,30 @@ export default {
         });
       }
     },
-    modificar(datos) {             
-     let  indice  =this.itemCocina.findIndex(x=>x.id_pedido== datos.id_pedido);   
-     if (datos.estado_pedido==4) {
-         const array = this.itemCocina[indice].detalle.filter(function(element){
-            return element.id_pedido == datos.id_pedido;
-         });   
-      array.forEach((element) => {
-          datos.lista.push({         
+    modificar(datos) {
+      let indice = this.itemCocina.findIndex(
+        (x) => x.id_pedido == datos.id_pedido
+      );
+      if (datos.estado_pedido == 4) {
+        const array = this.itemCocina[indice].detalle.filter(function (
+          element
+        ) {
+          return element.id_pedido == datos.id_pedido;
+        });
+        array.forEach((element) => {
+          datos.lista.push({
             id_producto: element.id_producto,
             cantidad_pedido: element.cantidad_pedido,
-            usastock: element.usastock       
+            usastock: element.usastock,
           });
         });
-     } 
-    // console.log(datos);
-     this.conn.send(JSON.stringify(datos));     
+      }
+      // console.log(datos);
+      this.conn.send(JSON.stringify(datos));
     },
   },
 };
 </script>
 
 <style lang="sass">
-
 </style>

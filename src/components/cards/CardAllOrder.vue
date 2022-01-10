@@ -19,13 +19,10 @@
         <q-item-section>
           <q-item-label>{{ item.nombre_producto }}</q-item-label>
           <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
-           <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
+           <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }} x <span class="text-green text-bold"> {{item.precio_venta}}</span></q-item-label>
         </q-item-section>
 
-        <q-item-section side top>
-          <!-- <q-item-label caption>5 min ago</q-item-label> -->
-          <!-- <q-icon name="star" color="yellow" /> -->
-          <!-- @click="estrellas(item.id_pedido_detalle,item.id_producto)" -->
+        <q-item-section side top>        
           <q-rating
             size="18px"
             v-model="item.estrellas"

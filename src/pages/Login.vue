@@ -192,7 +192,7 @@ export default defineComponent({
              me.$q.sessionStorage.set("Qsesion", objeto)
             // console.log(objeto)
              if (objeto.AREA=="COCINA") {          
-                  me.$router.push({path:'/Sistema/Cocina'})
+                  me.$router.push({path:'/Cocina/Cocina'})
              }else{             
                  me.$router.push({path:'/Sistema/Cafeteria'})
              }

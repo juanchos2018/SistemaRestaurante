@@ -12,17 +12,23 @@ const routes = [
           {path: 'Cafeteria', name: "Sistema/Cafeteria", component: () =>  import('pages/Cafeteria/Cafeteria.vue') },
           {path: 'MiPedido', name: "Sistema/MiPedido", component: () => import('pages/Cafeteria/MiPedido.vue') },
           {path: 'MisPedidos', name: "Sistema/MisPedidos", component: () => import('pages/Cafeteria/MisPedidos.vue') },
-          {path: 'Categoria', name: "Sistema/Categoria",component: () => import('pages/Cocina/CategoriaList.vue') }, 
-          {path: 'Cocina',   name: "Sistema/Cocina", component: () => import('pages/Cocina/Cocina.vue') },
-          {path: 'ProductoList/:id_categoria',name: "/ProductoList",props:true, component: () => import('pages/Cocina/ProductoList.vue') },
-          {path: 'Historial',   name: "Sistema/Historial", component: () => import('pages/Cocina/PedidosAll.vue') },
-     
-      
-        //   { name: "Sistema/Cocina",path: 'Cocina', component: () => import('pages/Cocina/Cocina.vue') },
-        //   { name: "/ProductoList",path: 'ProductoList/:id_categoria',props:true, component: () => import('pages/Cocina/ProductoList.vue') },
-
+          //{path: 'Categoria', name: "Sistema/Categoria",component: () => import('pages/Cocina/CategoriaList.vue') }, 
+       //   {path: 'Cocina',   name: "Sistema/Cocina", component: () => import('pages/Cocina/Cocina.vue') },
+        //  {path: 'ProductoList/:id_categoria',name: "/ProductoList",props:true, component: () => import('pages/Cocina/ProductoList.vue') },
+        //  {path: 'Historial',   name: "Sistema/Historial", component: () => import('pages/Cocina/PedidosAll.vue') },
       ]
   },
+  {
+    path: '/Cocina',
+    component: () =>
+    import('layouts/LayoutCocina.vue'),
+    children: [
+        {path: 'Categoria', name: "Cocina/Categoria",component: () => import('pages/Cocina/CategoriaList.vue') }, 
+        {path: 'Cocina',   name: "Cocina/Cocina", component: () => import('pages/Cocina/Cocina.vue') },
+        {path: 'ProductoList/:id_categoria',name: "/ProductoList",props:true, component: () => import('pages/Cocina/ProductoList.vue') },
+        {path: 'Historial',   name: "Cocina/Historial", component: () => import('pages/Cocina/PedidosAll.vue') },
+    ]
+},
 
 
   {

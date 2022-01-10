@@ -56,12 +56,12 @@ export default defineComponent({
   setup() {
     const $q = useQuasar()
     const arrayva = inject("arrayvacio");
-    const fin=()=>{
+    const fin=(title)=>{
           $q
         .dialog({
           dark: true,
           title: "Ups",
-          message: "Se ha agotado :(",
+          message: title+" Se ha agotado",
         })
         .onOk(() => {
           // console.log('OK')
@@ -95,7 +95,7 @@ export default defineComponent({
 
         if (usastock==1) {
             if (stock==0) {
-               fin();
+               fin(title);
             }
             else{
                   let obj = arrayva.value.find((x) => x.id_producto == id_producto);

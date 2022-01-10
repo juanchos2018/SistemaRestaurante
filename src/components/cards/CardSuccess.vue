@@ -19,7 +19,7 @@
         <q-item-section>
           <q-item-label>{{ item.nombre_producto }}   </q-item-label>
           <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
-            <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
+            <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }} x <span class="text-green text-bold"> {{item.precio_venta}}</span></q-item-label>
         </q-item-section>
 
         <q-item-section side top>
@@ -76,7 +76,15 @@ export default {
     },
   },
   methods: {
-   
+     estrellas(start, id_detalle, id_producto) {
+      let model = {
+        id_pedido_detalle: id_detalle,
+        id_producto: id_producto,
+        estrellas: start,
+        tipo: "start",
+      };
+      this.$emit("updateStart", model);
+    },
   },
 };
 </script>

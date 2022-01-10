@@ -1,10 +1,15 @@
 <template>
   <q-card :class="color">
     <q-item>
+
+      
       <q-item-section>
         <div class="text-subtitle2 text-white">{{ des_auxiliar }}</div>
         <div class="text-subtitle2 text-white">Area:  {{ area }}</div>
         <div class="text-subtitle2 text-white"> Piso : {{ piso_especialidad }}</div>
+         <q-item-label caption class="text-bold">
+          {{ hora_pedido }}
+        </q-item-label>
       </q-item-section>
       <q-item-section side>
         <q-btn-dropdown color="negative" size="sm">
@@ -22,15 +27,12 @@
     <q-list>
       <q-item clickable v-for="item in detalle" :key="item.id_pedido_detalle">
         <q-item-section avatar>
-          <q-icon color="primary" name="local_bar" />
+          <q-icon color="primary" :name="item.logo" />
         </q-item-section>
-        <q-item-section>
-          <q-item-label class="text-subtitle2 text-white"
-            >{{ item.nombre_producto }} - {{ item.cantidad_pedido }}
-          </q-item-label>
-          <q-item-label caption class="text-white">{{
-            item.descripcion
-          }}</q-item-label>
+       <q-item-section>
+          <q-item-label>{{ item.nombre_producto }}</q-item-label>
+          <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
+           <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }} x S/ <span class="text-bold"> {{item.precio_venta}}</span></q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -63,9 +65,14 @@
       </q-step>
       <q-step :name="3" icon="settings"   title="Tarea" :done="estado > 2"> </q-step>
       </q-stepper>
+       <q-card-section class="col-5 flex flex-left  text-bold">
+      <div>Total: S/ {{ total }}</div>
+    </q-card-section>
   </q-card>
 </template>
 <script>
+import moment from "moment";
+import "moment/locale/es";
 export default {
   props: [
     "id_pedido",
@@ -75,6 +82,9 @@ export default {
     "detalle",
     "color",
     "estado",
+    "fecha_pedido",
+       "total",
+    "hora_pedido"
   ],
   data() {
     return {
@@ -83,6 +93,11 @@ export default {
       done2: false,
       done3: false,
     };
+  },
+   computed: {
+    nombreDia: function () {
+      return moment(this.fecha_pedido).format("dddd");
+    },
   },
   methods: {
     Editar(step) { 

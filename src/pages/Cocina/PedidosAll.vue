@@ -1,5 +1,12 @@
 <template>
   <q-page class="q-pa-sm">
+     <q-toolbar class="bg-red-1  q-my-md shadow-2">
+          <div class="text-h5  text-bold">
+           -
+          </div>
+          <q-space />
+          <div class="text-h5  text-bold">S/ {{ SumTotal }}</div>
+        </q-toolbar>
        <div class="row q-col-gutter-sm">     
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
@@ -60,6 +67,12 @@ export default defineComponent({
    },
   computed: {
    ...mapState(["url_base",'url_izipay','url_socket']),
+    SumTotal() {
+      var result = this.itemallorder.reduce(function (acc, obj) {
+        return acc + parseFloat(obj.totalpedido);
+      }, 0);
+      return result.toFixed(2);
+    },
   },
   methods: {      
     get(){
