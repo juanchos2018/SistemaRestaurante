@@ -5,6 +5,7 @@
         <q-form  @submit.prevent="Validate">
           <q-card-section>
             <div class="text-h6">Agregar Producto</div>
+            <!-- <p>{{modelo}}</p> -->
           </q-card-section>
           <q-separator />         
           <div class="row">
@@ -150,8 +151,7 @@ export default {
       let url ="/Controller/ProductoController.php";
       me.modelo.id_categoria = me.id_categoria;      
       me.modelo.estado = me.Estado==true?1:0;
-      me.modelo.usastock = me.Stock==true?1:0;
-      
+      me.modelo.usastock = me.Stock==true?1:0;      
 
       let data = me.modelo;
       this.$axios({
@@ -175,6 +175,7 @@ export default {
           } else {
             /// me.Existe();
           }
+            me.Limpiar();
         })
         .catch((error) => {
           console.log(error);
@@ -198,7 +199,8 @@ export default {
       this.errors.nombre_producto = this.modelo.nombre_producto == "" ? true : false;
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
       this.errors.precio_producto = this.modelo.precio_producto == null? true : false;
-
+      this.errors.precio_producto = this.modelo.precio_producto == '0.00'? true : false;
+    //0.00
         if (this.errors.nombre_producto) {
             this.validate = true;
             this.$q.dialog({
@@ -235,7 +237,7 @@ export default {
           this.$q.dialog({
               dark: true,
               title: 'Ups',
-              message: 'Falta Llenar campos'
+              message: 'El Campo Precio debe ser mayor a cero'
             }).onOk(() => {            
             }).onCancel(() => {       
             }).onDismiss(() => {             

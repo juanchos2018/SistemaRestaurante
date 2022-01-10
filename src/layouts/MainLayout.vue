@@ -2,18 +2,15 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-tabs v-model="tab" shrink>
-      
-          <q-route-tab  v-if="esCliente" icon="fas fa-cookie-bite" to="/Sistema/Cafeteria" exact label="Cafeteria" />
-          <q-route-tab  v-if="esCliente" icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="MiPedido" />
-          <q-route-tab  v-if="esCliente" icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="MisPedidos" />
+        <q-tabs v-model="tab" shrink>      
+          <q-route-tab  v-if="!esCocinero" icon="fas fa-cookie-bite" to="/Sistema/Cafeteria" exact label="Cafeteria" />
+          <q-route-tab  v-if="!esCocinero" icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="MiPedido" />
+          <q-route-tab  v-if="!esCocinero" icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="MisPedidos" />
           <q-route-tab  v-if="esCocinero" icon="fas fa-mug-hot" to="/Sistema/Cocina" exact label="Cocina" />
-          <q-route-tab  v-if="esCocinero" icon="fab fa-get-pocket" to="/Sistema/Categoria" exact label="Categoria" />
-         
-
+          <q-route-tab  v-if="esCocinero" icon="fab fa-get-pocket" to="/Sistema/Categoria" exact label="Categoria" />      
+          <q-route-tab  v-if="esCocinero" icon="fab fa-get-pocket" to="/Sistema/Historial" exact label="Historial" />     
         </q-tabs>
         <q-space />
-
         <div class="q-gutter-sm row items-center no-wrap">       
           <q-btn round flat>
             <q-avatar size="26px">
@@ -44,7 +41,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-page-container class="bg-grey-2">
+    <q-page-container >
       <router-view />
     </q-page-container>
   </q-layout>
@@ -61,10 +58,10 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const search = ref("");
     const storage = ref(0.26);
-    const $q = useQuasar();
+   // const $q = useQuasar();
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
     return {
-      $q,
+    
       modelo,
       leftDrawerOpen,
       search,
@@ -101,14 +98,14 @@ export default defineComponent({
        let existe = this.$q.sessionStorage.has("Qsesion");
         if (existe==true) {
             let datos = JSON.parse(localStorage.getItem('Qsesion'));
-            return    datos.TIPO_USUARIO=='Cocina';
+            return    datos.AREA=='COCINA';
         }      
     },
     esCliente(){
       let existe = this.$q.sessionStorage.has("Qsesion");
       if (existe==true) {
-        let datos = JSON.parse(localStorage.getItem('Qsesion'));
-          return    datos.TIPO_USUARIO=='Medico';
+          let datos = JSON.parse(localStorage.getItem('Qsesion'));
+          return    datos.AREA=='Medico';
       }      
     }
   },

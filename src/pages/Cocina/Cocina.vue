@@ -3,7 +3,7 @@
     <q-tabs v-model="tab" dense align="justify" class="bg-primary text-white shadow-2" :breakpoint="0">
       <q-tab name="mails" icon="alarm" label="Proceso" />
       <q-tab name="alarms" icon="fas fa-tasks" label="Enviado" />
-      <q-tab name="reject" icon="fas fa-exclamation-triangle" label="Rechazado" />
+      <q-tab name="reject" icon="fas fa-exclamation-triangle" label="Anulados" />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="mails">
@@ -25,16 +25,28 @@
         </q-table>
       </q-tab-panel>
       <q-tab-panel name="alarms">
+         <q-toolbar class="bg-secondary text-white q-my-md shadow-2">
+   <div class="text-h5  text-white text-bold">
+       {{ nombreDia }} - {{FechaHoy}}
+      </div>
+
+      <q-space />
+
+      <div class="text-h5  text-white text-bold">
+       S/ {{ SumTotal }}
+      </div>
+    </q-toolbar>
+   
         <div class="row q-col-gutter-sm">
           <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemTerminado" :key="item.id_pedido">
-            <card-terminado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :detalle="item.detalle" :estado="item.estado_pedido"></card-terminado>
+            <card-terminado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color"  :totalpedido="item.totalpedido"  :detalle="item.detalle" :estado="item.estado_pedido"></card-terminado>
           </div>
         </div>
       </q-tab-panel>
       <q-tab-panel name="reject">
         <div class="row q-col-gutter-sm">
           <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemRejected" :key="item.id_pedido">
-            <card-terminado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :detalle="item.detalle" :estado="item.estado_pedido"></card-terminado>
+            <card-anulado :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :totalpedido="item.totalpedido"  :detalle="item.detalle" :estado="item.estado_pedido"></card-anulado>
           </div>
         </div>
       </q-tab-panel>
@@ -47,17 +59,21 @@
 import { useQuasar } from "quasar";
 import CardPedido from "components/cards/CardPedido.vue";
 import CardTerminado from "components/cards/CardTerminado.vue";
+import CardAnulado from "components/cards/CardAnulado.vue";
+
 
 import useSound from "vue-use-sound";
 import buttonSfx from "../../assets/timbre.mp3";
 import { ref, watch, computed } from "vue";
 import { mapState } from "vuex";
-
+import moment from "moment";
+import "moment/locale/es";
 export default {
   name: "Cocina",
   components: {
     CardPedido,
     CardTerminado,
+    CardAnulado
   },
   setup() {
     const $q = useQuasar();
@@ -90,9 +106,9 @@ export default {
       otherValue,
       $q,
       play,
+      con:null,
       msg: "Test  Meesage",
-      name: "jkun",
-      conn: new WebSocket("ws://192.168.3.219:8090"),
+      name: "jkun",   
       msgA: [],
       filter,
       pagination,
@@ -121,6 +137,8 @@ export default {
           field: "piso_especialidad",
         },
       ],
+      moment,
+      FechaHoy: moment(new Date()).local().format("YYYY-MM-DD"),
     };
   },
   created() {
@@ -130,6 +148,7 @@ export default {
     }
   },
   mounted() {
+    this.conn= new WebSocket(this.url_socket);
     this.get();
     this.getTerminados();
     this.getRjecteds();
@@ -153,12 +172,21 @@ export default {
     };
   },
   computed: {
-    ...mapState(["url_base"]),
+    ...mapState(["url_base",'url_izipay','url_socket']),
     getData2() {
       return this.getData().slice(
         (this.page - 1) * this.totalPages,
         (this.page - 1) * this.totalPages + this.totalPages
       );
+    },
+    SumTotal() {
+      var result = this.itemTerminado.reduce(function (acc, obj) {
+        return acc + parseFloat(obj.totalpedido);
+      }, 0);
+      return result.toFixed(2);
+    },
+     nombreDia: function () {
+      return moment(this.FechaHoy).format("dddd");
     },
   },
   methods: {
@@ -168,6 +196,7 @@ export default {
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
+        //  console.log(response);
           this.itemCocina = response.data;
         })
         .catch(function (error) {
@@ -230,18 +259,19 @@ export default {
     },
     modificar(datos) {             
      let  indice  =this.itemCocina.findIndex(x=>x.id_pedido== datos.id_pedido);   
-     if (datos.estado==4) {
+     if (datos.estado_pedido==4) {
          const array = this.itemCocina[indice].detalle.filter(function(element){
             return element.id_pedido == datos.id_pedido;
          });   
       array.forEach((element) => {
           datos.lista.push({         
             id_producto: element.id_producto,
-            cantidad_pedido: element.cantidad_pedido        
+            cantidad_pedido: element.cantidad_pedido,
+            usastock: element.usastock       
           });
         });
      } 
-     //console.log(datos);
+    // console.log(datos);
      this.conn.send(JSON.stringify(datos));     
     },
   },
@@ -249,35 +279,5 @@ export default {
 </script>
 
 <style lang="sass">
-.grid-masonry
-  flex-direction: column
-  height: 700px
 
-  &--2
-    > div
-      &:nth-child(2n + 1)
-        order: 1
-      &:nth-child(2n)
-        order: 2
-
-    &:before
-      content: ''
-      flex: 1 0 100% !important
-      width: 0 !important
-      order: 1
-  &--3
-    > div
-      &:nth-child(3n + 1)
-        order: 1
-      &:nth-child(3n + 2)
-        order: 2
-      &:nth-child(3n)
-        order: 3
-
-    &:before,
-    &:after
-      content: ''
-      flex: 1 0 100% !important
-      width: 0 !important
-      order: 2
 </style>

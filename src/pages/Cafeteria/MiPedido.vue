@@ -30,14 +30,33 @@
        <q-tab-panel name="success"> 
         <div class="row q-col-gutter-sm">
           <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemSucess" :key="item.id_pedido">
-            <card-success :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :detalle="item.detalle" :estado="item.estado_pedido"></card-success>
+            <card-success 
+            :id_pedido="item.id_pedido"
+            :des_auxiliar="item.des_auxiliar"
+            :piso_especialidad="item.piso_especialidad"
+            :area="item.area" :color="item.color"
+            :detalle="item.detalle"
+            :estado="item.estado_pedido"
+            :fecha_pedido="item.fecha_pedido"
+            :hora_pedido="item.hora_pedido"
+            :total="item.totalpedido">
+            </card-success>
           </div>
         </div>
       </q-tab-panel>
       <q-tab-panel name="alarms">
+    
         <div class="row q-col-gutter-sm">
           <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemRejected" :key="item.id_pedido">
-            <card-rejected :id_pedido="item.id_pedido" :des_auxiliar="item.des_auxiliar" :piso_especialidad="item.piso_especialidad" :area="item.area" :color="item.color" :detalle="item.detalle" :estado="item.estado_pedido"></card-rejected>
+            <card-rejected  :id_pedido="item.id_pedido"
+            :des_auxiliar="item.des_auxiliar"
+            :piso_especialidad="item.piso_especialidad"
+            :area="item.area" :color="item.color"
+            :detalle="item.detalle"
+            :estado="item.estado_pedido"
+            :fecha_pedido="item.fecha_pedido"
+            :hora_pedido="item.hora_pedido"
+            :total="item.totalpedido"></card-rejected>
           </div>
         </div>
       </q-tab-panel>
@@ -62,18 +81,20 @@ export default defineComponent({
     let itemCocina = ref([]);
     let itemRejected = ref([]);
     let itemSucess = ref([]);
-    const modelo = reactive({ COD_AUXILIAR: "045530", DES_AUXILIAR: "n ombre" });
+    const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
     return {
-      conn: new WebSocket("ws://192.168.3.219:8090"),
-      step: ref(0),
+      tab: ref("mails"),
+      itemRejected,
+      itemCocina,    
+      itemSucess,
+      step:ref(0),
+    
       done1,
       done2,
-      done3,
-      itemCocina,
-      itemRejected,
-      itemSucess,
+      done3,      
       modelo,
-      tab: ref("mails"),
+      conn:null,
+     
     };
    },
    created(){ 
@@ -83,6 +104,7 @@ export default defineComponent({
       }
    },
    mounted() {
+      this.conn= new WebSocket(this.url_socket);
       let existe = this.$q.sessionStorage.has("Qsesion");     
       if (existe==true) {
           let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -91,22 +113,25 @@ export default defineComponent({
       } 
       this.get();   
       this.getSucess();
-  //  this.getrecjected();
+      this.getrecjected();
       this.conn.onopen = (e) => {
        console.log("WebSocket Mi : " + e);
-    };
-    this.conn.onmessage = (e) => {
-      this.rcv(e.data);
-      let recibe =   JSON.parse(e.data); 
+     };
+     this.conn.onmessage = (e) => {
+        this.rcv(e.data);
+         let recibe =   JSON.parse(e.data); 
       //console.log(e.data);
-      let es =  recibe.estado_pedido;
-      if (es=="2") {  
+         let es =  recibe.estado_pedido;
+         if (es=="2") {  
           this.check();
-      }   
-    };
+         }   
+     };
   },
   computed: {
-    ...mapState(["url_base"]),  
+   ...mapState(["url_base",'url_izipay','url_socket']),
+    nombreDia: function () {
+      return moment(this.fecha_pedido).format("dddd");
+    },
   },
   methods: {   
     check(){
@@ -136,7 +161,7 @@ export default defineComponent({
       this.$axios
         .get(this.url_base+url)
         .then((response) => {
-       //   console.log(response);
+          //console.log(response);
           this.itemRejected = response.data;         
         })
         .catch(function (error) {

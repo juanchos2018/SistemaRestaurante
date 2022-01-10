@@ -1,5 +1,5 @@
-<template> 
-   <q-card class="my-card">
+<template>
+  <q-card class="my-card">
     <q-item>
       <q-item-section>
         <q-item-label>{{ nombreDia }} - {{ fecha_pedido }}</q-item-label>
@@ -7,9 +7,6 @@
           {{ hora_pedido }}
         </q-item-label>
       </q-item-section>
-       <q-item-section side top>
-         ENTREGADO
-        </q-item-section>
     </q-item>
     <q-list bordered padding>
       <q-item v-for="item in detalle" :key="item.id_pedido_detalle">
@@ -17,9 +14,9 @@
           <q-icon color="primary" :name="item.logo" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ item.nombre_producto }}   </q-item-label>
+          <q-item-label>{{ item.nombre_producto }}</q-item-label>
           <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
-            <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
+           <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
         </q-item-section>
 
         <q-item-section side top>
@@ -38,7 +35,7 @@
         </q-item-section>
       </q-item>
     </q-list>
-    <q-card-section class="col-5 flex flex-left text-green  text-bold	">
+    <q-card-section class="col-5 flex flex-left text-green text-bold">
       <div>Total: S/ {{ total }}</div>
     </q-card-section>
   </q-card>
@@ -47,9 +44,9 @@
 import moment from "moment";
 import "moment/locale/es";
 export default {
-  name:'card-mi-medidos',
+  name: "card-mi-medidos",
   props: [
-     "id_pedido",
+    "id_pedido",
     "des_auxiliar",
     "piso_especialidad",
     "area",
@@ -60,23 +57,28 @@ export default {
     "fecha_pedido",
     "hora_pedido",
   ],
-  setup() {
+  data() {
     return {
       step: 0,
+      stars: 0,
       moment,
-      done1: false,
-      done2: false,
-      done3: false,
     };
   },
   computed: {
- 
     nombreDia: function () {
       return moment(this.fecha_pedido).format("dddd");
     },
   },
   methods: {
-   
+    estrellas(start, id_detalle, id_producto) {
+      let model = {
+        id_pedido_detalle: id_detalle,
+        id_producto: id_producto,
+        estrellas: start,
+        tipo: "start",
+      };
+      this.$emit("updateStart", model);
+    },
   },
 };
 </script>
@@ -85,7 +87,8 @@ export default {
 .q-stepper__step-content {
   display: none !important;
 }
-.q-stepper__tab--active, .q-stepper__tab--done {
-    color: #b71408;
+.q-stepper__tab--active,
+.q-stepper__tab--done {
+  color: #b71408;
 }
 </style>

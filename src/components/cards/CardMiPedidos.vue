@@ -1,9 +1,9 @@
 <template>
   <q-card class="my-card">
-    <div class="row ">
-      <div class="col-7 ">
-        <q-list  class="rounded-borders q-pt-xs">
-          <q-item
+    <div class="row">
+      <div class="col-7">
+        <q-list class="rounded-borders q-pt-xs">
+          <!-- <q-item
             clickable
             v-for="item in detalle"
             :key="item.id_pedido_detalle"
@@ -15,19 +15,37 @@
               >
               <q-item-label caption>{{ item.descripcion }}</q-item-label>
             </q-item-section>
+          </q-item> -->
+          <q-item v-for="item in detalle" :key="item.id_pedido_detalle" class="no-margin ">
+            <q-item-section avatar  class="no-margin">
+              <q-icon color="primary" :name="item.logo" size="xs" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ item.nombre_producto }} </q-item-label>
+              <q-item-label caption lines="2">{{item.descripcion}}</q-item-label>
+              <q-item-label caption lines="1">
+                Cant. : {{ item.cantidad_pedido }}</q-item-label
+              >
+            </q-item-section>
           </q-item>
-        </q-list>       
-          <q-card-section class="col-5 flex flex-left">
-           <div>Total: S/ {{total}} </div>
+        </q-list>
+         <q-separator />
+        <q-card-section class="col-5 flex flex-left text-green text-bold">
+          <div>Total: S/ {{ total }}</div>
         </q-card-section>
       </div>
       <div class="col-5">
         <q-stepper
           v-model.number="estado_pedido"
-          vertical        
+          vertical
           animated
-          style="border-style: none; border-style: hidden; margin-left: auto;height:100%"
-          class=" text-red no-padding no-margin"
+          style="
+            border-style: none;
+            border-style: hidden;
+            margin-left: auto;
+            height: 100%;
+          "
+          class="text-red no-padding no-margin"
         >
           <q-step
             :name="0"
@@ -37,19 +55,28 @@
             class="no-marginno-margin no-padding"
           >
           </q-step>
-          <q-step :name="1" title="Proceso" icon="settings" :done="estado_pedido > 1">
+          <q-step
+            :name="1"
+            title="Proceso"
+            icon="settings"
+            :done="estado_pedido > 1"
+          >
           </q-step>
-          <q-step :name="4" title="Listo" icon="settings" :done="estado_pedido > 1">
+          <q-step
+            :name="4"
+            title="Listo"
+            icon="settings"
+            :done="estado_pedido > 1"
+          >
           </q-step>
         </q-stepper>
       </div>
-     
     </div>
   </q-card>
 </template>
 <script>
 export default {
-  name:'card-mi-medidos',
+  name: "card-mi-medidos",
   props: [
     "id_pedido",
     "des_auxiliar",
@@ -58,7 +85,7 @@ export default {
     "detalle",
     "color",
     "estado_pedido",
-    "total"
+    "total",
   ],
   setup() {
     return {
@@ -68,9 +95,7 @@ export default {
       done3: false,
     };
   },
-  methods: {
-   
-  },
+  methods: {},
 };
 </script>
 
@@ -78,7 +103,8 @@ export default {
 .q-stepper__step-content {
   display: none !important;
 }
-.q-stepper__tab--active, .q-stepper__tab--done {
-    color: #b71408;
+.q-stepper__tab--active,
+.q-stepper__tab--done {
+  color: #b71408;
 }
 </style>

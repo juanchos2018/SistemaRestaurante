@@ -3,10 +3,10 @@
        <div class="row q-col-gutter-sm">     
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
-            v-for="item in itemhistory"
+            v-for="item in itemallorder"
             :key="item.id_pedido"
           >
-            <card-history            
+            <card-all-order            
               :id_pedido="item.id_pedido"
               :des_auxiliar="item.des_auxiliar"
               :piso_especialidad="item.piso_especialidad"
@@ -16,9 +16,8 @@
               :hora_pedido="item.hora_pedido"
               :detalle="item.detalle"
               :estado_pedido="item.estado_pedido"
-              :total="item.totalpedido"   
-              v-on:updateStart="UpdateStart"         
-            ></card-history>
+              :total="item.totalpedido"                    
+            ></card-all-order>
           </div>
         </div>     
   </q-page>
@@ -26,19 +25,19 @@
 
 <script>
 import { defineComponent, ref,reactive } from "vue";
-import CardHistory from "components/cards/CardHistory.vue";
+import CardAllOrder from "components/cards/CardAllOrder.vue";
 
 import { mapState } from "vuex";
 
 export default defineComponent({
-  name: "MiPedido",
-  components: {CardHistory},
+  name: "PedidosAll",
+  components: {CardAllOrder},
   setup() {
-    let itemhistory = ref([]);
+    let itemallorder = ref([]);
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
     return {   
-      itemhistory,
-      step: ref(0),            
+      itemallorder,
+      step: ref(0),          
       modelo,
      
     };
@@ -50,7 +49,7 @@ export default defineComponent({
       }    
    },
    mounted() {
-      let  conn= new WebSocket(this.url_socket);
+     // let  conn= new WebSocket(this.url_socket);
       let existe = this.$q.sessionStorage.has("Qsesion");     
       if (existe==true) {
           let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -64,46 +63,20 @@ export default defineComponent({
   },
   methods: {      
     get(){
-      let tipo="history";
-      let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
+      let tipo="getallorder";
+      let url="/Controller/PedidoController.php?tipo="+tipo;
       this.$axios
         .get(this.url_base+url)
         .then((response) => {
        ///  console.log(response)
-          this.itemhistory = response.data;         
+          this.itemallorder = response.data;         
         })
         .catch(function (error) {
           console.log(error);
         })
         .finally(() => {});
     },   
-    UpdateStart(obj){
-   //  console.log(obj);
-      let me = this;
-      let url ="/Controller/PedidoController.php";         
-      let data = obj;
-      this.$axios({
-        method: "PUT",
-        url: me.url_base+url,
-        data: data,
-      })
-        .then(function (response) {
-         //  console.log(response);
-          let result = response.data;
-          me.get();
-              me.$q.notify({
-              message: "Calificado ",
-              color: "accent",
-              position: "top",
-        });
-        
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-
-    }
+   
   },
 });
 </script>

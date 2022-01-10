@@ -3,8 +3,8 @@
     <q-item>
       <q-item-section>
         <div class="text-subtitle2 text-white">{{ des_auxiliar }}</div>
-        <div class="text-subtitle2 text-white">{{ area }}</div>
-        <div class="text-subtitle2 text-white">{{ piso_especialidad }}</div>
+        <div class="text-subtitle2 text-white">Area:  {{ area }}</div>
+        <div class="text-subtitle2 text-white"> Piso : {{ piso_especialidad }}</div>
       </q-item-section>
       <q-item-section side>
         <q-btn-dropdown color="negative" size="sm">
@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     Editar(step) { 
-      console.log(step)
+     // console.log(step)
 //4   -1 2 3
     if (step==4  && this.estado>0) {     
                 this.$q.dialog({
@@ -106,9 +106,9 @@ export default {
         
       }else{
          
-          const datas={
+        const datas={
         estado_pedido:step,
-        id_pedido:this.id_pedido,
+        id_pedido:this.id_pedido,     
         lista:[],
         tipo:'Update'
         }

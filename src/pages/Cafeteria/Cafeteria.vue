@@ -7,13 +7,13 @@
           <q-bar style="min-width: 250px;" class="bg-teal text-white rounded-borders">
             <div class="cursor-pointer non-selectable">
               Mi Pedido
+               <!-- {{horaActual}} -->
             </div>
 
             <q-space />
             <label for="" style="font-size: 20px">S/ {{  parseFloat(SumTotal).toFixed(2) }}</label>
           </q-bar>
           <!-- <q-item-label header>Mi Pedido</q-item-label> -->
-
           <!-- <q-item-section header>
             <q-item-label >Mi Pedido</q-item-label>
             <q-item-label >5 min ago</q-item-label>
@@ -40,7 +40,6 @@
               </q-item-section>
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
-                  <!--    <q-btn class="gt-xs" size="12px" flat dense round icon="delete" /> -->
                   <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock)" />
                   <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock)" />
                   <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto)" />
@@ -78,19 +77,18 @@
                 </q-input>
               </q-card-section>
             </q-card>
-            <p>{{Token}}</p>
-             <div class="kr-embedded"
+          
+             <!-- <div class="kr-embedded"
                 kr-popin
                 :kr-form-token="Token">
-                  <!-- payment form fields -->
+                  payment form fields 
                   <div class="kr-pan"></div>
                   <div class="kr-expiry"></div>
                   <div class="kr-security-code"></div>  
-                  <!-- payment form submit button -->
-                   <!--    <button class="kr-payment-button"  value="200"></button> -->    
+                 
                   <q-btn  value="200" label="Pagar"/>               
                   <div class="kr-form-error"></div>
-             </div> 
+             </div>  -->
           </div>
           <div class="row q-col-gutter-sm">
             <div v-if="!itemProducto.length">
@@ -107,7 +105,7 @@
               <q-tabs shrink>
                 <!-- <i class="fas fa-table"></i> -->
                 <div v-for="item in itemCategoria" :key="item.id_categoria">
-                  <q-route-tab icon="fas fa-cocktail" @click="
+                  <q-route-tab  :icon="item.logo" @click="
                       GetProduct(item.id_categoria, item.nombre_categoria)
                     " exact :label="item.nombre_categoria" />
                 </div>
@@ -137,22 +135,19 @@
             <q-item>
               <q-input dense outlined class="full-width" label="Area" v-model="modelUser.area" />
             </q-item>
-            <p>{{Token}}</p>
+            <!-- <p>{{Token}}</p> -->
           </div>
-            <div class="col-6">
-            <div class="kr-embedded"
+            <!-- <div class="col-6">
+             <div class="kr-embedded"
                 kr-popin
-                :kr-form-token="Token">
-                  <!-- payment form fields -->
+                :kr-form-token="Token">            
                   <div class="kr-pan"></div>
                   <div class="kr-expiry"></div>
-                  <div class="kr-security-code"></div>  
-                  <!-- payment form submit button -->
-                  <button class="kr-payment-button"  value="200"></button>
-                  <!-- error zone -->
+                  <div class="kr-security-code"></div>                  
+                  <button class="kr-payment-button"  value="200"></button>             
                   <div class="kr-form-error"></div>
              </div> 
-          </div>
+          </div> -->
         </div>
         <!-- <q-card-section class="q-pt-none">
           <q-input dense v-model="address" autofocus @keyup.enter="prompt = false" placeholder="Piso" />
@@ -183,6 +178,7 @@ const columns = [
 import { provide, defineAsyncComponent, ref,reactive } from "vue";
 import { mapState } from "vuex";
 import { useQuasar } from "quasar";
+import moment from 'moment'
 
 export default {
   name: "Cafeteria",
@@ -208,7 +204,7 @@ export default {
     const  modelUser =  reactive({
         tipo:'Store',
         fecha_pedido: "",
-        hora_pedido: "10f4",
+        hora_pedido: "",
         estado_pedido: 0,
         cod_auxiliar: "",
         especialidad: "especi",
@@ -224,7 +220,8 @@ export default {
       Token:ref(''),
       modelUser,
       id_categoria,   
-      conn: new WebSocket("ws://192.168.3.219:8090"),
+      horaActual:'',
+      conn:null,
       rightDrawerOpen,
       otherValue,
       drawerWidth,
@@ -259,6 +256,7 @@ export default {
     }
   },
   mounted() { 
+    this.conn= new WebSocket(this.url_socket);
     let existe = this.$q.sessionStorage.has("Qsesion"); 
     if (existe==true) {     
         let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -274,11 +272,43 @@ export default {
     this.conn.onmessage = (e) => {
        this.rcv(e.data);      
     }; 
+    this.setTime();
 
     // let recaptchaScript2= document.createElement('script')
     // recaptchaScript2.setAttribute('src', "https://api.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js  kr-public-key='58045315:testpublickey_1Q9ePN9mK8XtXfW7ex48ur1KEpkjqr4nVweRH3fw6pO5Z'  kr-post-url-success='http://192.168.3.219/pasarela/paid.php'")
     // document.head.appendChild(recaptchaScript2)
 
+  },
+  computed: {
+    ...mapState(["url_base",'url_izipay','url_socket']),
+    getData3() {
+      return this.getData().slice(
+        (this.page - 1) * this.cantfilas.length,
+        (this.page - 1) * this.cantfilas.length + this.cantfilas.length
+      );
+    },
+    getDatas() {
+      return this.arrayvacio.slice(
+        (this.page - 1) * this.totalPages,
+        (this.page - 1) * this.totalPages + this.totalPages
+      );
+    },
+    FilterList() {
+      return this.itemProducto.filter((item) => {
+        return item.nombre_producto
+          .toLowerCase()
+          .includes(this.search.toLowerCase());
+      });
+    },
+    cantfilas() {
+      return this.arrayvacio;
+    },
+    SumTotal() {
+      var result = this.arrayvacio.reduce(function (acc, obj) {
+        return acc + obj.total;
+      }, 0);
+      return result;
+    },
   },
   methods: {
     GetCategoria() {
@@ -303,7 +333,7 @@ export default {
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
-          console.log(response)
+          //console.log(response)
           this.itemProducto = response.data;
         })
         .catch(function (error) {
@@ -367,8 +397,7 @@ export default {
               this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
               this.arrayvacio[position].total =
               precio * this.arrayvacio[position].cantidad_pedido;
-              this.AgregaoItem(producto);
-            
+              this.AgregaoItem(producto);            
       }     
      
     },
@@ -402,10 +431,12 @@ export default {
           id_producto: element.id_producto,
           cantidad_pedido: element.cantidad_pedido,
           descripcion: element.descripcion,
+          usastock: element.usastock,
         });
       });
       this.modelUser.detallePedido = lista;
       this.modelUser.TotalPedido = this.SumTotal;
+      this.modelUser.hora_pedido = this.horaActual;
 
       let data = this.modelUser;
       //envia al socket  php no borrar  
@@ -414,6 +445,9 @@ export default {
       this.prompt = false;
       this.Cancelar();
 
+    },
+    VerHora(){
+      console.log(this.horaActual)
     },
     MensajeEnviar() {
       if (this.arrayvacio.length > 0) {
@@ -524,38 +558,14 @@ export default {
               
         }); 
     },
+    setTime () {
+				setInterval(() => {      
+					this.horaActual= moment().format('LTS')
+        
+				}, 1000)
+			},
   },
-  computed: {
-    ...mapState(["url_base",'url_izipay']),
-    getData3() {
-      return this.getData().slice(
-        (this.page - 1) * this.cantfilas.length,
-        (this.page - 1) * this.cantfilas.length + this.cantfilas.length
-      );
-    },
-    getDatas() {
-      return this.arrayvacio.slice(
-        (this.page - 1) * this.totalPages,
-        (this.page - 1) * this.totalPages + this.totalPages
-      );
-    },
-    FilterList() {
-      return this.itemProducto.filter((item) => {
-        return item.nombre_producto
-          .toLowerCase()
-          .includes(this.search.toLowerCase());
-      });
-    },
-    cantfilas() {
-      return this.arrayvacio;
-    },
-    SumTotal() {
-      var result = this.arrayvacio.reduce(function (acc, obj) {
-        return acc + obj.total;
-      }, 0);
-      return result;
-    },
-  },
+  
 };
 </script>
 

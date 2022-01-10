@@ -18,12 +18,28 @@
                 <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
               </q-item>
             </div>
+
+          <div class="col-3">
+              <q-item>                
+                <q-checkbox v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
+              </q-item>
+            </div>
+              <div class="col-4">
+              <!-- <q-item>                 
+                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock" />                 
+              </q-item> -->
+
+               <q-item>                 
+                <!-- disable readonly  -->
+                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock"  min="1" :readonly="Stock==true ? false : true"/>                 
+              </q-item>
+            </div>
             <div class="col-4">
               <q-item>
               <q-input
                   filled
                   v-model="modelo.precio_venta"
-                  label="2 decimales"
+                  label="Precio"
                   mask="#.##"
                   fill-mask="0"
                   reverse-fill-mask
@@ -32,11 +48,7 @@
                   input-class="text-right"
                 />                  </q-item>
             </div>
-            <div class="col-4">
-              <q-item>                 
-                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock" />                 
-              </q-item>
-            </div>
+           
             <div class="col-4">
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true? 'Activo':'Inactivo'" />
@@ -72,6 +84,7 @@ export default {
   data() {
     return { 
       Estado: false,
+      Stock:false,
       isLoading: false,
       Show: this.DialogoEditProducto, 
   
@@ -89,6 +102,8 @@ export default {
         stock: 1,
         fecha: "",
         imagen: "",
+        usastock:0,
+        estrellas:0
       },
       errors: {
         nombre_producto: false,
@@ -118,11 +133,11 @@ export default {
         method: "GET",
         url: me.url_base+url,      
       })
-        .then(function (response) {
-           // console.log(response);        
-            me.modelo=response.data;     
+        .then(function (response) {            
+            me.modelo={...response.data};     
             me.Estado=me.modelo.estado==1?true:false;   
-        })
+            me.Stock =me.modelo.usastock==1?true:false;            
+          })
         .catch((error) => {
           console.log(error);
         });
@@ -131,15 +146,15 @@ export default {
       let me = this;
       let url ="/Controller/ProductoController.php?tipo=editpro";   
       me.modelo.estado=me.Estado==true?1:0;   
+      me.modelo.usastock = me.Stock==true?1:0;
       let data = me.modelo;
-
       this.$axios({
         method: "PUT",
         url: me.url_base+url,
         data: data,
       })
         .then(function (response) {
-          // console.log(response);
+           //console.log(response);
           let result = response.data;
           if (result.afect>0) {             
           //  me.Limpiar();
@@ -162,6 +177,12 @@ export default {
     ListarProductos(id_categoria) {
       this.$emit("GetProductos", id_categoria);
     },  
+    toggleCheckboxes(event){    
+      if (this.stock==false) {        
+      }else{
+       this.modelo.stock=0;
+      }
+    },
     CerrarModal() {
       this.$emit("CerrarModal");
     },
@@ -177,7 +198,8 @@ export default {
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
       this.errors.precio_producto = this.modelo.precio_producto == 0? true : false;
 
-        if (this.errors.nombre_producto) {
+
+      if (this.errors.nombre_producto) {
             this.validate = true;
             this.$q.dialog({
               dark: true,
@@ -207,7 +229,7 @@ export default {
           this.validate = false;
         }
 
-          if (this.errors.precio_producto) {
+        if (this.errors.precio_producto) {
           this.validate = true;
           this.$q.dialog({
               dark: true,
@@ -221,7 +243,21 @@ export default {
         } else {
           this.validate = false;
         }
-   
+        if (this.Stock==true && this.modelo.stock==0 ) {
+             this.validate = true;
+          this.$q.dialog({
+              dark: true,
+              title: 'Ups',
+              message: 'Falta Llenar El Stock !'
+            }).onOk(() => {            
+            }).onCancel(() => {       
+            }).onDismiss(() => {             
+            })
+          return false;
+        }else{
+             this.validate = false;
+        }
+
         if (!this.validate) {
            this.$q.dialog({        
             title: 'Mensaje',
@@ -230,7 +266,8 @@ export default {
             persistent: true
           }).onOk(() => {
             // console.log('>>>> OK')
-            this.Update();
+           this.Update();
+            //alert("modificado");
           }).onOk(() => {
             // console.log('>>>> second OK catcher')
           }).onCancel(() => {

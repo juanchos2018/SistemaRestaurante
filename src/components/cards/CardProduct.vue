@@ -1,6 +1,10 @@
 <template>
   <q-card class="my-card" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_venta,data.id_categoria,data.stock,data.usastock)">
-      <q-img src="../../assets/imgprueba.jpg" />
+      <q-img :src="url_base+data.imagen"   :ratio="4/3" >
+        <div class="absolute-bottom text-subtitle1 text-center">
+          
+          </div>
+          </q-img>
       <q-card-section>     
         <div v-if="data.usastock==1">
             <q-badge fab color="primary" :label="data.stock>0?'Disponible':'Agotado'"   class="absolute"   style="top: 0; right: 12px; transform: translateY(-50%);"/>
@@ -11,11 +15,21 @@
         <div class="row no-wrap items-center">
           <div class="col text-h6 ellipsis">
             {{ data.nombre_producto }}
-          </div>
+          </div>        
+        
           <div class="col-auto text-green  text-bold	 text-caption q-pt-md row no-wrap items-center">         
             S/  {{data.precio_ventas}}
           </div>
         </div>  
+          <div class="text-caption text-grey">
+         {{data.descripcion}}
+        </div>
+      </q-card-section>
+
+       <q-card-section>
+         <div class="row no-wrap items-center">
+            <q-rating size="22px" v-model="data.estrellas" :max="5" color="yellow"   readonly  />
+         </div>
       </q-card-section>
       <q-card-section class="q-pt-none">
         <div class="text-subtitle1" v-if="data.usastock==1">
@@ -24,9 +38,7 @@
         <div class="text-subtitle1" v-else>        
           stock :  <q-icon name="fas fa-infinity" size="24px"></q-icon>
         </div>
-        <div class="text-caption text-grey">
-         {{data.descripcion}}
-        </div>
+       
       </q-card-section>
       <q-separator />   
     </q-card> 
@@ -35,6 +47,8 @@
 <script>
 import { inject, defineComponent } from "vue";
 import { useQuasar } from 'quasar'
+import { mapState } from "vuex";
+
 
 export default defineComponent({
   name: "CardProduct",
@@ -88,12 +102,13 @@ export default defineComponent({
                   if (obj) {
                         let position = arrayva.value.findIndex((x) => x.id_producto == id_producto);
                         let cantidad_pedido = obj.cantidad_pedido;
-                        if (cantidad_pedido==stock) {
+                        if (cantidad_pedido>=stock) {
                             Mucho()
                         }else{
                           let precio =obj.precio;
                           arrayva.value[position].cantidad_pedido = cantidad_pedido + 1; 
                           arrayva.value[position].total = precio * arrayva.value[position].cantidad_pedido;   
+                          arrayva.value[position].stock = stock;   
                         }                    
                   }else{
                        const objeto = {
@@ -109,6 +124,11 @@ export default defineComponent({
                       };     
                       arrayva.value.push(objeto); 
                   }
+                   $q.notify({
+                  message: "Agregado "+title,
+                  color: "accent",
+                  position: "top",
+                });
             }
         }else{
 
@@ -134,12 +154,22 @@ export default defineComponent({
                       };     
                       arrayva.value.push(objeto); 
               }
+               $q.notify({
+              message: "Agregado "+title,
+              color: "accent",
+              position: "top",
+            });
 
         }      
+
+            
     
     };
     return { aggrear,fin };
   },
+   computed: {
+    ...mapState(["url_base",'url_izipay']),
+   },
   methods: {
     detail(id, title, preci) {
       this.$emit("additem", id, title, 1, parseInt(preci));

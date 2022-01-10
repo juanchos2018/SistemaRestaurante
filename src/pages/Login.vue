@@ -2,37 +2,33 @@
   <q-layout class="bg-image" v-cloak>
     <q-page-container>
       <q-page class="flex flex-center">
-        <p>{{token}}</p>
-        <div class="kr-embedded"
+        <!-- <p>{{token}}</p> -->
+        <!-- <div class="kr-embedded"
         kr-popin
         :kr-form-token="Token">
-          <!-- payment form fields -->
           <div class="kr-pan"></div>
           <div class="kr-expiry"></div>
           <div class="kr-security-code"></div>  
-          <!-- payment form submit button -->
           <button class="kr-payment-button"  value="200"></button>
-          <!-- error zone -->
           <div class="kr-form-error"></div>
-        </div>  
+        </div>   -->
 
-         <q-form action="https://some-url.com" method="post" @submit.prevent="Validate">
-              <!-- <q-btn color="white" text-color="black" label="Standard" @click="Izipay" /> -->
-        <q-btn color="white" text-color="black" label="GenerarToken" @click="GenerarPago" /> 
+         <q-form action="https://some-url.com" method="post" @submit.prevent="Validate">   
+
         <q-card
           v-if="!$q.screen.lt.sm"
           class="bg-transparent no-border no-shadow"
         >
           <q-item>
             <q-item-section avatar>
-              <q-avatar size="130px" class="shadow-10">
-                <img src="profile.svg" />
+              <q-avatar size="150px" class="shadow-10">
+                <img src="svglogo5.svg" />
               </q-avatar>
             </q-item-section>
 
             <q-item-section class="text-white">
               <q-item-label>Inicio de Sesion</q-item-label>
-                 <q-select  dark color="white" outlined v-model="modelo.TIPO_USUARIO" :options="options" label="Seleccione" />
+                 <!-- <q-select  dark color="white" outlined v-model="modelo.TIPO_USUARIO" :options="options" label="Seleccione" /> -->
               <q-item-label caption>
                 <q-input
                   dark
@@ -78,7 +74,7 @@
         >
           <q-card-section class="text-center">
             <q-avatar size="130px" class="shadow-10">
-              <img src="profile.svg" />
+             <img src="svglogo5.svg" />
             </q-avatar>
           </q-card-section>
           <q-card-section class="text-center">
@@ -120,7 +116,7 @@
 import { defineComponent } from "vue";
 import { useQuasar,QSpinnerFacebook,QSpinnerCube } from 'quasar'
 import { onBeforeUnmount } from 'vue'
-import { ref,reactive  } from "vue";
+import { ref,reactive ,watch } from "vue";
 import { mapState } from 'vuex'
 
 export default defineComponent({
@@ -137,14 +133,14 @@ export default defineComponent({
         $q.loading.hide()
       }
     })     
-    const modelo = reactive({ COD_USUARIO: 'YNUÑEZ',DES_PASSWORD:'',TIPO_USUARIO:'' })
+    const modelo = reactive({ COD_USUARIO: 'VILLATOPA',DES_PASSWORD:'',TIPO_USUARIO:'' })
     const  errors= {
         COD_USUARIO: ref(false),
         DES_PASSWORD: ref(false)            
       }
-    
-    return {
-      TokenIziay,
+  
+    return {      
+      TokenIziay,  
       Token:ref("27P-t44BikQZixgvQOfZZHzg221eyJhbW91bnQiOjEwMCwiY3VycmVuY3kiOiJQRU4iLCJtb2RlIjoiVEVTVCIsInZlcnNpb24iOjMsIm9yZGVySWQiOiJNeU9yZGVySWQ2MWQ4YTNkNWQzYmY0Iiwic2hvcE5hbWUiOiJDbMOtbmljYSBMYSBMdXogLSBURVNUIiwicmlza0FuYWx5c2VyIjp7ImZpbmdlclByaW50c0lkIjoiZGM4ZGQ4OTYtYTc1Mi00MTZlLThiZTUtMzFmMmQxYWY2MTlmIiwianNVcmwiOiJodHRwczovL3NlY3VyZS5taWN1ZW50YXdlYi5wZS90cmFzL2FuYWx5emVyL3B1YmxpYy92MS9jaGVja2VyL2RjOGRkODk2LWE3NTItNDE2ZS04YmU1LTMxZjJkMWFmNjE5ZiJ9LCJjYXRlZ29yaWVzIjp7ImRlYml0Q3JlZGl0Q2FyZHMiOnsiYXBwSWQiOiJjYXJkcyIsInBhcmFtIjpbIkFNRVgiLCJNQVNURVJDQVJEX0RFQklUIiwiTUFTVEVSQ0FSRCIsIk1DX0NPUkRPQkVTQSIsIlZJU0EiLCJWSVNBX0VMRUNUUk9OIiwiVklTQV9ERUJJVCIsIkRJTkVSUyJdfX0sImNhcmRzIjp7IkFNRVgiOnsiZmllbGRzIjp7InNlY3VyaXR5Q29kZSI6eyJtYXhMZW5ndGgiOjR9LCJpbnN0YWxsbWVudE51bWJlciI6eyJ2YWx1ZSI6Ii0xIiwidmFsdWVzIjp7Ii0xIjoiMTo6Ojo6MTAwIiwiRFlOQU1JQyI6Ijo6Ojo6In0sInJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOmZhbHNlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOmZhbHNlfSwiZmlyc3RJbnN0YWxsbWVudERlbGF5Ijp7InZhbHVlIjoiMCIsInZhbHVlcyI6eyIwIjoiMCIsIkRZTkFNSUMiOiJEWU5BTUlDIn0sInJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOmZhbHNlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOmZhbHNlfX0sImNvcHlGcm9tIjoiY2FyZHMuREVGQVVMVCJ9LCJNQVNURVJDQVJEX0RFQklUIjp7ImZpZWxkcyI6eyJpbnN0YWxsbWVudE51bWJlciI6eyJ2YWx1ZSI6Ii0xIiwidmFsdWVzIjp7Ii0xIjoiMTo6Ojo6MTAwIiwiRFlOQU1JQyI6Ijo6Ojo6In0sInJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOmZhbHNlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOmZhbHNlfSwiZmlyc3RJbnN0YWxsbWVudERlbGF5Ijp7InZhbHVlIjoiMCIsInZhbHVlcyI6eyIwIjoiMCIsIkRZTkFNSUMiOiJEWU5BTUlDIn0sInJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOmZhbHNlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOmZhbHNlfX0sImNvcHlGcm9tIjoiY2FyZHMuREVGQVVMVCJ9LCJNQVNURVJDQVJEIjp7ImZpZWxkcyI6eyJpbnN0YWxsbWVudE51bWJlciI6eyJ2YWx1ZSI6Ii0xIiwidmFsdWVzIjp7Ii0xIjoiMTo6Ojo6MTAwIiwiRFlOQU1JQyI6Ijo6Ojo6In0sInJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOmZhbHNlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOmZhbHNlfSwiZmlyc3RJbnN0YWxsbWVudERlbGF5Ijp7InZhbHVlIjoiMCIsInZhbHVlcyI6eyIwIjoiMCIsIkRZTkFNSUMiOiJEWU5BTUlDIn0sInJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOmZhbHNlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOmZhbHNlfX0sImNvcHlGcm9tIjoiY2FyZHMuREVGQVVMVCJ9LCJNQ19DT1JET0JFU0EiOnsiZmllbGRzIjp7Imluc3RhbGxtZW50TnVtYmVyIjp7InZhbHVlIjoiLTEiLCJ2YWx1ZXMiOnsiLTEiOiIxOjo6OjoxMDAiLCJEWU5BTUlDIjoiOjo6OjoifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9LCJmaXJzdEluc3RhbGxtZW50RGVsYXkiOnsidmFsdWUiOiIwIiwidmFsdWVzIjp7IjAiOiIwIiwiRFlOQU1JQyI6IkRZTkFNSUMifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9fSwiY29weUZyb20iOiJjYXJkcy5ERUZBVUxUIn0sIlZJU0EiOnsiZmllbGRzIjp7Imluc3RhbGxtZW50TnVtYmVyIjp7InZhbHVlIjoiLTEiLCJ2YWx1ZXMiOnsiLTEiOiIxOjo6OjoxMDAiLCJEWU5BTUlDIjoiOjo6OjoifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9LCJmaXJzdEluc3RhbGxtZW50RGVsYXkiOnsidmFsdWUiOiIwIiwidmFsdWVzIjp7IjAiOiIwIiwiRFlOQU1JQyI6IkRZTkFNSUMifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9fSwiY29weUZyb20iOiJjYXJkcy5ERUZBVUxUIn0sIlZJU0FfRUxFQ1RST04iOnsiZmllbGRzIjp7Imluc3RhbGxtZW50TnVtYmVyIjp7InZhbHVlIjoiLTEiLCJ2YWx1ZXMiOnsiLTEiOiIxOjo6OjoxMDAiLCJEWU5BTUlDIjoiOjo6OjoifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9LCJmaXJzdEluc3RhbGxtZW50RGVsYXkiOnsidmFsdWUiOiIwIiwidmFsdWVzIjp7IjAiOiIwIiwiRFlOQU1JQyI6IkRZTkFNSUMifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9fSwiY29weUZyb20iOiJjYXJkcy5ERUZBVUxUIn0sIkRFRkFVTFQiOnsiZmllbGRzIjp7InBhbiI6eyJtaW5MZW5ndGgiOjEwLCJtYXhMZW5ndGgiOjE5LCJ2YWxpZGF0b3JzIjpbIk5VTUVSSUMiLCJMVUhOIl0sInJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOnRydWUsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9LCJleHBpcnlEYXRlIjp7InJlcXVpcmVkIjp0cnVlLCJzZW5zaXRpdmUiOnRydWUsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9LCJzZWN1cml0eUNvZGUiOnsibWluTGVuZ3RoIjozLCJtYXhMZW5ndGgiOjQsInZhbGlkYXRvcnMiOlsiTlVNRVJJQyJdLCJyZXF1aXJlZCI6dHJ1ZSwic2Vuc2l0aXZlIjp0cnVlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOnRydWV9LCJpbnN0YWxsbWVudE51bWJlciI6eyJ2YWx1ZSI6Ii0xIiwidmFsdWVzIjp7Ii0xIjoiMTo6Ojo6MTAwIn0sInJlcXVpcmVkIjpmYWxzZSwic2Vuc2l0aXZlIjpmYWxzZSwiaGlkZGVuIjpmYWxzZSwiY2xlYXJPbkVycm9yIjpmYWxzZX0sImZpcnN0SW5zdGFsbG1lbnREZWxheSI6eyJ2YWx1ZSI6IjAiLCJ2YWx1ZXMiOnsiMCI6IjAifSwicmVxdWlyZWQiOmZhbHNlLCJzZW5zaXRpdmUiOmZhbHNlLCJoaWRkZW4iOmZhbHNlLCJjbGVhck9uRXJyb3IiOmZhbHNlfX19LCJESU5FUlMiOnsiZmllbGRzIjp7Imluc3RhbGxtZW50TnVtYmVyIjp7InZhbHVlIjoiLTEiLCJ2YWx1ZXMiOnsiLTEiOiIxOjo6OjoxMDAiLCJEWU5BTUlDIjoiOjo6OjoifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9LCJmaXJzdEluc3RhbGxtZW50RGVsYXkiOnsidmFsdWUiOiIwIiwidmFsdWVzIjp7IjAiOiIwIiwiRFlOQU1JQyI6IkRZTkFNSUMifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9fSwiY29weUZyb20iOiJjYXJkcy5ERUZBVUxUIn0sIlZJU0FfREVCSVQiOnsiZmllbGRzIjp7Imluc3RhbGxtZW50TnVtYmVyIjp7InZhbHVlIjoiLTEiLCJ2YWx1ZXMiOnsiLTEiOiIxOjo6OjoxMDAiLCJEWU5BTUlDIjoiOjo6OjoifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9LCJmaXJzdEluc3RhbGxtZW50RGVsYXkiOnsidmFsdWUiOiIwIiwidmFsdWVzIjp7IjAiOiIwIiwiRFlOQU1JQyI6IkRZTkFNSUMifSwicmVxdWlyZWQiOnRydWUsInNlbnNpdGl2ZSI6ZmFsc2UsImhpZGRlbiI6ZmFsc2UsImNsZWFyT25FcnJvciI6ZmFsc2V9fSwiY29weUZyb20iOiJjYXJkcy5ERUZBVUxUIn19LCJwYXNzQWN0aXZhdGVkIjp0cnVlLCJhcGlSZXN0VmVyc2lvbiI6IjQuMCIsImNvdW50cnkiOiJQRSJ93702"),
       isPwd: ref('password'),
       validate,
@@ -176,22 +172,29 @@ export default defineComponent({
         .then(function(response) {     
         me.$q.loading.hide()   
         let result =response.data;
-        if (result.existe=="Si") {         
-         
+      //  console.log(response);
+        if (result.existe=="Si") {      
+            let area ='';   
+            if (result.AREA==null) {
+              area='AREA NN';
+              console.log('area nulla');
+            }else{
+              area=result.AREA;
+            }
             let objeto ={COD_AUXILIAR:result.COD_AUXILIAR,
                         COD_MEDICO:result.COD_MEDICO,
                         DES_AUXILIAR:result.DES_AUXILIAR,
                         LOGUEO:'Qsesion',
-                        TIPO_USUARIO:me.modelo.TIPO_USUARIO}
+                        AREA:area}
            //  me.$q.localStorage.set("Qsesion", objeto)
              me.$store.dispatch("guardarDatos",objeto);  
               //const value = $q.localStorage.getItem(key)
              me.$q.sessionStorage.set("Qsesion", objeto)
-
-             if (me.modelo.TIPO_USUARIO=="Cocina") {
+            // console.log(objeto)
+             if (objeto.AREA=="COCINA") {          
                   me.$router.push({path:'/Sistema/Cocina'})
-             }else{
-                  me.$router.push({path:'/Sistema/Cafeteria'})
+             }else{             
+                 me.$router.push({path:'/Sistema/Cafeteria'})
              }
 
         }else{
@@ -213,16 +216,14 @@ export default defineComponent({
     },
     Salir(){
         
-    },
+    },    
     Izipay(){
       let me =this;
-         let url ="/popin.php";
-       
+         let url ="/popin.php";       
         this.$axios({
         method: "GET",
-        url: me.url_base+ url,
-         
-      })
+        url: me.url_base+ url         
+       })
         .then(function(response) {    
                    console.log(response); 
         })
@@ -244,7 +245,6 @@ export default defineComponent({
     GenerarPago(){
         let me =this;            
        let url ="/GenerarPago.php";
-
         const data={
           amount:50,
           currency:'PE'

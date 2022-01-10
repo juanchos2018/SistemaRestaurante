@@ -1,9 +1,8 @@
 <template>
   <q-page class="q-pa-sm">
-      <q-btn-group push>
+     <q-btn-group push>
         <q-btn push icon="fas fa-id-card" @click="TipoVista=true" />
-      <q-btn push  icon="fas fa-table"  @click="TipoVista=false"/>
-      
+      <q-btn push  icon="fas fa-table"  @click="TipoVista=false"/>      
     </q-btn-group>
     
     <q-btn position="right" class="float-right" color="primary" label="Nuevo Producto" @click="AddProducto" />
@@ -14,15 +13,13 @@
     <div v-if="TipoVista">
        <div class="row q-col-gutter-sm">
       <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemProducto" :key="item.id">
-        <card-producto :id_producto="item.id_producto" :nombre_producto="item.nombre_producto" :descripcion="item.descripcion" :precio_venta="item.precio_ventas" :nombre_categoria="item.nombre_categoria" v-on:UpdateProduct="UpdateProduct"></card-producto>
+        <card-producto :id_producto="item.id_producto" :nombre_producto="item.nombre_producto" :descripcion="item.descripcion" :precio_venta="item.precio_ventas" :nombre_categoria="item.nombre_categoria" :logo="item.logo" :stock="item.stock"  :usastock="item.usastock" :photo="item.imagen" v-on:UpdateProduct="UpdateProduct" @getproduct="getproduct"></card-producto>
       </div>
     </div>
-    </div>
-   
+    </div>   
     <div v-else > 
-          <tables-basic :data="itemProducto"  v-on:UpdateProduct="UpdateProduct"></tables-basic>
-    </div>
-   
+        <tables-basic :data="itemProducto"  v-on:UpdateProduct="UpdateProduct"></tables-basic>
+    </div>   
     <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get"></dialogo-add-producto>
     <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto"  ref="dialogoupdaute" v-on:GetProductos="Get"></dialogo-update-producto>
 
@@ -42,7 +39,6 @@ export default defineComponent({
       default: 0,
     },
   },
-
   components: {
     CardProducto: defineAsyncComponent(() =>
       import("components/cards/CardProducto")
@@ -57,17 +53,17 @@ export default defineComponent({
 
   },
   data() {
-    return {
+    return {     
+      DialogoEditProducto: false,      
+      DialogoAddProducto: false,     
       itemProducto: [],
-      TipoVista:true,
+      TipoVista:true,   
+      id_producto:0,
       modelo: {
         id_categoria: 0,
         nombre_categoria: "",
         estado: 1,
       },
-      DialogoAddProducto: false,
-      DialogoEditProducto: false,
-      id_producto:0,
     };
   },
   computed: {
@@ -88,7 +84,22 @@ export default defineComponent({
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
-          console.log(response);
+         // console.log(response);
+          this.itemProducto = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
+    getproduct() {
+      //console.log("desde ihjo")
+      let url =
+        "/Controller/ProductoController.php?id_categoria=" + this.modelo.id_categoria;
+      this.$axios
+        .get(this.url_base + url)
+        .then((response) => {
+          //console.log(response);
           this.itemProducto = response.data;
         })
         .catch(function (error) {

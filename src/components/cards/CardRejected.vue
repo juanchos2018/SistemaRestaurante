@@ -1,32 +1,42 @@
 <template>
   <q-card class="my-card">
-    <div class="row ">
-      <div class="col-7 ">
-        <q-list  class="rounded-borders q-pt-xs">
-          <q-item
-            clickable
-            v-for="item in detalle"
-            :key="item.id_pedido_detalle"
-          >         
-            <q-item-section>
-              <q-item-label class="text-subtitle2"
-                >{{ item.nombre_producto }} -
-                {{ item.cantidad_pedido }}</q-item-label
-              >
-              <q-item-label caption>{{ item.descripcion }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div>
-      <div class="col-5">
-       <h6>Rechazado</h6>
-      </div>
-    </div>
+    <q-item>
+      <q-item-section>
+        <q-item-label>{{ nombreDia }} - {{ fecha_pedido }}</q-item-label>
+        <q-item-label caption>
+          {{ hora_pedido }}
+        </q-item-label>
+      </q-item-section>
+        <q-item-section side top>
+             RECHAZADO
+        </q-item-section>
+    </q-item>
+    <q-list bordered padding>
+      <q-item v-for="item in detalle" :key="item.id_pedido_detalle">
+        <q-item-section avatar>
+          <q-icon color="primary" :name="item.logo" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ item.nombre_producto }}</q-item-label>
+          <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
+           <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
+        </q-item-section>
+
+        <q-item-section side top>
+         
+        </q-item-section>
+      </q-item>
+    </q-list>
+    <q-card-section class="col-5 flex flex-left text-green text-bold">
+      <div>Total: S/ {{ total }}</div>
+    </q-card-section>
   </q-card>
 </template>
 <script>
+import moment from "moment";
+import "moment/locale/es";
 export default {
-  name:'card-mi-medidos',
+  name: "card-rejected",
   props: [
     "id_pedido",
     "des_auxiliar",
@@ -35,17 +45,24 @@ export default {
     "detalle",
     "color",
     "estado_pedido",
+    "total",
+    "fecha_pedido",
+    "hora_pedido",
   ],
-  setup() {
+  data() {
     return {
       step: 0,
-      done1: false,
-      done2: false,
-      done3: false,
+      stars: 0,
+      moment,
     };
   },
+  computed: {
+    nombreDia: function () {
+      return moment(this.fecha_pedido).format("dddd");
+    },
+  },
   methods: {
-   
+    
   },
 };
 </script>
@@ -54,7 +71,8 @@ export default {
 .q-stepper__step-content {
   display: none !important;
 }
-.q-stepper__tab--active, .q-stepper__tab--done {
-    color: #b71408;
+.q-stepper__tab--active,
+.q-stepper__tab--done {
+  color: #b71408;
 }
 </style>

@@ -7,7 +7,7 @@
         <div class="text-subtitle2 text-white"> Piso : {{ piso_especialidad }}</div>
       </q-item-section>
         <q-item-section side top class=" text-white">
-         ENTREGADO
+         ANULADO
         </q-item-section>
     
     </q-item>
@@ -24,23 +24,13 @@
         </q-item-section>
 
         <q-item-section side top>
-          <!-- <q-item-label caption>5 min ago</q-item-label> -->
-          <!-- <q-icon name="star" color="yellow" /> -->
-          <!-- @click="estrellas(item.id_pedido_detalle,item.id_producto)" -->
-          <q-rating
-            size="18px"
-            v-model="item.estrellas"
-            :max="5"
-            color="yellow"
-            readonly
-          />
+         
         </q-item-section>
       </q-item>
     </q-list>
     <q-card-section class="col-5 flex flex-left text-white text-bold">
       <div>Total: S/ {{ totalpedido }}</div>
-    </q-card-section>
-   
+    </q-card-section>   
   </q-card>
 </template>
 <script>

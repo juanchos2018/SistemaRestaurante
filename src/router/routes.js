@@ -15,6 +15,7 @@ const routes = [
           {path: 'Categoria', name: "Sistema/Categoria",component: () => import('pages/Cocina/CategoriaList.vue') }, 
           {path: 'Cocina',   name: "Sistema/Cocina", component: () => import('pages/Cocina/Cocina.vue') },
           {path: 'ProductoList/:id_categoria',name: "/ProductoList",props:true, component: () => import('pages/Cocina/ProductoList.vue') },
+          {path: 'Historial',   name: "Sistema/Historial", component: () => import('pages/Cocina/PedidosAll.vue') },
      
       
         //   { name: "Sistema/Cocina",path: 'Cocina', component: () => import('pages/Cocina/Cocina.vue') },
