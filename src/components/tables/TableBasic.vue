@@ -8,6 +8,7 @@
         :columns="columns"
         row-key="name"
         :filter="filter"
+        class="colorborde"
       >
         <template v-slot:top-right>
           <q-input
@@ -121,4 +122,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
 </style>

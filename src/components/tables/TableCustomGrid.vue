@@ -1,7 +1,7 @@
 <template>
   <q-card>
     <q-card-section>
-      <div class="text-h6 text-grey-8">Categoria</div>
+      <div class="text-h6 ">Categoria</div>
     </q-card-section>
     <q-separator />
     <q-card-section class="q-pa-none">
@@ -19,6 +19,7 @@
               :id_categoria="props.row.id_categoria"
               :name="props.row.nombre_categoria"
               :logo="props.row.logo"
+              :estado="props.row.estado"
               v-on:Editar="Editar"
             ></card-categoria>
           </div>
@@ -52,6 +53,11 @@
                 <q-icon :name="modelo.logo"  size="md"  :key="componentKey" ref="icono" />                  
             </q-item>
           </div>
+            <div class="col-4">
+              <q-item>
+                <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
+              </q-item>
+            </div>
           <div class="col-12">
             <br><br>
             <q-card bordered>
@@ -131,7 +137,7 @@ export default defineComponent({
       rowsPerPage: getItemsPerPage(),
     });
     let visiblemodal = ref(false);
-    const modelo = ref({id_categoria: 0, nombre_categoria: "",logo:''});
+    const modelo = ref({id_categoria: 0, nombre_categoria: "",logo:'',estado:0});
     const figura=ref('')
   
     return {
@@ -139,6 +145,7 @@ export default defineComponent({
       logos,
       columns,
       figura,   
+      Estado: ref(true),
       currentPage: 1,
       nextPage: null,
       totalPages: 4,
@@ -161,6 +168,7 @@ export default defineComponent({
   methods: {
     Editar(data) {
       this.modelo = data;
+      this.Estado=this.modelo.estado==1?true:false;
      // this.figura = data.logo      
       this.visiblemodal = true;
     },
@@ -188,8 +196,9 @@ export default defineComponent({
     Update() {
       let me = this;
       let url = "/Controller/CategoriaController.php?";
+      me.modelo.estado= me.Estado==true?1:0;
       let data = me.modelo;
-      console.log(me.modelo);
+      //console.log(me.modelo);
       this.$axios({
         method: "PUT",
         url: me.url_base + url,

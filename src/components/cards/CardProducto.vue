@@ -1,5 +1,5 @@
 <template>
-  <q-card class="my-card rounded-card" flat bordered>
+  <q-card class="my-card rounded-card colorborde" flat bordered>
     <q-card-section horizontal>
       <q-card-section class="col-5 flex flex-center">
         <q-img :src="url_base+photo" />
@@ -45,6 +45,7 @@
       outlined
       multiple
       :clearable="!cargar"
+    
    
     >
       <template v-slot:file="{ index, file }">
@@ -313,5 +314,11 @@ export default {
 <style>
 .rounded-card {
   border-radius: 10px 10px 0px 0px;
+}
+
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
 }
 </style>

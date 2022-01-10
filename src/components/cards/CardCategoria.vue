@@ -1,5 +1,5 @@
   <template>
-  <q-card >
+  <q-card class="colorborde">
     <q-card-section class="text-center">
       <q-avatar size="100px" class="shadow-10">
         <!-- <img :src="avatar"> -->
@@ -9,7 +9,7 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none text-center ">
-      <div class="text-h6  text-grey-8">
+      <div class="text-h6  ">
         {{ name }}
       </div>
       <!-- <div class="text-caption text-grey-8">
@@ -19,7 +19,7 @@
     </q-card-section>   
       <q-card-actions align="around">
         <q-btn flat  color="primary" @click="Detalle">Productos</q-btn>
-        <q-btn flat color="secondary" @click="Editar(id_categoria,name,logo)">Editar</q-btn>
+        <q-btn flat color="secondary" @click="Editar(id_categoria,name,logo,estado)">Editar</q-btn>
       </q-card-actions>
   </q-card>
 </template>
@@ -37,11 +37,14 @@ export default {
                 type: String,
                 required: true,
                 default: '', 
-            }
-            ,
+            },
             logo:{
                 type: String,              
                 default: '', 
+            },
+            estado:{
+                type: Number,              
+                default:0, 
             }},
   components: {    
 
@@ -64,11 +67,12 @@ export default {
       this.$router.push({name:"/ProductoList",params:{ id_categoria} });
     //   this.$router.push({path:'/Sistema/Cafeteria'})
      },
-     Editar(id,nombre_categoria,logo){ 
+     Editar(id,nombre_categoria,logo,estado){ 
        let datos ={
          id_categoria:id,
          nombre_categoria:nombre_categoria,
-         logo:logo
+         logo:logo,
+         estado:estado
 
        }
        this.$emit("editar",datos)
@@ -77,5 +81,9 @@ export default {
 };
 </script>
 <style scoped>
-
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
 </style>

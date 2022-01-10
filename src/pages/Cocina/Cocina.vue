@@ -68,12 +68,9 @@
           <div class="text-h5 text-white text-bold">
             {{ nombreDia }} - {{ FechaHoy }}
           </div>
-
           <q-space />
-
           <div class="text-h5 text-white text-bold">S/ {{ SumTotal }}</div>
         </q-toolbar>
-
         <div class="row q-col-gutter-sm">
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"

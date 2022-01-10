@@ -1,10 +1,9 @@
 <template>
-  <q-card class="my-card" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_venta,data.id_categoria,data.stock,data.usastock)">
+  <q-card class="my-card colorborde" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_venta,data.id_categoria,data.stock,data.usastock)">
       <q-img :src="url_base+data.imagen"   :ratio="4/3" >
-        <div class="absolute-bottom text-subtitle1 text-center">
-          
-          </div>
-          </q-img>
+        <div class="absolute-bottom text-subtitle1 text-center">          
+        </div>
+      </q-img>
       <q-card-section>     
         <div v-if="data.usastock==1">
             <q-badge fab color="primary" :label="data.stock>0?'Disponible':'Agotado'"   class="absolute"   style="top: 0; right: 12px; transform: translateY(-50%);"/>
@@ -15,22 +14,23 @@
         <div class="row no-wrap items-center">
           <div class="col text-h6 ellipsis">
             {{ data.nombre_producto }}
-          </div>        
-        
+          </div>                
           <div class="col-auto text-green  text-bold	 text-caption q-pt-md row no-wrap items-center">         
             S/  {{data.precio_ventas}}
           </div>
         </div>  
           <div class="text-caption text-grey">
-         {{data.descripcion}}
+          {{data.descripcion}}
+        </div>
+        <div class="">
+        <q-rating size="22px" v-model="data.estrellas" :max="5" color="yellow"   readonly  />
         </div>
       </q-card-section>
-
-       <q-card-section>
+       <!-- <q-card-section>
          <div class="row no-wrap items-center">
             <q-rating size="22px" v-model="data.estrellas" :max="5" color="yellow"   readonly  />
          </div>
-      </q-card-section>
+      </q-card-section> -->
       <q-card-section class="q-pt-none">
         <div class="text-subtitle1" v-if="data.usastock==1">
           stock :  {{ data.stock }}
@@ -182,4 +182,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
 </style>

@@ -45,6 +45,11 @@
                 <q-icon :name="modelo.logo" size="md" ref="icono" />
               </q-item>
             </div>
+             <div class="col-4">
+              <q-item>
+                <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
+              </q-item>
+            </div>
             <div class="col-12">
               <br /><br />
               <q-card bordered>
@@ -112,6 +117,7 @@ export default defineComponent({
     return {
       visiblemodal,
       itemCategoria: ref([]),
+      Estado: ref(true),
       modelo,
       logos,
     };
@@ -160,6 +166,7 @@ export default defineComponent({
       let me = this;
       // me.modelo.nombre_categoria=nombre;
       let url = "/Controller/CategoriaController.php";
+      me.modelo.estado = me.Estado==true?1:0;
       const data = me.modelo;
       this.$axios({
         method: "POST",

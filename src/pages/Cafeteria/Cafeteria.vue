@@ -2,14 +2,12 @@
   <q-page class="q-pa-sm">
     <q-layout view="lhh LpR lfr" container style="height: 90vh" class="shadow-2 rounded-borders">
       <q-drawer side="right" show-if-above v-model="rightDrawerOpen" bordered :breakpoint="500" :width="drawerWidth" class="no-margin no-padding">
-        <div class="q-pa-sm no-margin no-padding">
-
+        <div class="q-pa-sm no-margin no-padding">    
           <q-bar style="min-width: 250px;" class="bg-teal text-white rounded-borders">
             <div class="cursor-pointer non-selectable">
               Mi Pedido
                <!-- {{horaActual}} -->
             </div>
-
             <q-space />
             <label for="" style="font-size: 20px">S/ {{  parseFloat(SumTotal).toFixed(2) }}</label>
           </q-bar>
@@ -51,7 +49,6 @@
             <q-pagination v-model="page" :min="current" :max="Math.ceil(arrayvacio.length / totalPages)" :input="true" input-class="text-orange-10">
             </q-pagination>
           </div>
-
           <q-banner inline-actions class="text-white bg-red absolute-bottom">
             <q-btn color="bg-positive" glossy push label="Enviar" @click="MensajeEnviar" />
             <template v-slot:action>
@@ -316,7 +313,20 @@ export default {
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
-          this.itemCategoria = response.data;
+           // this.itemCategoria = response.data;
+            let array=response.data;
+            array.forEach((element) => {
+              if (element.estado==1) {
+                this.itemCategoria.push({
+                id_categoria: element.id_categoria,
+                nombre_categoria: element.nombre_categoria,
+                estado: element.estado,
+                logo: element.logo,
+              });
+              }
+              
+            });
+
           this.GetProduct(this.itemCategoria[0].id_categoria);
           this.nombrecategoria = this.itemCategoria[0].nombre_categoria;
           this.id_categoria=this.itemCategoria[0].id_categoria;
@@ -494,7 +504,7 @@ export default {
           let result = response.data.resultado;
           console.log(response);
           if (result == "Registrado") {
-            alert("Registrado");
+             alert("Registrado");
             this.Cancelar();
           } else {
           }
@@ -576,4 +586,5 @@ export default {
   bottom: 0;
   width: 100%;
 }
+
 </style>

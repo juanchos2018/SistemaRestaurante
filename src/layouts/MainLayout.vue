@@ -25,7 +25,7 @@ v-if="!esCocinero" -->
         <div class="q-gutter-sm row items-center no-wrap">       
           <q-btn round flat>
             <q-avatar size="26px">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              <img src="~assets/avatar.png" />
             </q-avatar>
 
             <q-menu transition-show="jump-down" transition-hide="jump-up">
@@ -37,9 +37,9 @@ v-if="!esCocinero" -->
                   </q-item-section>
                 </q-item>
 
-                <q-item clickable v-close-popup>
+                <q-item clickable v-close-popup  @click="Salir">
                   <q-item-section>
-                    <q-item-label @click="Salir">Salir</q-item-label>
+                    <q-item-label>Salir</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-icon name="info" color="amber" />
@@ -52,7 +52,7 @@ v-if="!esCocinero" -->
       </q-toolbar>
     </q-header>
    <!-- class="bg-grey-2" -->
-    <q-page-container class="bg-grey-2">
+    <q-page-container >
       <router-view />
     </q-page-container>
   </q-layout>

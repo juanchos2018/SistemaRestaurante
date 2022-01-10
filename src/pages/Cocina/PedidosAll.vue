@@ -4,9 +4,18 @@
           <div class="text-h5  text-bold">
            -
           </div>
-          <q-space />
+          <q-space />           
           <div class="text-h5  text-bold">S/ {{ SumTotal }}</div>
         </q-toolbar>
+        <div class="row">
+            <div class="col-3">
+                <q-input v-model="date" filled type="date"    @update:model-value="search($event)"  />
+            </div>
+        </div>
+        <br>     
+        <div v-if="!itemallorder.length">
+              <h5>SIN REGISTROS</h5>
+       </div>
        <div class="row q-col-gutter-sm">     
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
@@ -44,7 +53,8 @@ export default defineComponent({
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
     return {   
       itemallorder,
-      step: ref(0),          
+      step: ref(0),  
+      date: ref(''),        
       modelo,
      
     };
@@ -88,7 +98,22 @@ export default defineComponent({
           console.log(error);
         })
         .finally(() => {});
-    },   
+    },  
+    search(event){
+      let fecha =event;
+      let tipo="fecha";
+      let url="/Controller/PedidoController.php?tipo="+tipo+"&fecha="+fecha;
+      this.$axios
+        .get(this.url_base+url)
+        .then((response) => {
+         console.log(response)
+          this.itemallorder = response.data;         
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    } 
    
   },
 });

@@ -12,8 +12,8 @@
           <button class="kr-payment-button"  value="200"></button>
           <div class="kr-form-error"></div>
         </div>   -->
-
-         <q-form action="https://some-url.com" method="post" @submit.prevent="Validate">   
+          
+         <q-form method="post" @submit.prevent="Validate">   
 
         <q-card
           v-if="!$q.screen.lt.sm"
@@ -133,7 +133,7 @@ export default defineComponent({
         $q.loading.hide()
       }
     })     
-    const modelo = reactive({ COD_USUARIO: 'VILLATOPA',DES_PASSWORD:'',TIPO_USUARIO:'' })
+    const modelo = reactive({ COD_USUARIO: '',DES_PASSWORD:'',TIPO_USUARIO:'' })
     const  errors= {
         COD_USUARIO: ref(false),
         DES_PASSWORD: ref(false)            
@@ -172,12 +172,23 @@ export default defineComponent({
         .then(function(response) {     
         me.$q.loading.hide()   
         let result =response.data;
-      //  console.log(response);
-        if (result.existe=="Si") {      
-            let area ='';   
+       // console.log(response);
+        if (result.existe=="si") {  
+          
+          if (result.error=='si') {
+               me.$q.dialog({
+              dark: true,
+              title: 'Ups',
+              message: result.msg
+            }).onOk(() => {            
+            }).onCancel(() => {       
+            }).onDismiss(() => {             
+            })
+          }else{
+             let area ='';   
             if (result.AREA==null) {
               area='AREA NN';
-              console.log('area nulla');
+              //console.log('area nulla');
             }else{
               area=result.AREA;
             }
@@ -194,8 +205,10 @@ export default defineComponent({
              if (objeto.AREA=="COCINA") {          
                   me.$router.push({path:'/Cocina/Cocina'})
              }else{             
-                 me.$router.push({path:'/Sistema/Cafeteria'})
+                  me.$router.push({path:'/Sistema/Cafeteria'})
              }
+          }
+           
 
         }else{
             me.$q.dialog({
@@ -231,6 +244,46 @@ export default defineComponent({
           console.log(error); 
         
         });    
+    },
+    ConsultarDdni(){
+      let url="https://quertium.com/api/v1/reniec/dni/45713875?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTM3Mw.x-jUgUBcJukD5qZgqvBGbQVMxJFUAIDroZEm4Y9uTyg"
+    //  let url = "/Controller/PedidoController.php?tipo=" + tipo;
+  let token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTM3Mw.x-jUgUBcJukD5qZgqvBGbQVMxJFUAIDroZEm4Y9uTyg";
+let headers={
+   Authorization: 'Bearer ' + token //the token is a variable which holds the token
+ }
+
+    // let config = {
+    //       headers: {
+    //         header1: value,
+    //       }
+    //     }
+
+    //     let data = {
+    //       'HTTP_CONTENT_LANGUAGE': self.language
+    //     }
+
+
+    var config = {
+    headers: { 
+      'x-rapidapi-host': 'https://quertium.com',
+      'x-rapidapi-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTM3Mw.x-jUgUBcJukD5qZgqvBGbQVMxJFUAIDroZEm4Y9uTyg' 
+      }
+   };
+      this.$axios
+        .get( url, {
+ headers: {
+   Authorization: 'Bearer ' + token 
+ }
+})
+        .then((response) => {
+           console.log(response);
+         
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
     },
     Menasaje()
     {//QSpinnerCube
