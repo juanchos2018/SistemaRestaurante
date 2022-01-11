@@ -23,7 +23,10 @@
                 <q-item-label lines="1">
                   <span class="text-weight-medium">{{ item.producto }}</span>
                 </q-item-label>
-                <q-item-label caption lines="1">
+                 <q-item-label v-if="item.descripcion==''" caption lines="1">
+                 Click Aqui para tu detalle
+                </q-item-label>
+                <q-item-label v-else caption lines="1">
                   {{ item.descripcion }}
                 </q-item-label>
                 <q-popup-edit v-model="item.descripcion" :title="item.producto" auto-save v-slot="scope">
@@ -435,6 +438,8 @@ export default {
     },
     StorePedido() {
       let lista = [];
+      this.modelUser.TotalPedido = this.SumTotal;
+      this.modelUser.hora_pedido = this.horaActual;
       this.arrayvacio.forEach((element) => {
         lista.push({
           id_categoria: element.id_categoria,
@@ -445,10 +450,11 @@ export default {
         });
       });
       this.modelUser.detallePedido = lista;
-      this.modelUser.TotalPedido = this.SumTotal;
-      this.modelUser.hora_pedido = this.horaActual;
+  
 
       let data = this.modelUser;
+      console.log(data);
+      
       //envia al socket  php no borrar  
       this.conn.send(JSON.stringify(data));
       this.Enviado();

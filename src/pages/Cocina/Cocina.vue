@@ -7,7 +7,7 @@
       class="bg-red-1 text-white shadow-2"
       :breakpoint="0"
     >
-      <q-tab name="mails" icon="alarm" label="Proceso" />
+      <q-tab name="mails" icon="alarm" label="Nuevo" />
       <q-tab name="alarms" icon="fas fa-tasks" label="Enviado" />
       <q-tab
         name="reject"

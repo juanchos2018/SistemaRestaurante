@@ -96,6 +96,7 @@ const logos = [
   "fas fa-hotdog",
   "fas fa-apple-alt",
   "fas fa-cheese",
+  "room_service"
 ];
 
 export default defineComponent({

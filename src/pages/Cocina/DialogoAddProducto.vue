@@ -249,8 +249,8 @@ export default {
    
         if (!this.validate) {
            this.$q.dialog({        
-            title: 'Mensaneje',
-            message: 'Desea Registrar?',
+            title: 'Agregar',
+            message: 'Desea Registrar ?',
             cancel: true,
             persistent: true
           }).onOk(() => {

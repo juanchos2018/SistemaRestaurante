@@ -1,12 +1,12 @@
 <template>
-  <q-card :class="color">  
+  <q-card  class="my-card colorborde">  
      <q-item>
       <q-item-section>
-        <div class="text-subtitle2 text-white">{{ des_auxiliar }}</div>
-        <div class="text-subtitle2 text-white">Area:  {{ area }}</div>
-        <div class="text-subtitle2 text-white"> Piso : {{ piso_especialidad }}</div>
+        <div class="text-subtitle2">{{ des_auxiliar }}</div>
+        <div class="text-subtitle2">Area:  {{ area }}</div>
+        <div class="text-subtitle2"> Piso : {{ piso_especialidad }}</div>
       </q-item-section>
-        <q-item-section side top class=" text-white">
+        <q-item-section side top class=" text-green-9 text-bold">
          ENTREGADO
         </q-item-section>
     
@@ -37,7 +37,7 @@
         </q-item-section>
       </q-item>
     </q-list>
-    <q-card-section class="col-5 flex flex-left text-white text-bold">
+    <q-card-section class="col-5 flex flex-left text-bold">
       <div>Total: S/ {{ totalpedido }}</div>
     </q-card-section>
    
@@ -64,5 +64,11 @@ export default {
 <style>
 .q-stepper__step-content {
   display:none !important
+}
+
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
 }
 </style>

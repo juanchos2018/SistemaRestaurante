@@ -22,8 +22,18 @@
           <q-icon v-else name="fas fa-infinity" size="24px"></q-icon>
         </div>
       </q-card-section>
-    </q-card-section>
+       <q-item-section side top>
+              <q-option-group
+      :options="options"
+      type="checkbox"
+      v-model="group"
+    />
 
+        </q-item-section>
+     
+
+    </q-card-section>
+ 
     <q-separator />
 
     <q-card-actions>
@@ -293,6 +303,14 @@ export default {
         });       
 
       },
+       group: ref([]),
+      options: [
+        { label: 'Lu', value: 'bat', size:"xs" },
+        { label: 'Ma', value: 'friend', color: 'green' , size:"xs" },
+        { label: 'Mi', value: 'upload', color: 'red', size:"xs"  },
+        { label: 'Ju', value: 'ju', color: 'red', size:"xs"  },
+        { label: 'Vi', value: 'vi', color: 'red', size:"xs"  }
+      ]
     
     };
      

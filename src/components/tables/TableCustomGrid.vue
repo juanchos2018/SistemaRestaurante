@@ -97,7 +97,8 @@ const logos = [
   "fas fa-pizza-slice",
   "fas fa-hotdog",
   "fas fa-apple-alt",
-  "fas fa-cheese"
+  "fas fa-cheese",
+  "room_service"
 ];
 
 const columns = [

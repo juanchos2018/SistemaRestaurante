@@ -33,7 +33,7 @@
       </q-toolbar>
     </q-header>
     <q-drawer
-      class="left-navigation text-white bg-images "
+      class="left-navigation text-white bg-images  q-drawer2 "
       show-if-above
       v-model="left"     
       side="left"
@@ -63,7 +63,7 @@
                 v-ripple
               >
                 <q-item-section avatar>
-                  <q-icon name="dashboard" />
+                  <q-icon name="room_service" />
                 </q-item-section>
 
                 <q-item-section>
@@ -165,8 +165,8 @@ export default {
 };
 </script>
 
-<style lang="css" scoped>
-.q-drawer {
+<style lang="css" >
+.q-drawer2 {
   /*background-image: url(https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg) !important;*/
   background-image: url("~assets/clinicaluzdos.jpg") !important;
   background-size: cover !important;
@@ -188,9 +188,6 @@ export default {
   background-color: rgb(235, 18, 18);
 }
 
-body {
-  background: #f1f1f1 !important;
-}
 
 .header_normal {
   background: linear-gradient(
