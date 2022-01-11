@@ -33,7 +33,7 @@
       </q-toolbar>
     </q-header>
     <q-drawer
-      class="left-navigation text-white bg-images  q-drawer2 "
+      class="left-navigation text-white bg-images  q-drawer2"
       show-if-above
       v-model="left"     
       side="left"

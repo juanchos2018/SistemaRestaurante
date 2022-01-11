@@ -65,19 +65,7 @@
       </q-drawer>
       <q-page-container>
         <q-page style="padding-top: 80px" class="q-pa-md">
-          <div>
-            <!-- <p>{{modelUser}}</p> -->
-            <q-card class="no-border no-shadow bg-transparent">
-              <q-card-section class="q-pa-sm">
-                <q-input rounded v-model="search" outlined placeholder="Buscar Producto">
-                  <template v-slot:append>
-                    <q-icon v-if="search === ''" name="search" />
-                    <q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
-                  </template>
-                </q-input>
-              </q-card-section>
-            </q-card>
-          
+          <div>          
              <!-- <div class="kr-embedded"
                 kr-popin
                 :kr-form-token="Token">
@@ -89,7 +77,21 @@
                   <q-btn  value="200" label="Pagar"/>               
                   <div class="kr-form-error"></div>
              </div>  -->
+          
+
+             <q-btn-dropdown color="red" :label="date" dropdown-icon="change_history"     class="float-right"  >
+               <q-date
+                  v-model="date"
+                 
+                  @update:model-value="ChangeDate($event)"
+                />
+
+              </q-btn-dropdown>
           </div>
+          <br>
+          <br>
+          <br>
+          <br>
           <div class="row q-col-gutter-sm">
             <div v-if="!itemProducto.length">
               <h5>SIN PRODUCTOS</h5>
@@ -128,7 +130,7 @@
         <div class="row">
           <div class="col-6">
             <q-item>
-              <q-input dense outlined class="full-width" type="number" label="Piso Area" v-model="modelUser.piso_especialidad" />
+              <q-input dense outlined class="full-width" type="number" label="Piso " v-model="modelUser.piso_especialidad" />
             </q-item>
           </div>
           <div class="col-6">
@@ -189,6 +191,8 @@ export default {
   },
 
   setup() {
+    
+  
     let itemRefs = [];
     const $q = useQuasar();
     const arrayvacio = ref([]);
@@ -217,6 +221,10 @@ export default {
     return {
       $q,
       modelo,
+      date: ref('2022/01/11'),
+      events: [ '2022/01/11','2022/01/14','2022/01/17' ],
+      fecha_actual: moment(new Date()).local().format("YYYY-MM-DD"),
+        
       Token:ref(''),
       modelUser,
       id_categoria,   
@@ -247,6 +255,14 @@ export default {
       pagination: {
         rowsPerPage: 6,
       },
+      
+      updateProxy () {
+        proxyDate.value = date.value
+      },
+
+      save () {
+        date.value = proxyDate.value
+      }
     };
   },
   created() {
@@ -273,14 +289,14 @@ export default {
        this.rcv(e.data);      
     }; 
     this.setTime();
-
+    this.ListarCarroState();
     // let recaptchaScript2= document.createElement('script')
     // recaptchaScript2.setAttribute('src', "https://api.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js  kr-public-key='58045315:testpublickey_1Q9ePN9mK8XtXfW7ex48ur1KEpkjqr4nVweRH3fw6pO5Z'  kr-post-url-success='http://192.168.3.219/pasarela/paid.php'")
     // document.head.appendChild(recaptchaScript2)
 
   },
   computed: {
-    ...mapState(["url_base",'url_izipay','url_socket']),
+    ...mapState(["url_base",'url_izipay','url_socket','carrito']),
     getData3() {
       return this.getData().slice(
         (this.page - 1) * this.cantfilas.length,
@@ -311,6 +327,13 @@ export default {
     },
   },
   methods: {
+    onItemClick(){
+
+    },
+    ListarCarroState(){
+        console.log("de state");
+        console.log(this.carrito);
+    },
     GetCategoria() {
       let url = "/Controller/CategoriaController.php";
       this.$axios
@@ -326,9 +349,8 @@ export default {
                 estado: element.estado,
                 logo: element.logo,
               });
-              }
-              
-            });
+              }              
+           });
 
           this.GetProduct(this.itemCategoria[0].id_categoria);
           this.nombrecategoria = this.itemCategoria[0].nombre_categoria;
@@ -341,8 +363,8 @@ export default {
     },
     GetProduct(id_categoria, nombre) {
       this.nombrecategoria = nombre;
-      let url =
-        "/Controller/ProductoController.php?id_categoria=" + id_categoria;
+      let tipo="categoria";
+      let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
@@ -356,7 +378,8 @@ export default {
     },
     GetProducto2(){
        //   this.nombrecategoria = nombre;
-      let url = "/Controller/ProductoController.php?id_categoria=" + this.id_categoria;
+      let tipo="categoria";
+      let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + this.id_categoria;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
@@ -369,6 +392,24 @@ export default {
     },
     rcv(data){
       this.GetProducto2();
+    },
+    ChangeDate(e){
+      let fecha =e;
+      let dia = moment(fecha).format('dddd');
+      let tipo="dia";
+      console.log(dia);
+      let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +dia+"&id_categoria="+this.id_categoria;
+      this.$axios
+        .get(this.url_base + url)
+        .then((response) => {
+         // this.itemProducto = response.data;
+          console.log(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    
     },
     Cancelar() {
       this.arrayvacio = [];
@@ -450,10 +491,8 @@ export default {
         });
       });
       this.modelUser.detallePedido = lista;
-  
-
       let data = this.modelUser;
-      console.log(data);
+      //console.log(data);
       
       //envia al socket  php no borrar  
       this.conn.send(JSON.stringify(data));

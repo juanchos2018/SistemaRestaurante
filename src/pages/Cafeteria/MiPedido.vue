@@ -123,10 +123,11 @@ export default defineComponent({
      this.conn.onmessage = (e) => {
         this.rcv(e.data);
          let recibe =   JSON.parse(e.data); 
-      //console.log(e.data);
+      //  console.log(e.data);
          let es =  recibe.estado_pedido;
-         if (es=="2") {  
-          this.check();
+         let cod_auxiliar=recibe.cod_auxiliar;         
+         if (es=="2" && cod_auxiliar==this.modelo.COD_AUXILIAR) {  
+            this.check();
          }   
      };
   },

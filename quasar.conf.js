@@ -83,7 +83,7 @@ module.exports = configure(function( /* ctx */ ) {
                 notify: { /* look at QuasarConfOptions from the API card */ },
                 loading: { /* look at QuasarConfOptions from the API card */ }
             },
-
+            lang: 'es',
             // iconSet: 'material-icons', // Quasar icon set
             // lang: 'en-US', // Quasar language pack
 

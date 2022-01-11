@@ -48,7 +48,18 @@
                   input-class="text-right"
                 />                  </q-item>
             </div>
-           
+              <div class="col-12">
+                 <q-item>
+                 <div class="q-gutter-sm">
+                <q-checkbox v-model="dia_uno" label="Lu" color="red" />
+                <q-checkbox v-model="dia_dos" label="Ma" color="red" />
+                <q-checkbox v-model="dia_tres" label="Mi" color="red" />
+                <q-checkbox v-model="dia_cuatro" label="Ju" color="red" />
+                 <q-checkbox v-model="dia_cinco" label="Vi" color="red" />
+                <q-checkbox v-model="dia_seis" label="Sa" color="red" />
+              </div>
+                 </q-item>
+             </div>
             <div class="col-4">
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true? 'Activo':'Inactivo'" />
@@ -105,6 +116,12 @@ export default {
         usastock:0,
         estrellas:0
       },
+      dia_uno: true,
+      dia_dos: true,
+      dia_tres: true,
+      dia_cuatro: true,
+      dia_cinco: true,
+      dia_seis: true,
       errors: {
         nombre_producto: false,
         descripcion: false,
@@ -128,7 +145,7 @@ export default {
   methods: {   
     View(id) {
       let me = this;
-      let url ="/Controller/ProductoController.php?id_producto="+id;
+      let url ="/Controller/ProductoControllerCo.php?id_producto="+id;
       this.$axios({
         method: "GET",
         url: me.url_base+url,      
@@ -136,7 +153,13 @@ export default {
         .then(function (response) {            
             me.modelo={...response.data};     
             me.Estado=me.modelo.estado==1?true:false;   
-            me.Stock =me.modelo.usastock==1?true:false;            
+            me.Stock =me.modelo.usastock==1?true:false;    
+            me.dia_uno=me.modelo.dia_uno==1?true:false;
+            me.dia_dos=me.modelo.dia_dos==1?true:false; 
+            me.dia_tres=me.modelo.dia_tres==1?true:false; 
+            me.dia_cuatro=me.modelo.dia_cuatro==1?true:false; 
+            me.dia_cinco=me.modelo.dia_cinco==1?true:false; 
+            me.dia_seis=me.modelo.dia_seis==1?true:false;            
           })
         .catch((error) => {
           console.log(error);
@@ -147,6 +170,15 @@ export default {
       let url ="/Controller/ProductoController.php?tipo=editpro";   
       me.modelo.estado=me.Estado==true?1:0;   
       me.modelo.usastock = me.Stock==true?1:0;
+
+       me.modelo.dia_uno=me.dia_uno==true?1:0;
+       me.modelo.dia_dos=me.dia_dos==true?1:0; 
+       me.modelo.dia_tres=me.dia_tres==true?1:0; 
+       me.modelo.dia_cuatro=me.dia_cuatro==true?1:0; 
+       me.modelo.dia_cinco=me.dia_cinco==true?1:0; 
+       me.modelo.dia_seis=me.dia_seis==true?1:0;   
+
+
       let data = me.modelo;
       this.$axios({
         method: "PUT",
@@ -197,7 +229,6 @@ export default {
       this.errors.nombre_producto = this.modelo.nombre_producto == "" ? true : false;
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
       this.errors.precio_producto = this.modelo.precio_producto == 0? true : false;
-
 
       if (this.errors.nombre_producto) {
             this.validate = true;

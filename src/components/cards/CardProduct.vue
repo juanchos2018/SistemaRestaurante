@@ -47,7 +47,8 @@
 <script>
 import { inject, defineComponent } from "vue";
 import { useQuasar } from 'quasar'
-import { mapState } from "vuex";
+import { mapState ,useStore} from "vuex";
+
 
 
 export default defineComponent({
@@ -55,6 +56,7 @@ export default defineComponent({
   props: ["data"],
   setup() {
     const $q = useQuasar()
+    const store = useStore();
     const arrayva = inject("arrayvacio");
     const fin=(title)=>{
           $q
@@ -92,6 +94,27 @@ export default defineComponent({
     }
 
     const aggrear = (id_producto, title, preci,id_categoria,stock,usastock) => {
+      
+        // let data ={
+        //     id_producto:id_producto,
+        //     title:title,
+        //     preci:preci,
+        //     id_categoria:id_categoria,
+        //     stock:stock,
+        //     usastock:usastock
+        //   }
+        // store.commit('setItemCart', data);
+        // let tipo =store.state.tipoMensaje;
+        // if (tipo=="sin") {
+        //       Mucho();
+        // }else if (tipo=="add") {
+        //     $q.notify({
+        //       message: "Agregado "+title,
+        //       color: "accent",
+        //       position: "top",
+        //     });
+        // }       
+      
 
         if (usastock==1) {
             if (stock==0) {
@@ -160,15 +183,13 @@ export default defineComponent({
               position: "top",
             });
 
-        }      
-
-            
+        }   
     
     };
     return { aggrear,fin };
   },
    computed: {
-    ...mapState(["url_base",'url_izipay']),
+    ...mapState(["url_base",'url_izipay',]),
    },
   methods: {
     detail(id, title, preci) {

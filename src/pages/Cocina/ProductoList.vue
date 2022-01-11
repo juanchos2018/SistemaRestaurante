@@ -80,7 +80,7 @@ export default defineComponent({
     },
     Get(idcategoria) {
       let url =
-        "/Controller/ProductoController.php?id_categoria=" + idcategoria;
+        "/Controller/ProductoControllerCo.php?id_categoria=" + idcategoria;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
@@ -94,8 +94,7 @@ export default defineComponent({
     },
     getproduct() {
       //console.log("desde ihjo")
-      let url =
-        "/Controller/ProductoController.php?id_categoria=" + this.modelo.id_categoria;
+      let url =  "/Controller/ProductoControllerCo.php?id_categoria=" + this.modelo.id_categoria;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {

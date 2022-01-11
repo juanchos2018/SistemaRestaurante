@@ -46,6 +46,18 @@
               </q-item>
             </div>
              
+             <div class="col-12">
+                 <q-item>
+                 <div class="q-gutter-sm">
+                <q-checkbox v-model="dia_uno" label="Lu" color="red" />
+                <q-checkbox v-model="dia_dos" label="Ma" color="red" />
+                <q-checkbox v-model="dia_tres" label="Mi" color="red" />
+                <q-checkbox v-model="dia_cuatro" label="Ju" color="red" />
+                 <q-checkbox v-model="dia_cinco" label="Vi" color="red" />
+                <q-checkbox v-model="dia_seis" label="Sa" color="red" />
+              </div>
+                 </q-item>
+             </div>
             <div class="col-4">
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
@@ -65,7 +77,8 @@
 
 <script>
 import moment from "moment";
-import Vue from "vue";
+import { ref } from 'vue'
+
 import { mapState } from "vuex";
 
 export default {
@@ -92,6 +105,13 @@ export default {
       fecha_actual: moment().format("DD/MM/YYYY"),
       hora_actual: moment().format("HH:mm:ss"),
       validate: false,
+      dia_uno: ref(true),
+      dia_dos: ref(true),
+      dia_tres: ref(true),
+      dia_cuatro: ref(true),
+      dia_cinco: ref(true),
+      dia_seis: ref(true),
+
       modelo: {
         id_producto: 0,
         nombre_producto: "",
@@ -103,9 +123,15 @@ export default {
         fecha: "",
         imagen: "",
         usastock:0,
-        estrellas:0
-
+        estrellas:0,
+        dia_uno:1,
+        dia_dos:1,
+        dia_tres:1,
+        dia_cuatro:1,
+        dia_cinco:1,
+        dia_seis:1
       },
+
       errors: {
         nombre_producto: false,
         descripcion: false,

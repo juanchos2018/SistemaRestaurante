@@ -1,8 +1,6 @@
 <template>
   <q-card :class="color">
-    <q-item>
-
-      
+    <q-item>      
       <q-item-section>
         <div class="text-subtitle2 text-white">{{ des_auxiliar }}</div>
         <div class="text-subtitle2 text-white">Area:  {{ area }}</div>
@@ -84,7 +82,8 @@ export default {
     "estado",
     "fecha_pedido",
        "total",
-    "hora_pedido"
+    "hora_pedido",
+    "cod_auxiliar"
   ],
   data() {
     return {
@@ -120,12 +119,13 @@ export default {
           });
         
       }else{
-         
+        // console.log(this.cod_auxiliar);
         const datas={
         estado_pedido:step,
         id_pedido:this.id_pedido,     
         lista:[],
-        tipo:'Update'
+        tipo:'Update',
+        cod_auxiliar:this.cod_auxiliar
         }
         this.$emit("update", datas);
        }   

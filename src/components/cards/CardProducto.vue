@@ -22,14 +22,14 @@
           <q-icon v-else name="fas fa-infinity" size="24px"></q-icon>
         </div>
       </q-card-section>
-       <q-item-section side top>
+       <!-- <q-item-section side top>
               <q-option-group
       :options="options"
       type="checkbox"
       v-model="group"
     />
 
-        </q-item-section>
+        </q-item-section> -->
      
 
     </q-card-section>

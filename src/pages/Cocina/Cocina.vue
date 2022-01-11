@@ -49,6 +49,7 @@
               <card-pedido
                 :id_pedido="props.row.id_pedido"
                 :des_auxiliar="props.row.des_auxiliar"
+                :cod_auxiliar="props.row.cod_auxiliar"
                 :piso_especialidad="props.row.piso_especialidad"
                 :area="props.row.area"
                 :color="props.row.color"
