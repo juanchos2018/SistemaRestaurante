@@ -65,21 +65,17 @@
       </q-drawer>
       <q-page-container>
         <q-page style="padding-top: 55px" class="q-pa-sm">
-          <div>         
-          
-             <q-btn-dropdown color="red" :label="nombreDia+' / '+date" dropdown-icon="change_history"     class="float-right"  >
+          <div>                   
+             <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
-                  v-model="date"            
-                 
+                  v-model="date"     
                   @update:model-value="ChangeDate($event)"
                 />
-              </q-btn-dropdown>             
-
+              </q-btn-dropdown>  
           </div>
           <br>
           <br>
-          <br>
-        
+          <br>        
           <div class="row q-col-gutter-sm">
             <div v-if="!itemProducto.length">
               <h5>SIN PRODUCTOS</h5>
@@ -91,19 +87,16 @@
           <q-page-sticky position="top" expand class="bg-dark text-white">
             <q-toolbar>
               <!-- <q-btn flat round dense icon="map" />
-              <q-toolbar-title>{{ nombrecategoria }}</q-toolbar-title> -->         
-              
-               <q-tabs
-                   
+              <q-toolbar-title>{{ nombrecategoria }}</q-toolbar-title> -->  
+               <q-tabs                   
                   inline-label
                   shrink
                   stretch
                   active-color="red-1"
                 >
-                  <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria" :icon="item.logo"   @click="
+               <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria" :icon="item.logo"   @click="
                       GetProduct(item.id_categoria, item.nombre_categoria)" />
-                </q-tabs>
-                 
+                </q-tabs>                 
               <q-space />
               <div class="q-gutter-sm row items-center no-wrap">
                 <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
@@ -131,11 +124,8 @@
             </q-item>          
           </div>   
           <div class="col-6">
-            <q-item>
-                            <!-- <p>{{horaActual}}</p> -->
-
-              <!-- <p>{{timeactual}}</p> -->
-                <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm**ss" hint="Hora" />   
+            <q-item>        
+               <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm**ss" hint="Hora" />   
             </q-item>          
           </div>   
 
@@ -143,28 +133,23 @@
             <q-item>
               <!-- <p>{{fecha_hora}}</p> -->
               <!-- <q-input v-model="fecha_pedido" filled type="date" format="DD/MM/YYYY"  /> -->
-                 <q-input  dense outlined  class="full-width" v-model="fecha_hora"   >
-                  <!-- <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="date" @input="() => $refs.qDateProxy.hide()" ></q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>  -->
+                <!-- <p>{{diaEntrega}}</p> -->
+              <q-input bottom-slots  dense outlined  class="full-width" v-model="fecha_hora" >   
                 <q-popup-proxy @before-show="updateProxy" cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="proxyDate" mask="DD/MM/YYYY">
+                  <!-- :options="optionsFn"  despues poner esto we -->
+                  <q-date v-model="proxyDate" mask="DD-MM-YYYY"    >
                     <div class="row items-center justify-end q-gutter-sm">
                       <q-btn label="Cancel" color="primary" flat v-close-popup />
                       <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
                     </div>
                   </q-date>
                 </q-popup-proxy>
-              </q-input>
-      
+                  <template v-slot:hint>
+                  <q-badge outline color="secondary" :label="diaEntrega" />
+                  </template>
+              </q-input>      
             </q-item>          
-          </div>   
-
-         
+          </div>            
         </div>  
 
         <q-card-actions align="right" class="text-primary">
@@ -233,25 +218,32 @@ export default {
       //  let  fecha_hora=ref(moment(new Date()).format("DD/MM/YYYY"))
         let todaysDate = new Date();
         const date2 = ref(moment(new Date()).local().format("DD/MM/YYYY"))
-        const proxyDate = ref(moment(new Date()).local().format("DD/MM/YYYY"))
-        const fecha_hora=ref(moment(new Date()).local().format("DD/MM/YYYY"));
+        const proxyDate = ref(moment(new Date()).local().format("DD-MM-YYYY"))
+        const fecha_hora=ref(moment(new Date()).local().format("DD-MM-YYYY"));
+        let  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
+        let  fecha_actual2= ref(moment(new Date()).format("YYYY/MM/DD"));
     return {
       proxyDate,
       date2,
-
       modelo,
+      nombreDiados:'',
       nombreDia:'',
       time: ref(''),
-      timeactual:ref(moment.utc().add('hours',7).format('hh:mm:ss') ),
-     
-      datehoy : Date.now(),
-      fecha_pedidoss:ref('2020/02/01'),
+      date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
+      fecha_actual,
+
+      timeactual:ref(moment.utc().add(7,'hours').format('hh:mm:ss') ),     
+      datehoy : Date.now(),     
       fecha_hora,
-      todaysDate,
-      fecha_actualssss: moment(new Date()).local().format("YYYY-MM-DD"),
+      todaysDate,   
+      date1: ref('2019/02/01'),
+      optionsFn (fecha_hora) {
+
+        return fecha_hora >= '2022/01/15' && fecha_hora <= '2022/01/20'
+      },
 
       updateProxy () {
-        proxyDate.value = date2.value
+        //proxyDate.value = date2.value
       },
 
       save () {
@@ -259,11 +251,6 @@ export default {
       },
 
 
-
-
-      date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
-      fecha_actual: moment(new Date()).format("YYYY/MM/DD"),
-     
     
         
       Token:ref(''),
@@ -296,9 +283,7 @@ export default {
       search,
       pagination: {
         rowsPerPage: 6,
-      },
-      
-     
+      },   
     };
   },
   created() {
@@ -357,6 +342,15 @@ export default {
         return acc + obj.total;
       }, 0);
       return result;
+    },
+    diaEntrega: function () {     
+        let fechas =this.fecha_hora.split('-');
+        let dia =fechas[0];
+        let mes =fechas[1];
+        let anio =fechas[2];
+        let fecha_sql =anio+'-'+mes+'-'+dia;
+        this.modelUser.fecha_pedido=fecha_sql; 
+        return  moment(fecha_sql).format('dddd');
     },
   },
   methods: {
@@ -448,12 +442,7 @@ export default {
 
         if (this.nombreDia=="" || this.nombreDia ==null ) {
           console.log("datos nulos");
-        }else{
-       // console.log("datos entras");
-
-          //  console.log(this.nombreDia);
-          //  console.log(this.id_categoria);
-          // console.log(tipo);
+        }else{      
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
           this.$axios
           .get(this.url_base + url)
@@ -465,8 +454,7 @@ export default {
             console.log(error);
           })
           .finally(() => {});
-        }
-        
+        }        
       }
     },
     Cancelar() {
@@ -536,9 +524,17 @@ export default {
       }
     },
     StorePedido() {
+        ///console.log(this.fecha_hora);
+        let fechas =this.fecha_hora.split('/');
+        let dia =fechas[0];
+        let mes =fechas[1];
+        let anio =fechas[2];
+        let fechaenviar =anio+'/'+mes+'/'+dia;
+     // this.modelUser.fecha_pedido =moment(new Date(fechaenviar)).format('YYYY/MM/DD');
+      this.modelUser.hora_pedido=this.timeactual;
       let lista = [];
       this.modelUser.TotalPedido = this.SumTotal;
-      this.modelUser.hora_pedido = this.horaActual;
+      //this.modelUser.hora_pedido = this.horaActual;
       this.arrayvacio.forEach((element) => {
         lista.push({
           id_categoria: element.id_categoria,
@@ -550,7 +546,7 @@ export default {
       });
       this.modelUser.detallePedido = lista;
       let data = this.modelUser;
-      //console.log(data);
+      console.log(data);
       
       //envia al socket  php no borrar  
       this.conn.send(JSON.stringify(data));
@@ -586,6 +582,8 @@ export default {
     },
     StorePedido2() {
       let lista = [];
+
+    
       this.arrayvacio.forEach((element) => {
         lista.push({
           id_categoria: element.id_categoria,

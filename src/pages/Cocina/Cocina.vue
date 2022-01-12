@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-sm">
+  <q-page class="q-pa-xs">
     <q-tabs
       v-model="tab"
       dense
@@ -31,7 +31,7 @@
           :rows-per-page-options="rowsPerPageOptions"
         >
           <template v-slot:top-right>
-            <q-input
+            <!-- <q-input
               borderless
               dense
               debounce="300"
@@ -41,7 +41,16 @@
               <template v-slot:append>
                 <q-icon name="search" />
               </template>
-            </q-input>
+            </q-input> -->
+            <div>                   
+             <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
+               <q-date
+                  v-model="date"     
+                  @update:model-value="ChangeDate($event)"
+                />
+              </q-btn-dropdown>  
+          </div>
+       
           </template>
 
           <template v-slot:item="props">
@@ -56,7 +65,7 @@
                 :detalle="props.row.detalle"
                 :fecha_pedido="props.row.fecha_pedido"
                 :hora_pedido="props.row.hora_pedido"
-                :estado="props.row.estado_pedido"
+                :estado_pedido="props.row.estado_pedido"
                 :total="props.row.totalpedido"
                 v-on:update="modificar"
               ></card-pedido>
@@ -64,10 +73,11 @@
           </template>
         </q-table>
       </q-tab-panel>
+
       <q-tab-panel name="alarms">
         <q-toolbar class="bg-secondary text-white q-my-md shadow-2">
           <div class="text-h5 text-white text-bold">
-            {{ nombreDia }} - {{ FechaHoy }}
+             {{ nombreDia }} - {{ fecha_actual }}
           </div>
           <q-space />
           <div class="text-h5 text-white text-bold">S/ {{ SumTotal }}</div>
@@ -91,6 +101,7 @@
           </div>
         </div>
       </q-tab-panel>
+
       <q-tab-panel name="reject">
         <div class="row q-col-gutter-sm">
           <div
@@ -111,6 +122,7 @@
           </div>
         </div>
       </q-tab-panel>
+
     </q-tab-panels>
     <br />
   </q-page>
@@ -142,6 +154,7 @@ export default {
     let itemRejected = ref([]);
     const [play] = useSound(buttonSfx);
     const otherValue = $q.sessionStorage.getItem("Qsesion");
+    const  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
     function getItemsPerPage() {
       if ($q.screen.lt.sm) {
         return 3;
@@ -164,7 +177,9 @@ export default {
     );
     return {
       otherValue,
-      $q,
+      nombreDia:'',    
+      date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
+      fecha_actual,
       play,
       con: null,
       msg: "Test  Meesage",
@@ -198,7 +213,7 @@ export default {
         },
       ],
       moment,
-      FechaHoy: moment(new Date()).local().format("YYYY-MM-DD"),
+    
     };
   },
   created() {
@@ -208,6 +223,7 @@ export default {
     }
   },
   mounted() {
+    this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
     this.conn = new WebSocket(this.url_socket);
     this.get();
     this.getTerminados();
@@ -248,8 +264,8 @@ export default {
       }, 0);
       return result.toFixed(2);
     },
-    nombreDia: function () {
-      return moment(this.FechaHoy).format("dddd");
+    nombreDiayano: function () {
+      return moment(this.fecha_actual).format("dddd");
     },
     esCocinero(){
        let existe = this.$q.sessionStorage.has("Qsesion");
@@ -262,11 +278,10 @@ export default {
   methods: {
     get() {
       let tipo = "nuevo";
-      let url = "/Controller/PedidoController.php?tipo=" + tipo;
+      let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+this.fecha_actual;
       this.$axios
         .get(this.url_base + url)
-        .then((response) => {
-  console.log(response);
+        .then((response) => {      
           this.itemCocina = response.data;
         })
         .catch(function (error) {
@@ -274,6 +289,27 @@ export default {
         })
         .finally(() => {});
     },
+    ChangeDate(e){
+      let tipo = "nuevo";   
+      if (e==null) {       
+       this.date=this.fecha_actual
+       this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
+       this.get();
+      }else{           
+        this.nombreDia=moment(new Date(e)).format('dddd');         
+        let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+e;
+        this.$axios
+        .get(this.url_base + url)
+        .then((response) => {        
+          this.itemCocina = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});                 
+      }
+    },
+
     getTerminados() {
       let tipo = "terminado";
       let url = "/Controller/PedidoController.php?tipo=" + tipo;

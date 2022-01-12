@@ -175,7 +175,7 @@ export default defineComponent({
         .then(function(response) {     
         me.$q.loading.hide()   
         let result =response.data;
-       // console.log(response);
+         // console.log(response);
         if (result.existe=="si") {  
           
           if (result.error=='si') {

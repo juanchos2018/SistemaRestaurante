@@ -1,15 +1,13 @@
 <template>
-  <q-card class="my-card">
-
+  <q-card class="my-card colorborde">
      <q-item>
       <q-item-section>
-        <q-item-label>{{ nombreDia }} - {{ fecha_pedido }}</q-item-label>
+        <q-item-label>{{tipoEnvio}} {{ diaEntrega }} - {{ fecha_pedido }}</q-item-label>
         <q-item-label caption>
-          {{ hora_pedido }}
+         a las:    {{ hora_pedido }}
         </q-item-label>
       </q-item-section>
-        <q-item-section side top>
-           
+        <q-item-section side top>           
             <q-item-label v-if="estado_pedido==0">
               RECIBIDO
            </q-item-label>
@@ -100,6 +98,7 @@
 <script>
 import moment from "moment";
 import "moment/locale/es";
+import { ref} from "vue";
 export default {
   name: "card-mi-medidos",
   props: [
@@ -115,17 +114,35 @@ export default {
     "hora_pedido",
   ],
   setup() {
+     const  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
+     let tipoEnvio=ref('');
     return {
       step: 0,
       done1: false,
       done2: false,
       done3: false,
+      tipoEnvio,
+      fecha_actual
     };
   },
    computed: {
-    nombreDia: function () {
-     
-         return moment(new Date(this.fecha_pedido)).format("dddd");
+    nombreDia: function () {         
+        return moment(new Date(this.fecha_pedido)).format("dddd");
+    },
+    diaEntrega: function () {     
+        let fechas =this.fecha_pedido.split('-');
+        let dia =fechas[0];
+        let mes =fechas[1];
+        let anio =fechas[2];
+        let fecha_sql =anio+'-'+mes+'-'+dia;
+        let nombre_dia_hoy = moment(new Date(this.fecha_actual)).format("dddd");
+        let nombre_dia_envio =moment(fecha_sql).format('dddd');
+        if (nombre_dia_hoy==nombre_dia_envio) {
+            this.tipoEnvio="Para Hoy "
+        }else{
+           this.tipoEnvio="Para El "
+        }
+        return  moment(fecha_sql).format('dddd');
     },
   },
   methods: {},
@@ -139,5 +156,11 @@ export default {
 .q-stepper__tab--active,
 .q-stepper__tab--done {
   color: #b71408;
+}
+
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
 }
 </style>
