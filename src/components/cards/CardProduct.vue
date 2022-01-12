@@ -1,7 +1,13 @@
 <template>
   <q-card class="my-card colorborde" @click="aggrear(data.id_producto,data.nombre_producto,data.precio_venta,data.id_categoria,data.stock,data.usastock)">
       <q-img :src="url_base+data.imagen"   :ratio="4/3" >
-        <div class="absolute-bottom text-subtitle1 text-center">          
+        <div class="absolute-top text-h5 text-right text-bold text-green" style="height:45px">         
+           <strong> S/  {{data.precio_ventas}}</strong>  
+             <!-- <q-badge fab color="primary" :label="data.precio_ventas"   class="q-mr-sm"  /> -->
+              
+                 <!-- <q-chip outline color="teal" text-color="white" >
+              {{data.precio_ventas}}
+              </q-chip> -->
         </div>
       </q-img>
       <q-card-section>     
@@ -11,19 +17,21 @@
         <div v-else>
            <q-badge fab color="primary" label="Libre"   class="absolute"   style="top: 0; right: 12px; transform: translateY(-50%);"/>
         </div>     
-        <div class="row no-wrap items-center">
-          <div class="col text-h6 ellipsis">
+        <div class="row no-wrap items-center no-padding no-margin">
+          <div class="col text-h6 ellipsis no-padding no-margin ">
             {{ data.nombre_producto }}
           </div>                
-          <div class="col-auto text-green  text-bold	 text-caption q-pt-md row no-wrap items-center">         
-            S/  {{data.precio_ventas}}
+          <div class="col-auto 	 text-caption q-pt-md row no-wrap items-center no-padding no-margin">         
+            <!-- S/  {{data.precio_ventas}} -->
+             <span class="text-green text-bold" v-if="data.usastock==1">  stock :  {{ data.stock }}</span>
+         <span class="text-green text-bold"  v-else>    stock :  <q-icon name="fas fa-infinity" size="24px"></q-icon></span>
           </div>
         </div>  
-          <div class="text-caption text-grey">
+          <div class="text-caption text-grey no-padding no-margin">
           {{data.descripcion}}
         </div>
         <div class="">
-        <q-rating size="22px" v-model="data.estrellas" :max="5" color="yellow"   readonly  />
+        <!-- <q-rating size="22px" v-model="data.estrellas" :max="5" color="yellow"   readonly  /> -->
         </div>
       </q-card-section>
        <!-- <q-card-section>
@@ -31,13 +39,29 @@
             <q-rating size="22px" v-model="data.estrellas" :max="5" color="yellow"   readonly  />
          </div>
       </q-card-section> -->
-      <q-card-section class="q-pt-none">
-        <div class="text-subtitle1" v-if="data.usastock==1">
+      <q-card-section class="">
+       <q-item-label  lines="1">  
+        
+
+
+         <!-- <div class="text-subtitle1" v-if="data.usastock==1">
           stock :  {{ data.stock }}
         </div>
         <div class="text-subtitle1" v-else>        
           stock :  <q-icon name="fas fa-infinity" size="24px"></q-icon>
+        </div> -->
+           <q-rating size="22px" v-model="data.estrellas" :max="5" color="yellow"   readonly  />
+        </q-item-label>
+
+  <!-- <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }} x <span class="text-green text-bold"> {{item.precio_venta}}</span></q-item-label> -->
+
+
+        <!-- <div class="text-subtitle1" v-if="data.usastock==1">
+          stock :  {{ data.stock }}
         </div>
+        <div class="text-subtitle1" v-else>        
+          stock :  <q-icon name="fas fa-infinity" size="24px"></q-icon>
+        </div> -->
        
       </q-card-section>
       <q-separator />   

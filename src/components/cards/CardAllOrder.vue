@@ -63,8 +63,8 @@ export default {
     };
   },
   computed: {
-    nombreDia: function () {
-      return moment(this.fecha_pedido).format("dddd");
+    nombreDia: function () {      
+         return moment(new Date(this.fecha_pedido)).format("dddd");
     },
   },
   methods: {

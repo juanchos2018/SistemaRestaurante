@@ -64,54 +64,46 @@
         </div>
       </q-drawer>
       <q-page-container>
-        <q-page style="padding-top: 80px" class="q-pa-md">
-          <div>          
-             <!-- <div class="kr-embedded"
-                kr-popin
-                :kr-form-token="Token">
-                  payment form fields 
-                  <div class="kr-pan"></div>
-                  <div class="kr-expiry"></div>
-                  <div class="kr-security-code"></div>  
-                 
-                  <q-btn  value="200" label="Pagar"/>               
-                  <div class="kr-form-error"></div>
-             </div>  -->
+        <q-page style="padding-top: 55px" class="q-pa-sm">
+          <div>         
           
-
-             <q-btn-dropdown color="red" :label="date" dropdown-icon="change_history"     class="float-right"  >
+             <q-btn-dropdown color="red" :label="nombreDia+' / '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
-                  v-model="date"
+                  v-model="date"            
                  
                   @update:model-value="ChangeDate($event)"
                 />
+              </q-btn-dropdown>             
 
-              </q-btn-dropdown>
           </div>
           <br>
           <br>
           <br>
-          <br>
+        
           <div class="row q-col-gutter-sm">
             <div v-if="!itemProducto.length">
               <h5>SIN PRODUCTOS</h5>
             </div>
-            <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12" v-for="item in FilterList" :key="item.id_producto">
+            <div class="col-md-3 col-lg-3 col-sm-6 col-xs-6" v-for="item in itemProducto" :key="item.id_producto">
               <card-product :data="item"></card-product>
             </div>
           </div>
           <q-page-sticky position="top" expand class="bg-dark text-white">
             <q-toolbar>
               <!-- <q-btn flat round dense icon="map" />
-              <q-toolbar-title>{{ nombrecategoria }}</q-toolbar-title> -->
-              <q-tabs shrink>
-                <!-- <i class="fas fa-table"></i> -->
-                <div v-for="item in itemCategoria" :key="item.id_categoria">
-                  <q-route-tab  :icon="item.logo" @click="
-                      GetProduct(item.id_categoria, item.nombre_categoria)
-                    " exact :label="item.nombre_categoria" />
-                </div>
-              </q-tabs>
+              <q-toolbar-title>{{ nombrecategoria }}</q-toolbar-title> -->         
+              
+               <q-tabs
+                   
+                  inline-label
+                  shrink
+                  stretch
+                  active-color="red-1"
+                >
+                  <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria" :icon="item.logo"   @click="
+                      GetProduct(item.id_categoria, item.nombre_categoria)" />
+                </q-tabs>
+                 
               <q-space />
               <div class="q-gutter-sm row items-center no-wrap">
                 <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
@@ -122,7 +114,7 @@
       </q-page-container>
     </q-layout>
     <q-dialog v-model="prompt" persistent>
-      <q-card style="min-width: 390px">
+      <q-card >
         <q-card-section>
           <div class="text-h6">{{modelo.DES_AUXILIAR}}</div>
           <!-- <div class="text-subtitle2">Area</div> -->
@@ -136,24 +128,44 @@
           <div class="col-6">
             <q-item>
               <q-input dense outlined class="full-width" label="Area" v-model="modelUser.area" />
-            </q-item>
-            <!-- <p>{{Token}}</p> -->
-          </div>
-            <!-- <div class="col-6">
-             <div class="kr-embedded"
-                kr-popin
-                :kr-form-token="Token">            
-                  <div class="kr-pan"></div>
-                  <div class="kr-expiry"></div>
-                  <div class="kr-security-code"></div>                  
-                  <button class="kr-payment-button"  value="200"></button>             
-                  <div class="kr-form-error"></div>
-             </div> 
-          </div> -->
-        </div>
-        <!-- <q-card-section class="q-pt-none">
-          <q-input dense v-model="address" autofocus @keyup.enter="prompt = false" placeholder="Piso" />
-        </q-card-section> -->
+            </q-item>          
+          </div>   
+          <div class="col-6">
+            <q-item>
+                            <!-- <p>{{horaActual}}</p> -->
+
+              <!-- <p>{{timeactual}}</p> -->
+                <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm**ss" hint="Hora" />   
+            </q-item>          
+          </div>   
+
+          <div class="col-6">
+            <q-item>
+              <!-- <p>{{fecha_hora}}</p> -->
+              <!-- <q-input v-model="fecha_pedido" filled type="date" format="DD/MM/YYYY"  /> -->
+                 <q-input  dense outlined  class="full-width" v-model="fecha_hora"   >
+                  <!-- <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="date" @input="() => $refs.qDateProxy.hide()" ></q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>  -->
+                <q-popup-proxy @before-show="updateProxy" cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="proxyDate" mask="DD/MM/YYYY">
+                    <div class="row items-center justify-end q-gutter-sm">
+                      <q-btn label="Cancel" color="primary" flat v-close-popup />
+                      <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-input>
+      
+            </q-item>          
+          </div>   
+
+         
+        </div>  
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancelar" v-close-popup />
@@ -181,7 +193,7 @@ import { provide, defineAsyncComponent, ref,reactive } from "vue";
 import { mapState } from "vuex";
 import { useQuasar } from "quasar";
 import moment from 'moment'
-
+import "moment/locale/es";
 export default {
   name: "Cafeteria",
   components: {
@@ -218,15 +230,45 @@ export default {
         detallePedido: [],
         TotalPedido: 0,
         color: "bg-positive", });    
+      //  let  fecha_hora=ref(moment(new Date()).format("DD/MM/YYYY"))
+        let todaysDate = new Date();
+        const date2 = ref(moment(new Date()).local().format("DD/MM/YYYY"))
+        const proxyDate = ref(moment(new Date()).local().format("DD/MM/YYYY"))
+        const fecha_hora=ref(moment(new Date()).local().format("DD/MM/YYYY"));
     return {
-      $q,
+      proxyDate,
+      date2,
+
       modelo,
-      date: ref('2022/01/11'),
-      events: [ '2022/01/11','2022/01/14','2022/01/17' ],
-      fecha_actual: moment(new Date()).local().format("YYYY-MM-DD"),
+      nombreDia:'',
+      time: ref(''),
+      timeactual:ref(moment.utc().add('hours',7).format('hh:mm:ss') ),
+     
+      datehoy : Date.now(),
+      fecha_pedidoss:ref('2020/02/01'),
+      fecha_hora,
+      todaysDate,
+      fecha_actualssss: moment(new Date()).local().format("YYYY-MM-DD"),
+
+      updateProxy () {
+        proxyDate.value = date2.value
+      },
+
+      save () {
+        fecha_hora.value = proxyDate.value
+      },
+
+
+
+
+      date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
+      fecha_actual: moment(new Date()).format("YYYY/MM/DD"),
+     
+    
         
       Token:ref(''),
       modelUser,
+      index_categoria:0,
       id_categoria,   
       horaActual:'',
       conn:null,
@@ -256,13 +298,7 @@ export default {
         rowsPerPage: 6,
       },
       
-      updateProxy () {
-        proxyDate.value = date.value
-      },
-
-      save () {
-        date.value = proxyDate.value
-      }
+     
     };
   },
   created() {
@@ -272,6 +308,9 @@ export default {
     }
   },
   mounted() { 
+    this.GetCategoria();
+    this.setTime();
+    this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
     this.conn= new WebSocket(this.url_socket);
     let existe = this.$q.sessionStorage.has("Qsesion"); 
     if (existe==true) {     
@@ -281,19 +320,13 @@ export default {
         this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
         this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
     } 
-    this.GetCategoria();
+    
     this.conn.onopen = (e) => {
          console.log("conectado WebSocket");
     };
     this.conn.onmessage = (e) => {
        this.rcv(e.data);      
-    }; 
-    this.setTime();
-    this.ListarCarroState();
-    // let recaptchaScript2= document.createElement('script')
-    // recaptchaScript2.setAttribute('src', "https://api.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js  kr-public-key='58045315:testpublickey_1Q9ePN9mK8XtXfW7ex48ur1KEpkjqr4nVweRH3fw6pO5Z'  kr-post-url-success='http://192.168.3.219/pasarela/paid.php'")
-    // document.head.appendChild(recaptchaScript2)
-
+    };    
   },
   computed: {
     ...mapState(["url_base",'url_izipay','url_socket','carrito']),
@@ -353,6 +386,7 @@ export default {
            });
 
           this.GetProduct(this.itemCategoria[0].id_categoria);
+        //  this.index_categoria=0;
           this.nombrecategoria = this.itemCategoria[0].nombre_categoria;
           this.id_categoria=this.itemCategoria[0].id_categoria;
         })
@@ -362,9 +396,13 @@ export default {
         .finally(() => {});
     },
     GetProduct(id_categoria, nombre) {
+     // this.index_categoria=this.itemCategoria.findIndex(x=>x.id_categoria=id_categoria);
       this.nombrecategoria = nombre;
-      let tipo="categoria";
-      let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
+      this.id_categoria=id_categoria;
+      console.log(id_categoria)
+      let tipo="dia";
+      let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
+     // let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
@@ -378,8 +416,10 @@ export default {
     },
     GetProducto2(){
        //   this.nombrecategoria = nombre;
-      let tipo="categoria";
-      let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + this.id_categoria;
+    //  let tipo="categoria";
+    //  let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + this.id_categoria;
+      let tipo="dia";
+      let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
@@ -395,21 +435,39 @@ export default {
     },
     ChangeDate(e){
       let fecha =e;
-      let dia = moment(fecha).format('dddd');
-      let tipo="dia";
-      console.log(dia);
-      let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +dia+"&id_categoria="+this.id_categoria;
-      this.$axios
-        .get(this.url_base + url)
-        .then((response) => {
-         // this.itemProducto = response.data;
-          console.log(response)
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(() => {});
-    
+       console.log(e);
+      if (e==null) {
+       
+        this.date=this.fecha_actual
+        this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
+        this.GetProducto2();
+      }else{           
+        this.nombreDia=moment(new Date(fecha)).format('dddd');
+        let tipo="dia";       
+        this.date=e;            
+
+        if (this.nombreDia=="" || this.nombreDia ==null ) {
+          console.log("datos nulos");
+        }else{
+       // console.log("datos entras");
+
+          //  console.log(this.nombreDia);
+          //  console.log(this.id_categoria);
+          // console.log(tipo);
+          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
+          this.$axios
+          .get(this.url_base + url)
+          .then((response) => {
+            this.itemProducto = response.data;
+            console.log(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .finally(() => {});
+        }
+        
+      }
     },
     Cancelar() {
       this.arrayvacio = [];
@@ -505,6 +563,7 @@ export default {
       console.log(this.horaActual)
     },
     MensajeEnviar() {
+      this.fecha_pedido=this.fecha_hora;
       if (this.arrayvacio.length > 0) {
         this.prompt = true;
       } else {
