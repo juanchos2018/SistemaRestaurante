@@ -30,30 +30,18 @@
           v-model:pagination="pagination"
           :rows-per-page-options="rowsPerPageOptions"
         >
-          <template v-slot:top-right>
-            <!-- <q-input
-              borderless
-              dense
-              debounce="300"
-              v-model="filter"
-              placeholder="Search"
-            >
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input> -->
+          <template v-slot:top-right>          
             <div>                   
              <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
                   v-model="date"     
-                  
+                      :events="events"
+                       event-color="red"
                   @update:model-value="ChangeDate($event)"
                 />
               </q-btn-dropdown>  
-          </div>
-       
+          </div>       
           </template>
-
           <template v-slot:item="props">
             <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
               <card-pedido
@@ -179,6 +167,7 @@ export default {
     return {
       otherValue,
       nombreDia:'',    
+      events: [],
       date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
       fecha_actual,
       play,
@@ -227,6 +216,7 @@ export default {
     this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
     this.conn = new WebSocket(this.url_socket);
     this.get();
+    this.getCalendar();
     this.getTerminados();
     this.getRjecteds();
     this.conn.onopen = (e) => {
@@ -290,6 +280,20 @@ export default {
         })
         .finally(() => {});
     },
+    getCalendar() {
+      let tipo = "calendar";
+      let url = "/Controller/PedidoController.php?tipo=" + tipo;
+      this.$axios
+        .get(this.url_base + url)
+        .then((response) => {      
+        //  console.log(response);
+          this.events = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
     ChangeDate(e){
       let tipo = "nuevo";   
       if (e==null) {       
@@ -299,11 +303,11 @@ export default {
       }else{           
         this.nombreDia=moment(new Date(e)).format('dddd');         
         let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+e;
-        console.log(url);
+      //  console.log(url);
         this.$axios
         .get(this.url_base + url)
         .then((response) => {        
-          console.log(response);
+          ///console.log(response);
           this.itemCocina = response.data;
         })
         .catch(function (error) {

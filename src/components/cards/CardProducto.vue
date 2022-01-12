@@ -1,5 +1,5 @@
 <template>
-  <q-card class="my-card rounded-card colorborde" flat bordered>
+  <q-card class="my-card rounded-card colorborde" flat >
     <q-card-section horizontal>
       <q-card-section class="col-5 flex flex-center">
         <q-img :src="url_base+photo" />
@@ -21,20 +21,16 @@
           >
           <q-icon v-else name="fas fa-infinity" size="24px"></q-icon>
         </div>
-      </q-card-section>
-       <!-- <q-item-section side top>
-              <q-option-group
-      :options="options"
-      type="checkbox"
-      v-model="group"
-    />
-
-        </q-item-section> -->
-     
-
+      </q-card-section>      
     </q-card-section>
- 
-    <q-separator />
+    <div class="q-gutter-sm">
+      <q-checkbox  disable  val="lu" color="red" label="lu" v-model="dialunes"  size="xs" readonly/>         
+       <q-checkbox  val="ma" color="red" label="ma"  size="xs" v-model="diamartes" />   
+        <q-checkbox  val="mi" color="red" label="mi"   size="xs" v-model="diamiercoles"/>         
+       <q-checkbox  val="ju" color="red" label="ju"  size="xs" v-model="diajueves"/>  
+        <q-checkbox  val="vi" color="red" label="vi"  size="xs" v-model="diaviernes"/>  
+          <q-checkbox  val="sa" color="red" label="sa"  size="xs" v-model="diasabado"/> 
+    </div>
 
     <q-card-actions>
       <q-btn flat round icon="fas fa-edit" @click="UpdateProduct">
@@ -154,9 +150,36 @@ export default {
       type: String,
       default: "",
     },
+    lunes: {
+      type: Number,
+      default: 0,
+    },
+    martes: {
+            type: Number,
+      default: 0,
+    },
+    miercoles: {
+          type: Number,
+      default: 0,
+    },
+
+     jueves: {
+      type: Number,
+      default: 0,
+    },
+    viernes: {
+            type: Number,
+      default: 0,
+    },
+    sabado: {
+          type: Number,
+      default: 0,
+    },
+
   },
   emits: ['getproduct'],
   setup(props,{emit}) {
+      const red = ref(true)
      const $q = useQuasar()
      const files = ref(null)
      const uploadProgress = ref([])
@@ -173,10 +196,8 @@ export default {
     //  clearTimeout(uploading.value)
     }
 
-    function updateUploadSucces () {
-     
-       uploading.value=false
-     //  alert("termino")
+    function updateUploadSucces () {     
+       uploading.value=false    
        console.log(uploading.value)
       }
       const   showNotif = () =>{
@@ -218,6 +239,7 @@ export default {
     const url_base = computed(() => store.state.url_base)
 
     return {
+      red,
       files,
       url_base,
       cargar,
@@ -317,6 +339,24 @@ export default {
   },
    computed: {
     ...mapState(["url_base"]),
+    dialunes(){
+     return this.lunes==1?true:false
+    },
+    diamartes(){
+     return this.martes==1?true:false
+    },
+    diamiercoles(){
+     return this.miercoles==1?true:false
+    },
+    diajueves(){
+     return this.jueves==1?true:false
+    },
+    diaviernes(){
+     return this.viernes==1?true:false
+    },
+    diasabado(){
+     return this.sabado==1?true:false
+    }
   },
   methods: {
     UpdateProduct() {

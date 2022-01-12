@@ -115,7 +115,7 @@
         <div class="row">
           <div class="col-6">
             <q-item>
-              <q-input dense outlined class="full-width" type="number" label="Piso " v-model="modelUser.piso_especialidad" />
+              <q-input dense outlined class="full-width" type="number" max='9' label="Piso " v-model="modelUser.piso_especialidad" />
             </q-item>
           </div>
           <div class="col-6">
@@ -130,13 +130,14 @@
           </div>   
 
           <div class="col-6">
-            <q-item>
-              <!-- <p>{{fecha_hora}}</p> -->
-              <!-- <q-input v-model="fecha_pedido" filled type="date" format="DD/MM/YYYY"  /> -->
-                <!-- <p>{{diaEntrega}}</p> -->
-              <q-input bottom-slots  dense outlined  class="full-width" v-model="fecha_hora" >   
-                <q-popup-proxy @before-show="updateProxy" cover transition-show="scale" transition-hide="scale">
-                  <!-- :options="optionsFn"  despues poner esto we -->
+            <q-item>          
+              <q-input bottom-slots   dense outlined class="full-width"  v-model="fechaPeruana"  readonly >
+                <template v-slot:hint>
+                  <q-badge outline color="secondary" :label="nombreDia" />
+                  </template>
+              </q-input>
+              <!-- <q-input bottom-slots  dense outlined  class="full-width" v-model="fecha_hora"  readonly>   
+                <q-popup-proxy @before-show="updateProxy" cover transition-show="scale" transition-hide="scale">               
                   <q-date v-model="proxyDate" mask="DD-MM-YYYY"    >
                     <div class="row items-center justify-end q-gutter-sm">
                       <q-btn label="Cancel" color="primary" flat v-close-popup />
@@ -147,11 +148,10 @@
                   <template v-slot:hint>
                   <q-badge outline color="secondary" :label="diaEntrega" />
                   </template>
-              </q-input>      
+              </q-input>       -->
             </q-item>          
           </div>            
         </div>  
-
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancelar" v-close-popup />
           <q-btn flat label="Enviar Pedido" @click="StorePedido" />
@@ -187,9 +187,7 @@ export default {
     ),
   },
 
-  setup() {
-    
-  
+  setup() {     
     let itemRefs = [];
     const $q = useQuasar();
     const arrayvacio = ref([]);
@@ -208,7 +206,7 @@ export default {
         hora_pedido: "",
         estado_pedido: 0,
         cod_auxiliar: "",
-        especialidad: "especi",
+        especialidad: "",
         area: "",
         piso_especialidad: "",
         des_auxiliar: "",
@@ -228,6 +226,7 @@ export default {
       modelo,
       nombreDiados:'',
       nombreDia:'',
+      NombreDiaComprobar:'',
       time: ref(''),
       date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
       fecha_actual,
@@ -238,20 +237,15 @@ export default {
       todaysDate,   
       date1: ref('2019/02/01'),
       optionsFn (fecha_hora) {
-
         return fecha_hora >= '2022/01/15' && fecha_hora <= '2022/01/20'
       },
 
       updateProxy () {
         //proxyDate.value = date2.value
       },
-
       save () {
         fecha_hora.value = proxyDate.value
-      },
-
-
-    
+      },    
         
       Token:ref(''),
       modelUser,
@@ -343,6 +337,19 @@ export default {
       }, 0);
       return result;
     },
+    fechaPeruana(){
+        let fechas =this.date.split('/');
+        let anio =fechas[0];
+        let mes =fechas[1];       
+        let dia =fechas[2];       
+
+        let fecha_sql =anio+'-'+mes+'-'+dia;
+        this.modelUser.fecha_pedido=fecha_sql;
+        let fechape=dia+'-'+mes+'-'+anio;
+    //    this.modelUser.fecha_pedido=fecha_sql; 
+     ///   console.log(this.modelUser.fecha_pedido)
+        return  fechape;
+    },
     diaEntrega: function () {     
         let fechas =this.fecha_hora.split('-');
         let dia =fechas[0];
@@ -350,6 +357,7 @@ export default {
         let anio =fechas[2];
         let fecha_sql =anio+'-'+mes+'-'+dia;
         this.modelUser.fecha_pedido=fecha_sql; 
+        console.log(this.modelUser.fecha_pedido)
         return  moment(fecha_sql).format('dddd');
     },
   },
@@ -390,23 +398,29 @@ export default {
         .finally(() => {});
     },
     GetProduct(id_categoria, nombre) {
-     // this.index_categoria=this.itemCategoria.findIndex(x=>x.id_categoria=id_categoria);
-      this.nombrecategoria = nombre;
-      this.id_categoria=id_categoria;
-      console.log(id_categoria)
-      let tipo="dia";
-      let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
-     // let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
-      this.$axios
-        .get(this.url_base + url)
-        .then((response) => {
-          //console.log(response)
-          this.itemProducto = response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(() => {});
+      if (this.NombreDiaComprobar=='domingo') {
+          this.itemProducto = [];
+      }else{
+          this.nombrecategoria = nombre;
+          this.id_categoria=id_categoria;
+          console.log(id_categoria)
+          let tipo="dia";
+          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
+        // let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
+          this.$axios
+            .get(this.url_base + url)
+            .then((response) => {
+              //console.log(response)
+              this.itemProducto = response.data;
+            })
+            .catch(function (error) {
+              console.log(error);
+            })
+            .finally(() => {});
+      }
+      
+
+
     },
     GetProducto2(){
        //   this.nombrecategoria = nombre;
@@ -428,21 +442,32 @@ export default {
       this.GetProducto2();
     },
     ChangeDate(e){
-      let fecha =e;
-       console.log(e);
-      if (e==null) {
-       
+      // let fecha =e;
+      //  console.log(e);
+      // this.nombreDia=moment(new Date(e)).format('dddd');
+      // console.log(this.nombreDia);
+      // console.log(this.nombreDia);
+
+      if (e==null) {       
         this.date=this.fecha_actual
         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
         this.GetProducto2();
       }else{           
-        this.nombreDia=moment(new Date(fecha)).format('dddd');
+        this.nombreDia=moment(new Date(e)).format('dddd');
+        this.arrayvacio=[];
+        console.log(this.nombreDia);
         let tipo="dia";       
         this.date=e;            
-
-        if (this.nombreDia=="" || this.nombreDia ==null ) {
-          console.log("datos nulos");
+        if (this.nombreDia=='domingo') {
+           console.log('no entra a la peticion ');
+           this.NombreDiaComprobar='domingo'
+           this.itemProducto = [];
+        }else{
+          if (this.nombreDia=="" || this.nombreDia ==null ) {
+              this.id_categoria=9999999;
+              console.log("datos nulos");
         }else{      
+         this.NombreDiaComprobar='libre';
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
           this.$axios
           .get(this.url_base + url)
@@ -454,7 +479,8 @@ export default {
             console.log(error);
           })
           .finally(() => {});
-        }        
+        }  
+        }              
       }
     },
     Cancelar() {
@@ -524,39 +550,76 @@ export default {
       }
     },
     StorePedido() {
-        ///console.log(this.fecha_hora);
-        let fechas =this.fecha_hora.split('/');
-        let dia =fechas[0];
-        let mes =fechas[1];
-        let anio =fechas[2];
-        let fechaenviar =anio+'/'+mes+'/'+dia;
-     // this.modelUser.fecha_pedido =moment(new Date(fechaenviar)).format('YYYY/MM/DD');
-      this.modelUser.hora_pedido=this.timeactual;
-      let lista = [];
-      this.modelUser.TotalPedido = this.SumTotal;
-      //this.modelUser.hora_pedido = this.horaActual;
-      this.arrayvacio.forEach((element) => {
-        lista.push({
-          id_categoria: element.id_categoria,
-          id_producto: element.id_producto,
-          cantidad_pedido: element.cantidad_pedido,
-          descripcion: element.descripcion,
-          usastock: element.usastock,
+
+    this.modelUser.hora_pedido=this.timeactual;
+    let valifecha =this.modelUser.fecha_pedido;
+   
+     if ( this.modelUser.hora_pedido=="") {
+        this.TipoMensaje('hora');
+     }
+     else if(this.modelUser.fecha_pedido==""){
+       this.TipoMensaje('fecha');
+     }  
+     else if(this.modelUser.fecha_pedido=="undefined-undefined-"){
+         this.TipoMensaje('fecha');
+     }   
+     else if(this.modelUser.area==""){
+       this.TipoMensaje('area');
+     }  
+     else if(this.modelUser.piso_especialidad==""){
+       this.TipoMensaje('piso');
+     }  
+     else{
+        /// console.log(array)
+          let fechas =this.fecha_hora.split('/');
+          let dia =fechas[0];
+          let mes =fechas[1];
+          let anio =fechas[2];
+          let fechaenviar =anio+'/'+mes+'/'+dia;
+      // this.modelUser.fecha_pedido =moment(new Date(fechaenviar)).format('YYYY/MM/DD');
+       
+        let lista = [];
+        this.modelUser.TotalPedido = this.SumTotal;
+       
+        this.arrayvacio.forEach((element) => {
+          lista.push({
+            id_categoria: element.id_categoria,
+            id_producto: element.id_producto,
+            cantidad_pedido: element.cantidad_pedido,
+            descripcion: element.descripcion,
+            usastock: element.usastock,
+          });
         });
-      });
-      this.modelUser.detallePedido = lista;
-      let data = this.modelUser;
-      console.log(data);
-      
-      //envia al socket  php no borrar  
-      this.conn.send(JSON.stringify(data));
-      this.Enviado();
-      this.prompt = false;
-      this.Cancelar();
+        this.modelUser.detallePedido = lista;
+        let data = this.modelUser;
+        console.log(data);       
+        //envia al socket  php no borrar  
+        this.conn.send(JSON.stringify(data));
+        this.Enviado();
+        this.prompt = false;
+        this.Cancelar();
+     }
+        
 
     },
     VerHora(){
       console.log(this.horaActual)
+    },
+    TipoMensaje(campo){
+        this.$q
+          .dialog({
+            dark: true,
+            title: "Ups",
+            message: "Falta llenar el campo "+campo,
+          })
+          .onOk(() => {
+            // console.log('OK')
+          })
+          .onCancel(() => {
+            // console.log('Cancel')
+          })
+          .onDismiss(() => {  });
+          
     },
     MensajeEnviar() {
       this.fecha_pedido=this.fecha_hora;
@@ -581,9 +644,7 @@ export default {
       }
     },
     StorePedido2() {
-      let lista = [];
-
-    
+      let lista = [];    
       this.arrayvacio.forEach((element) => {
         lista.push({
           id_categoria: element.id_categoria,

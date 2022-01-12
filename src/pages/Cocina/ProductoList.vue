@@ -13,7 +13,8 @@
     <div v-if="TipoVista">
        <div class="row q-col-gutter-sm">
       <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemProducto" :key="item.id">
-        <card-producto :id_producto="item.id_producto" :nombre_producto="item.nombre_producto" :descripcion="item.descripcion" :precio_venta="item.precio_ventas" :nombre_categoria="item.nombre_categoria" :logo="item.logo" :stock="item.stock"  :usastock="item.usastock" :photo="item.imagen" v-on:UpdateProduct="UpdateProduct" @getproduct="getproduct"></card-producto>
+        <card-producto :id_producto="item.id_producto" :nombre_producto="item.nombre_producto" :descripcion="item.descripcion" :precio_venta="item.precio_ventas" :nombre_categoria="item.nombre_categoria" :logo="item.logo" :stock="item.stock"  :usastock="item.usastock" :photo="item.imagen" 
+          :lunes="item.dia_uno"  :martes="item.dia_dos"   :miercoles="item.dia_tres"  :jueves="item.dia_cuatro" :viernes="item.dia_cinco" :sabado="item.dia_seis" v-on:UpdateProduct="UpdateProduct" @getproduct="getproduct"></card-producto>
       </div>
     </div>
     </div>   
@@ -84,7 +85,7 @@ export default defineComponent({
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
-         // console.log(response);
+          console.log(response);
           this.itemProducto = response.data;
         })
         .catch(function (error) {
