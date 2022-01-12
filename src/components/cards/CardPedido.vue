@@ -3,7 +3,6 @@
      
     <q-item>      
       <!-- <q-item-section >
-
         <q-btn color="primary" label="Primary" />
         <div class="text-subtitle2 ">
         <q-item-label lines="1">{{tipoEnvio}} {{ diaEntrega }} - {{ fecha_pedido }}  / a las:    {{ hora_pedido }}</q-item-label>
@@ -11,33 +10,61 @@
         </q-item-label>
          <q-item-label lines="1">Dr(a). {{ des_auxiliar }}</q-item-label>
         <q-item-label lines="1">A. {{ area }} -  Piso :{{ piso_especialidad }}</q-item-label>
-        
-        </div>
+         </div>
       </q-item-section>   -->
-
          <q-item-section top>
           <q-item-label lines="1">
-             <q-btn color="red" label="Nuevo" />
+
+             <q-btn v-if="estado_pedido==0" color="red" label="Nuevo" @click="Editar(1)">
+                <q-spinner-rings       
+                size="1.5em"
+              />
+             </q-btn>
+               <q-btn  v-else-if="estado_pedido==1" style="background: goldenrod; color: white" label="En Proceso  " @click="Editar(2)">
+                   <q-spinner-gears                
+                    size="1.5em"
+                  />
+               </q-btn>
+
+             <q-btn   v-else-if="estado_pedido==2" color="secondary" label="Listo"  @click="Editar(3)">  <q-spinner-hourglass
+          color="primary"
+          size="1.5em"
+        /></q-btn>
+
+              <!-- <q-btn color="red" label="Nuevo" @click="Editar2()">
+                <q-spinner-rings       
+                size="1.5em"
+              />
+             </q-btn> -->
+
           </q-item-label>
+          <br>
             <q-item-label lines="1">
             <span class="text-weight-medium">{{ area }}-  Piso  {{ piso_especialidad }}</span>
             <!-- <span class="text-grey-8"> - GitHub repository</span> -->
           </q-item-label>
 
           <q-item-label caption lines="1">
-            @rstoenescu in #1: > The build system
+              <span class=" text-bold ">    {{ diaEntrega }} - {{ fecha_pedido }}  / a las:    {{ hora_pedido }}</span>
+           
           </q-item-label>
           <q-item-label lines="1" class=" text-weight-bold text-primary text-uppercase">
             <span class="cursor-pointer">{{ des_auxiliar }}</span>
           </q-item-label>
         </q-item-section>
-      <q-item-section >
+
+          <q-item-section top side>
+          <div class="text-grey-8 q-gutter-xs">
+            <q-btn class="gt-xs" size="12px" flat dense round icon="delete" @click="Editar(4)" />            
+          </div>
+        </q-item-section>
+      <!-- <q-item-section > -->
          <!-- <q-item-label lines="1">{{ des_auxiliar }}</q-item-label> -->
         <!-- <div class="text-subtitle2 text-white">{{ des_auxiliar }}</div>
         <div class="text-subtitle2 text-white">Area:  {{ area }}</div>
         <div class="text-subtitle2 text-white"> Piso : {{ piso_especialidad }}</div> -->         
-      </q-item-section>
-      <q-item-section side>
+      <!-- </q-item-section> -->
+      <!-- <q-item-section side>
         <q-btn-dropdown color="negative" size="sm">
           <q-list>
             <q-item clickable v-close-popup>
@@ -47,7 +74,7 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-      </q-item-section>
+      </q-item-section> -->
     </q-item>
     <q-separator></q-separator>
     <q-list>
@@ -144,6 +171,16 @@ export default {
 
   },
   methods: {
+    Editar2(step){
+      console.log(this.estado_pedido)
+      let estado = this.estado_pedido;
+      if (estado==0) {
+        
+      }
+      else if (estado==1) {
+        
+      }
+    },
     Editar(step) {      
     if (this.fecha_pedido==this.fecha_actual2) {
       if (step==4  && this.estado_pedido>0) {     
@@ -164,7 +201,10 @@ export default {
         
      }else{
         // console.log(this.cod_auxiliar);
-        const datas={
+        if (step==4) {
+            //poner aqui ocpcion de pregunta ?
+        }else{
+           const datas={
         estado_pedido:step,
         id_pedido:this.id_pedido,     
         lista:[],
@@ -172,6 +212,13 @@ export default {
         cod_auxiliar:this.cod_auxiliar
         }
         this.$emit("update", datas);
+          this.$q.notify({
+                  message: "Enviado estado",
+                  color: "accent",
+                  position: "top",
+                });
+        }
+       
        }  
     }else{
       this.$q.dialog({

@@ -46,6 +46,7 @@
              <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
                   v-model="date"     
+                  
                   @update:model-value="ChangeDate($event)"
                 />
               </q-btn-dropdown>  
@@ -298,9 +299,11 @@ export default {
       }else{           
         this.nombreDia=moment(new Date(e)).format('dddd');         
         let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+e;
+        console.log(url);
         this.$axios
         .get(this.url_base + url)
         .then((response) => {        
+          console.log(response);
           this.itemCocina = response.data;
         })
         .catch(function (error) {
