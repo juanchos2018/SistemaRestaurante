@@ -177,7 +177,7 @@ export default defineComponent({
                                 stock: stock,
                                 usastock: usastock,
                                 reservado: "",
-                                fecha_pedido: fecha_pedido,
+                                fecha_pedido: fecha_sql,
                                 fecha_peruana:nombreDia+'-'+ fechape,
                               };
                               arrayva.value.push(objeto);                               

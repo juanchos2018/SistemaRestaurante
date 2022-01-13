@@ -305,7 +305,7 @@ export default {
         
         let json = JSON.parse(e.data);
         console.log(json)
-        let cod_auxiliar=recibe.cod_auxiliar;     
+        //let cod_auxiliar=recibe.cod_auxiliar;     
         // if (es=="2" && cod_auxiliar==this.modelo.COD_AUXILIAR) {  
         //     this.check();
         //  }  
