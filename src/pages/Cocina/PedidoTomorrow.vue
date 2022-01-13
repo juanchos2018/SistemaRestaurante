@@ -1,52 +1,56 @@
 <template>
   <q-page class="q-pa-sm">
-    <q-btn
-      position="right"
-      class="float-right"
-      color="primary"
-      label="Nueva Categoria"
-  
-    />
-  
-   <q-card class="colorborde" v-for="item in itemTomorrow " :key="item.id_pedido">
-    <q-card-section class="text-center">
-     
-    </q-card-section>
-        <q-card-section >
-             <table-tomorrow   class="q-mt-lg"   :data="item.detalle">
-           
-             </table-tomorrow>        
-            
-        </q-card-section>   
-    
-  </q-card>
+    <label for="">Reservas</label>
+    <br /><br />
+    <div class="row q-col-gutter-sm">     
+      <div
+        class="col-md-6 col-lg-6 col-sm-12 col-xs-12"
+        v-for="(item, index) in itemTomorrow"
+        :key="item.id_pedido"
+      >
+        <q-card class="colorborde">
+          <q-item>
+            <q-item-section top>
+              <q-item-label lines="1">
+                <span
+                  class="
+                    cursor-pointer
+                    text-body2 text-weight-bold text-primary text-uppercase
+                  "
+                >
+                  {{ nameDia[index] }}</span
+                >
+                <span class="text-weight-medium">
+                  - {{ formarPeru[index] }}</span
+                >
+              </q-item-label>
+            </q-item-section>
 
-
- 
-
-   
+            <q-item-section top side>
+              <div class="text-grey-8 q-gutter-xs">
+                <q-btn size="12px" flat dense round icon="more_vert" />
+              </div>
+            </q-item-section>
+          </q-item>
+  <q-separator></q-separator>
+          <q-card-section>
+            <table-tomorrow class="q-mt-lg" :data="item.detalle">
+            </table-tomorrow>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
   </q-page>
 </template>
 
 
 
 <script>
-import { defineComponent, defineAsyncComponent, ref, reactive } from "vue";
+import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { mapState } from "vuex";
 
-const logos = [
-  "fas fa-cocktail",
-  "fas fa-blender-phone",
-  "fas fa-cookie",
-  "fas fa-mug-hot",
-  "fas fa-hockey-puck",
-  "fas fa-hamburger",
-  "fas fa-pizza-slice",
-  "fas fa-hotdog",
-  "fas fa-apple-alt",
-  "fas fa-cheese",
-  "room_service"
-];
+import moment from "moment";
+import "moment/locale/es";
 
 export default defineComponent({
   name: "Tables",
@@ -56,20 +60,13 @@ export default defineComponent({
     ),
   },
   setup() {
-    const modelo = ref({
-      id_categoria: 0,
-      nombre_categoria: "",
-      estado: 0,
-      logo: "fas fa-cocktail",
-    });
-
     let visiblemodal = ref(false);
+    let fecha_actual = ref(moment(new Date()).format("YYYY/MM/DD"));
     return {
       visiblemodal,
       itemTomorrow: ref([]),
       Estado: ref(true),
-      modelo,
-      logos,
+      fecha_actual,
     };
   },
   created() {
@@ -82,6 +79,29 @@ export default defineComponent({
   },
   computed: {
     ...mapState(["url_base"]),
+    nombreDia: function () {
+      return moment(new Date(this.fecha_actual)).format("dddd");
+    },
+    nameDia: function () {
+      return this.itemTomorrow.map(function (item) {
+        return moment(new Date(item.fecha_pedido)).format("dddd");
+      });
+    },
+    formarPeru() {
+      //2022-01-18
+      //  let fechas =this.fecha_hora.split('-');
+      //   let dia =fechas[0];
+      //   let mes =fechas[1];
+      //   let anio =fechas[2];
+      //   let fecha_sql =anio+'-'+mes+'-'+dia;
+      //   this.modelUser.fecha_pedido=fecha_sql;
+
+      //   console.log(this.modelUser.fecha_pedido)
+
+      return this.itemTomorrow.map(function (item) {
+        return moment(new Date(item.fecha_pedido)).format("DD-MM-YYYY");
+      });
+    },
   },
   mounted() {
     this.Get();
@@ -112,47 +132,14 @@ export default defineComponent({
     EditarLogo(item) {
       this.modelo.logo = item;
     },
-    Store() {
-      let me = this;
-      // me.modelo.nombre_categoria=nombre;
-      let url = "/Controller/CategoriaController.php";
-      me.modelo.estado = me.Estado==true?1:0;
-      const data = me.modelo;
-      this.$axios({
-        method: "POST",
-        url: me.url_base + url,
-        data: data,
-      })
-        .then(function (response) {
-          // console.log(response);
-          let result = response.data.resultado;
-          if (result == "Registrado") {
-            me.Mensaje();
-            me.Get();
-            me.modelo.nombre_categoria = "";
-          } else {
-            me.Existe();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    Mensaje() {
-      this.$q.notify({
-        message: "Registrado",
-        color: "accent",
-        position: "top",
-      });
-    },
+
     Get() {
-      let tipo="tomorrow";
-      let url = "/Controller/PedidoController.php?tipo="+tipo;
+      let tipo = "tomorrow";
+      let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
           this.itemTomorrow = response.data;
-         
         })
         .catch(function (error) {
           console.log(error);
@@ -181,4 +168,9 @@ export default defineComponent({
 </script>
 
 <style>
+.colorborde {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
 </style>

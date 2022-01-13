@@ -2,9 +2,24 @@
   <q-card  class="my-card colorborde">  
      <q-item>
       <q-item-section>
-        <div class="text-subtitle2">{{ des_auxiliar }}</div>
-        <div class="text-subtitle2">Area:  {{ area }}</div>
-        <div class="text-subtitle2"> Piso : {{ piso_especialidad }}</div>
+        <q-item-label lines="1">
+          <span class="text-weight-medium"
+            >{{ area }}- Piso {{ piso_especialidad }}</span          >
+       
+        </q-item-label>
+
+        <q-item-label
+          lines="1"
+          class="text-weight-bold text-primary text-uppercase"
+        >
+          <span class="cursor-pointer">{{ des_auxiliar }}</span>
+        </q-item-label>
+        <q-item-label caption lines="1">
+          <span class="text-bold">
+            {{ diaEntrega }} - {{ fecha_pedido }} / a las:
+            {{ hora_pedido }}</span
+          >
+        </q-item-label>
       </q-item-section>
         <q-item-section side top class=" text-green-9 text-bold">
          ENTREGADO
@@ -23,10 +38,7 @@
            <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
         </q-item-section>
 
-        <q-item-section side top>
-          <!-- <q-item-label caption>5 min ago</q-item-label> -->
-          <!-- <q-icon name="star" color="yellow" /> -->
-          <!-- @click="estrellas(item.id_pedido_detalle,item.id_producto)" -->
+        <q-item-section side top>       
           <q-rating
             size="18px"
             v-model="item.estrellas"
@@ -44,8 +56,10 @@
   </q-card>
 </template>
 <script>
+import moment from "moment";
+import "moment/locale/es";
 export default {
-  props: ["id_pedido","des_auxiliar", "piso_especialidad","area", "detalle","color","estado","totalpedido"],
+  props: ["id_pedido","des_auxiliar", "piso_especialidad","area", "detalle","color","estado","totalpedido", "hora_pedido",  "fecha_pedido"],
   data(){
     return{   
       step: 0,
@@ -57,7 +71,24 @@ export default {
   },
   methods: {
   
-  }
+  },
+   computed: {
+    diaEntrega: function () {
+      let fechas = this.fecha_pedido.split("-");
+      let dia = fechas[0];
+      let mes = fechas[1];
+      let anio = fechas[2];
+      let fecha_sql = anio + "-" + mes + "-" + dia;
+      let nombre_dia_hoy = moment(new Date(this.fecha_actual)).format("dddd");
+      let nombre_dia_envio = moment(fecha_sql).format("dddd");
+      if (nombre_dia_hoy == nombre_dia_envio) {
+        this.tipoEnvio = "Hoy ";
+      } else {
+        this.tipoEnvio = "Para ";
+      }
+      return moment(fecha_sql).format("dddd");
+    },
+  },
 };
 </script>
 

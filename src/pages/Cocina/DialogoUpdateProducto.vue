@@ -170,14 +170,12 @@ export default {
       let url ="/Controller/ProductoController.php?tipo=editpro";   
       me.modelo.estado=me.Estado==true?1:0;   
       me.modelo.usastock = me.Stock==true?1:0;
-
        me.modelo.dia_uno=me.dia_uno==true?1:0;
        me.modelo.dia_dos=me.dia_dos==true?1:0; 
        me.modelo.dia_tres=me.dia_tres==true?1:0; 
        me.modelo.dia_cuatro=me.dia_cuatro==true?1:0; 
        me.modelo.dia_cinco=me.dia_cinco==true?1:0; 
        me.modelo.dia_seis=me.dia_seis==true?1:0;   
-
 
       let data = me.modelo;
       this.$axios({

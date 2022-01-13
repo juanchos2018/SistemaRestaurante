@@ -304,7 +304,14 @@ export default {
          console.log("conectado WebSocket");
     };
     this.conn.onmessage = (e) => {
-       this.rcv(e.data);      
+        this.rcv(e.data); 
+        let json = JSON.parse(e.data);
+        if (json.registrado == "si") {
+               this.Enviado();
+        }else{
+          this.Error();
+        } 
+
     };    
   },
   computed: {
@@ -370,7 +377,24 @@ export default {
         console.log(this.carrito);
     },
     GetCategoria() {
-      let url = "/Controller/CategoriaController.php";
+
+      let tipo="lista";
+      // let url = "/Controller/CategoriaController.php?tipo="+tipo;
+      // this.$axios
+      //   .get(this.url_base + url)
+      //   .then((response) => {
+      //     this.itemCategoria = response.data;
+      //     // console.log(response.data)
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   })
+      //   .finally(() => {});
+
+
+
+
+      let url = "/Controller/CategoriaController.php?tipo="+tipo;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
@@ -403,7 +427,7 @@ export default {
       }else{
           this.nombrecategoria = nombre;
           this.id_categoria=id_categoria;
-          console.log(id_categoria)
+         // console.log(id_categoria)
           let tipo="dia";
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
         // let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
@@ -417,10 +441,7 @@ export default {
               console.log(error);
             })
             .finally(() => {});
-      }
-      
-
-
+      }     
     },
     GetProducto2(){
        //   this.nombrecategoria = nombre;
@@ -465,7 +486,7 @@ export default {
         }else{
           if (this.nombreDia=="" || this.nombreDia ==null ) {
               this.id_categoria=9999999;
-              console.log("datos nulos");
+             // console.log("datos nulos");
         }else{      
          this.NombreDiaComprobar='libre';
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
@@ -473,7 +494,7 @@ export default {
           .get(this.url_base + url)
           .then((response) => {
             this.itemProducto = response.data;
-            console.log(response)
+          //  console.log(response)
           })
           .catch(function (error) {
             console.log(error);
@@ -595,7 +616,7 @@ export default {
         console.log(data);       
         //envia al socket  php no borrar  
         this.conn.send(JSON.stringify(data));
-        this.Enviado();
+     
         this.prompt = false;
         this.Cancelar();
      }
@@ -692,6 +713,23 @@ export default {
           // console.log('I am triggered on both OK and Cancel')
         });
     },
+    Error(){
+       this.$q
+        .dialog({
+          dark: true,
+          title: "Perdon ",
+          message: "tu  pedido no se registro algun error con el servidor llama a (Central de datos)",
+        })
+        .onOk(() => {
+          // console.log('OK')
+        })
+        .onCancel(() => {
+          // console.log('Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    },
     Mucho(){
        this.$q
         .dialog({
@@ -722,7 +760,7 @@ export default {
             data:data,              
           })
             .then(function(response) {     
-              console.log(response);
+            //  console.log(response);
               me.prompt = true;
               me.Token=response.data.token;
         })

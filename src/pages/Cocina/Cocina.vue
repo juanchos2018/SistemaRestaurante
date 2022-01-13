@@ -32,11 +32,12 @@
         >
           <template v-slot:top-right>          
             <div>                   
-             <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
+             <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"   class="float-right"  >
                <q-date
                   v-model="date"     
-                      :events="events"
-                       event-color="red"
+                  :events="events"
+                  event-color="red"
+                       mask="DD-MM-YYYY" 
                   @update:model-value="ChangeDate($event)"
                 />
               </q-btn-dropdown>  
@@ -71,6 +72,8 @@
           <q-space />
           <div class="text-h5 text-white text-bold">S/ {{ SumTotal }}</div>
         </q-toolbar>
+
+        
         <div class="row q-col-gutter-sm">
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
@@ -86,6 +89,8 @@
               :totalpedido="item.totalpedido"
               :detalle="item.detalle"
               :estado="item.estado_pedido"
+              :fecha_pedido="item.fecha_pedido"
+              :hora_pedido="item.hora_pedido"
             ></card-terminado>
           </div>
         </div>
@@ -168,7 +173,7 @@ export default {
       otherValue,
       nombreDia:'',    
       events: [],
-      date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
+      date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       fecha_actual,
       play,
       con: null,
@@ -285,8 +290,7 @@ export default {
       let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
         .get(this.url_base + url)
-        .then((response) => {      
-        //  console.log(response);
+        .then((response) => {    
           this.events = response.data;
         })
         .catch(function (error) {
@@ -295,25 +299,39 @@ export default {
         .finally(() => {});
     },
     ChangeDate(e){
-      let tipo = "nuevo";   
-      if (e==null) {       
-       this.date=this.fecha_actual
-       this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-       this.get();
+       let tipo = "nuevo";   
+      if (e==null) {  
+        // YYYY/MM/DD
+          let array =this.fecha_actual.split('/');
+          let dia =array[2];
+          let mes =array[1];
+          let anio=array[0];
+          let fecha1 =dia+'-'+mes+'-'+anio;
+          let fechaSql=anio+'-'+mes+'-'+dia;
+        //DD-MM-YYYY
+        this.date=fecha1      
+        this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
+        this.get();
       }else{           
-        this.nombreDia=moment(new Date(e)).format('dddd');         
-        let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+e;
-      //  console.log(url);
-        this.$axios
-        .get(this.url_base + url)
-        .then((response) => {        
-          ///console.log(response);
-          this.itemCocina = response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(() => {});                 
+          let array =e.split('-');
+          let dia =array[0];
+          let mes =array[1];
+          let anio=array[2];
+          let fecha1 =anio+'/'+mes+'/'+dia;
+          let fechaSql=anio+'-'+mes+'-'+dia;
+
+          this.nombreDia =moment(new Date(fecha1)).format('dddd');     
+          let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+fechaSql;
+          this.$axios
+          .get(this.url_base + url)
+          .then((response) => {        
+            ///console.log(response);
+            this.itemCocina = response.data;
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .finally(() => {});  
       }
     },
 

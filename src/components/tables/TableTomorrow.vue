@@ -1,42 +1,11 @@
 <template>
-  <q-card>
-    <q-card-section class="q-pa-none">
-   
-      <q-table
-        title="Reservas"
+      <q-table      
         :rows="data"
         :columns="columns"
-        row-key="name"
-        :filter="filter"
+        row-key="name"       
         class="colorborde"
-      >
-        <template v-slot:top-right>
-          <q-input
-            v-if="show_filter"
-            filled
-            borderless
-            dense
-            debounce="300"
-            v-model="filter"
-            placeholder="Buscar"
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-
-          <q-btn
-            class="q-ml-sm"
-            icon="filter_list"
-            @click="show_filter = !show_filter"
-            flat
-          />
-        </template>
-       
-      
+      >           
       </q-table>
-    </q-card-section>
-  </q-card>
 </template>
 
 <script>
@@ -58,7 +27,7 @@ const columns = [
     sortable: true,
   },
  
-  { name: "cantidad_pedido", label: "Cantida Pedido", field: "cantidad_pedido", sortable: true },
+  { name: "cantidad_pedido", label: "Cantidad Pedido", field: "cantidad_pedido", sortable: true },
  
   
 ];

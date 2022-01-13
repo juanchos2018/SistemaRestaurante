@@ -72,7 +72,8 @@
 import { inject, defineComponent } from "vue";
 import { useQuasar } from 'quasar'
 import { mapState ,useStore} from "vuex";
-
+import moment from "moment";
+import "moment/locale/es";
 
 
 export default defineComponent({
@@ -137,8 +138,7 @@ export default defineComponent({
         //       color: "accent",
         //       position: "top",
         //     });
-        // }       
-      
+        // }            
 
         if (usastock==1) {
             if (stock==0) {
@@ -167,7 +167,8 @@ export default defineComponent({
                         total: parseFloat(preci) ,
                         descripcion:'',
                         stock:stock,
-                        usastock:usastock
+                        usastock:usastock,
+                        reservado:''
                       };     
                       arrayva.value.push(objeto); 
                   }
@@ -197,7 +198,8 @@ export default defineComponent({
                         total: parseFloat(preci) ,
                         descripcion:'',
                         stock:stock,
-                        usastock:usastock
+                        usastock:usastock,
+                        reservado:''
                       };     
                       arrayva.value.push(objeto); 
               }

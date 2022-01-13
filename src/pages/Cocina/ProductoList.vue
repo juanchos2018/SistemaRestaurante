@@ -1,14 +1,18 @@
 <template>
   <q-page class="q-pa-sm">
+
+    <label for="" class="text-h6">Producto de la Categoria  {{modelo.nombre_categoria}}</label>
+<br />
+    <br />
      <q-btn-group push>
         <q-btn push icon="fas fa-id-card" @click="TipoVista=true" />
-      <q-btn push  icon="fas fa-table"  @click="TipoVista=false"/>      
+        <q-btn push  icon="fas fa-table"  @click="TipoVista=false"/>      
     </q-btn-group>
     
     <q-btn position="right" class="float-right" color="primary" label="Nuevo Producto" @click="AddProducto" />
     <br />
     <br />
-    <br />
+ 
 
     <div v-if="TipoVista">
        <div class="row q-col-gutter-sm">
@@ -74,6 +78,7 @@ export default defineComponent({
     //console.log("iid es :" + this.id_categoria);
       this.modelo.id_categoria = parseInt(this.id_categoria);
       this.Get(this.modelo.id_categoria);
+      this.InfoCategoria();
   },
   methods: {
     AddProducto() {
@@ -85,7 +90,7 @@ export default defineComponent({
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
-          console.log(response);
+         // console.log(response);
           this.itemProducto = response.data;
         })
         .catch(function (error) {
@@ -101,6 +106,20 @@ export default defineComponent({
         .then((response) => {
           //console.log(response);
           this.itemProducto = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
+    InfoCategoria(){
+        let tipo="view";
+        let url = "/Controller/CategoriaController.php?tipo="+tipo+"&id_categoria="+this.id_categoria;
+       this.$axios
+        .get(this.url_base + url)
+        .then((response) => {
+          this.modelo = response.data;
+          // console.log(response.data)
         })
         .catch(function (error) {
           console.log(error);

@@ -7,10 +7,6 @@
       label="Nueva Categoria"
       @click="AddCategoria"
     />
-    <!-- <div v-for="item in  logos">
-        <q-icon  :name="item" />
-      </div> -->
-
     <br />
     <br />
 
@@ -123,11 +119,9 @@ export default defineComponent({
       logos,
     };
   },
-  created() {
-    //  let existe =  this.$q.sessionStorage.isEmpty()
-    let existe2 = this.$q.sessionStorage.has("Qsesion");
-    //console.log(existe2);
-    if (!existe2) {
+  created() {    
+    let existe2 = this.$q.sessionStorage.has("Qsesion");    
+    if (existe2==false) {
       this.$router.push({ path: "/" });
     }
   },
@@ -197,7 +191,8 @@ export default defineComponent({
       });
     },
     Get() {
-      let url = "/Controller/CategoriaController.php";
+      let tipo="lista";
+      let url = "/Controller/CategoriaController.php?tipo="+tipo;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {

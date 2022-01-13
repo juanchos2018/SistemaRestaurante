@@ -1,17 +1,20 @@
 <template>
   <q-card>
     <q-card-section>
-      <div class="text-h6 ">Categoria</div>
+      <div class="text-h6 ">Categorias</div>
     </q-card-section>
     <q-separator />
     <q-card-section class="q-pa-none">
       <q-table
         grid
+        :card-container-class="cardContainerClass"
         :rows="itemCategoria"
         :columns="columns"
+        title=""
         v-model:pagination="pagination"
-           hide-header
-        :rows-per-page-options="rowsPerPageOptions"
+        row-key="name"
+        hide-header
+       :rows-per-page-options="rowsPerPageOptions"
       >
         <template v-slot:item="props">
           <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-3">
@@ -123,12 +126,12 @@ export default defineComponent({
   components: { CardCategoria },
   props: ["itemCategoria"],
   setup() {
-    const $qu = useQuasar();
+    const $q = useQuasar();
     function getItemsPerPage() {
-      if ($qu.screen.lt.sm) {
+      if ($q.screen.lt.sm) {
         return 3;
       }
-      if ($qu.screen.lt.md) {
+      if ($q.screen.lt.md) {
         return 6;
       }
       return 12;
@@ -142,7 +145,7 @@ export default defineComponent({
     const figura=ref('')
   
     return {
-      $qu,
+   
       logos,
       columns,
       figura,   
@@ -155,8 +158,13 @@ export default defineComponent({
       componentKey: 0,
       modelo,
      //  modelo: { id_categoria: 0, nombre_categoria: "",logo:'' },
+      cardContainerClass: computed(() => {
+        return $q.screen.gt.xs
+          ? "grid-masonry grid-masonry--" + ($q.screen.gt.sm ? "3" : "2")
+          : null;
+      }),
       rowsPerPageOptions: computed(() => {
-        return $qu.screen.gt.xs ? ($qu.screen.gt.sm ? [3, 6, 9] : [3, 6]) : [3];
+        return $q.screen.gt.xs ? ($q.screen.gt.sm ? [3, 6, 9] : [3, 6]) : [3];
       }),
     };
   },

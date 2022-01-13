@@ -82,20 +82,7 @@
 
                 <q-item-section> Categoria </q-item-section>
               </q-item>
-              <q-item
-                active-class="tab-active"
-                to="/Cocina/Historial"
-                exact
-                class="q-ma-sm navigation-item"
-                clickable
-                v-ripple
-              >
-                <q-item-section avatar>
-                  <q-icon name="dashboard" />
-                </q-item-section>
-
-                <q-item-section> Historial </q-item-section>
-              </q-item>
+             
               <q-item
                 active-class="tab-active"
                 to="/Cocina/Tomorrow"
@@ -109,6 +96,20 @@
                 </q-item-section>
 
                 <q-item-section> Reserva </q-item-section>
+              </q-item>
+               <q-item
+                active-class="tab-active"
+                to="/Cocina/Historial"
+                exact
+                class="q-ma-sm navigation-item"
+                clickable
+                v-ripple
+              >
+                <q-item-section avatar>
+                  <q-icon name="dashboard" />
+                </q-item-section>
+
+                <q-item-section> Historial </q-item-section>
               </q-item>
             </q-list>
           </q-scroll-area>

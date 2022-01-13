@@ -7,8 +7,12 @@
           {{ hora_pedido }}
         </q-item-label>
       </q-item-section>
-        <q-item-section side top>
-             ENTREGADO
+        <q-item-section side top>            
+           <span class="text-weight-medium" v-if="estado_pedido==0"> NUEVO</span>
+           <span class="text-weight-medium" v-else-if="estado_pedido==1"> PROCESO</span>
+           <span class="text-weight-medium" v-else-if="estado_pedido==2"> LISTO</span>
+           <span class="text-weight-medium" v-else-if="estado_pedido==3"> ENTREGADO</span>
+           <span class="text-weight-medium" v-else-if="estado_pedido==4"> ANULADO</span>
         </q-item-section>
     </q-item>
     <q-list bordered padding>
@@ -64,7 +68,17 @@ export default {
   },
   computed: {
     nombreDia: function () {      
-         return moment(new Date(this.fecha_pedido)).format("dddd");
+          
+        //18-01-2022  
+        let array = this.fecha_pedido.split("-");
+        let dia = array[0];
+        let mes = array[1];
+        let anio = array[2];
+
+        let fecha1 = anio + "/" + mes + "/" + dia;
+        let fechaSql = anio + "-" + mes + "-" + dia;
+      //  this.nombreDia = moment(new Date(fecha1)).format("dddd");
+        return moment(new Date(fecha1)).format("dddd");
     },
   },
   methods: {

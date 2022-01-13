@@ -64,8 +64,7 @@ export default {
   methods: {
      Detalle(){   
       const id_categoria = parseInt(this.id_categoria);
-      this.$router.push({name:"/ProductoList",params:{ id_categoria} });
-    //   this.$router.push({path:'/Sistema/Cafeteria'})
+      this.$router.push({name:"/ProductoList",params:{ id_categoria} });    
      },
      Editar(id,nombre_categoria,logo,estado){ 
        let datos ={
@@ -73,7 +72,6 @@ export default {
          nombre_categoria:nombre_categoria,
          logo:logo,
          estado:estado
-
        }
        this.$emit("editar",datos)
      }    

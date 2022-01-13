@@ -121,9 +121,8 @@ export default defineComponent({
        console.log("WebSocket Mi : " + e);
      };
      this.conn.onmessage = (e) => {
-        this.rcv(e.data);
-         let recibe =   JSON.parse(e.data); 
-      //  console.log(e.data);
+         this.rcv(e.data);
+         let recibe =   JSON.parse(e.data);     
          let es =  recibe.estado_pedido;
          let cod_auxiliar=recibe.cod_auxiliar;         
          if (es=="2" && cod_auxiliar==this.modelo.COD_AUXILIAR) {  

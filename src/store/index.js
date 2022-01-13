@@ -8,10 +8,10 @@ export default function () {
   const Store = new Vuex.Store({
     namespaced: true,
     name: "global",
-      state: {  url_base: 'http://192.168.3.219/ApiCafeteria',
+      state: {  url_base: 'http://192.168.1.209/ApiCafeteria',
       DatosUsuario:{},
       url_izipay:'http://192.168.1.209/pasarela',
-      url_socket:'ws://192.168.3.219:8090',
+      url_socket:'ws://192.168.1.209:8090',
       carrito:[] ,
       tipoMensaje:'',
       systemNotify: {
