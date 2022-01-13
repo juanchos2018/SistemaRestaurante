@@ -5,17 +5,11 @@
         <div class="q-pa-sm no-margin no-padding">    
           <q-bar style="min-width: 250px;" class="bg-teal text-white rounded-borders">
             <div class="cursor-pointer non-selectable">
-              Mi Pedido
-               <!-- {{horaActual}} -->
+              Mi Pedido           
             </div>
             <q-space />
             <label for="" style="font-size: 20px">S/ {{  parseFloat(SumTotal).toFixed(2) }}</label>
-          </q-bar>
-          <!-- <q-item-label header>Mi Pedido</q-item-label> -->
-          <!-- <q-item-section header>
-            <q-item-label >Mi Pedido</q-item-label>
-            <q-item-label >5 min ago</q-item-label>
-          </q-item-section> -->
+          </q-bar>         
           <br>
           <q-list class="no-margin no-padding" separator v-for="item in getDatas" :key="item.id_producto">
             <q-item>
@@ -24,10 +18,13 @@
                   <span class="text-weight-medium">{{ item.producto }}</span>
                 </q-item-label>
                  <q-item-label v-if="item.descripcion==''" caption lines="1">
-                 Click Aqui para tu detalle
+                   Click Aqui para tu detalle
                 </q-item-label>
                 <q-item-label v-else caption lines="1">
                   {{ item.descripcion }}
+                </q-item-label>
+                 <q-item-label  caption lines="1">
+                    {{ item.fecha_peruana }}
                 </q-item-label>
                 <q-popup-edit v-model="item.descripcion" :title="item.producto" auto-save v-slot="scope">
                   <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
@@ -69,6 +66,7 @@
              <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
                   v-model="date"     
+                  mask="DD-MM-YYYY" 
                   @update:model-value="ChangeDate($event)"
                 />
               </q-btn-dropdown>  
@@ -81,13 +79,11 @@
               <h5>SIN PRODUCTOS</h5>
             </div>
             <div class="col-md-3 col-lg-3 col-sm-6 col-xs-6" v-for="item in itemProducto" :key="item.id_producto">
-              <card-product :data="item"></card-product>
+              <card-product :data="item"  ></card-product>
             </div>
           </div>
           <q-page-sticky position="top" expand class="bg-dark text-white">
-            <q-toolbar>
-              <!-- <q-btn flat round dense icon="map" />
-              <q-toolbar-title>{{ nombrecategoria }}</q-toolbar-title> -->  
+            <q-toolbar>            
                <q-tabs                   
                   inline-label
                   shrink
@@ -219,7 +215,7 @@ export default {
         const proxyDate = ref(moment(new Date()).local().format("DD-MM-YYYY"))
         const fecha_hora=ref(moment(new Date()).local().format("DD-MM-YYYY"));
         let  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
-        let  fecha_actual2= ref(moment(new Date()).format("YYYY/MM/DD"));
+        let  fecha_sql= ref(moment(new Date()).format("YYYY-MM-DD"));
     return {
       proxyDate,
       date2,
@@ -228,8 +224,9 @@ export default {
       nombreDia:'',
       NombreDiaComprobar:'',
       time: ref(''),
-      date: ref(moment(new Date()).local().format("YYYY/MM/DD")), 
+      date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       fecha_actual,
+      fecha_sql,
 
       timeactual:ref(moment.utc().add(7,'hours').format('hh:mm:ss') ),     
       datehoy : Date.now(),     
@@ -305,11 +302,17 @@ export default {
     };
     this.conn.onmessage = (e) => {
         this.rcv(e.data); 
+        
         let json = JSON.parse(e.data);
+        console.log(json)
+        let cod_auxiliar=recibe.cod_auxiliar;     
+        // if (es=="2" && cod_auxiliar==this.modelo.COD_AUXILIAR) {  
+        //     this.check();
+        //  }  
         if (json.registrado == "si") {
-               this.Enviado();
+             //  this.Enviado();
         }else{
-          this.Error();
+          /// this.Error();
         } 
 
     };    
@@ -345,10 +348,11 @@ export default {
       return result;
     },
     fechaPeruana(){
-        let fechas =this.date.split('/');
-        let anio =fechas[0];
+      // date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
+        let fechas =this.date.split('-');
+        let anio =fechas[2];
         let mes =fechas[1];       
-        let dia =fechas[2];       
+        let dia =fechas[0];       
 
         let fecha_sql =anio+'-'+mes+'-'+dia;
         this.modelUser.fecha_pedido=fecha_sql;
@@ -364,9 +368,12 @@ export default {
         let anio =fechas[2];
         let fecha_sql =anio+'-'+mes+'-'+dia;
         this.modelUser.fecha_pedido=fecha_sql; 
-        console.log(this.modelUser.fecha_pedido)
+     ///   console.log(this.modelUser.fecha_pedido)
         return  moment(fecha_sql).format('dddd');
     },
+    fechaSql(){
+
+    }
   },
   methods: {
     onItemClick(){
@@ -377,7 +384,6 @@ export default {
         console.log(this.carrito);
     },
     GetCategoria() {
-
       let tipo="lista";
       // let url = "/Controller/CategoriaController.php?tipo="+tipo;
       // this.$axios
@@ -390,9 +396,6 @@ export default {
       //     console.log(error);
       //   })
       //   .finally(() => {});
-
-
-
 
       let url = "/Controller/CategoriaController.php?tipo="+tipo;
       this.$axios
@@ -411,8 +414,7 @@ export default {
               }              
            });
 
-          this.GetProduct(this.itemCategoria[0].id_categoria);
-        //  this.index_categoria=0;
+          this.GetProduct(this.itemCategoria[0].id_categoria);      
           this.nombrecategoria = this.itemCategoria[0].nombre_categoria;
           this.id_categoria=this.itemCategoria[0].id_categoria;
         })
@@ -424,12 +426,14 @@ export default {
     GetProduct(id_categoria, nombre) {
       if (this.NombreDiaComprobar=='domingo') {
           this.itemProducto = [];
+
       }else{
+         // this.fecha_sql= moment(new Date()).format("YYYY-MM-DD");
           this.nombrecategoria = nombre;
           this.id_categoria=id_categoria;
          // console.log(id_categoria)
           let tipo="dia";
-          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
+          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
         // let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
           this.$axios
             .get(this.url_base + url)
@@ -448,7 +452,7 @@ export default {
     //  let tipo="categoria";
     //  let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + this.id_categoria;
       let tipo="dia";
-      let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
+      let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
@@ -468,28 +472,49 @@ export default {
       // this.nombreDia=moment(new Date(e)).format('dddd');
       // console.log(this.nombreDia);
       // console.log(this.nombreDia);
-
       if (e==null) {       
-        this.date=this.fecha_actual
-        this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-        this.GetProducto2();
-      }else{           
-        this.nombreDia=moment(new Date(e)).format('dddd');
-        this.arrayvacio=[];
-        console.log(this.nombreDia);
-        let tipo="dia";       
-        this.date=e;            
+       /// this.date=this.fecha_actual
+      //  this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
+          let array =this.fecha_actual.split('/');
+          let dia =array[2];
+          let mes =array[1];
+          let anio=array[0];
+          let fecha1 =dia+'-'+mes+'-'+anio;
+          let fechaSql=anio+'-'+mes+'-'+dia;
+          this.fecha_sql=fechaSql;
+        //DD-MM-YYYY
+     //   this.fecha_sql=
+         this.date=fecha1;      
+         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');     
+      
+         this.GetProducto2();
+      }else{    
+          // this.nombreDia=moment(new Date(e)).format('dddd');
+          // this.arrayvacio=[];
+          // console.log(this.nombreDia);
+          let array =e.split('-');
+          let dia =array[0];
+          let mes =array[1];
+          let anio=array[2];
+          let fecha1 =anio+'/'+mes+'/'+dia;
+          let fechaSql=anio+'-'+mes+'-'+dia;
+          this.fecha_sql=fechaSql;
+          this.nombreDia =moment(new Date(fecha1)).format('dddd'); 
+
+        let tipo="dia";      
+                 
         if (this.nombreDia=='domingo') {
            console.log('no entra a la peticion ');
            this.NombreDiaComprobar='domingo'
            this.itemProducto = [];
         }else{
           if (this.nombreDia=="" || this.nombreDia ==null ) {
-              this.id_categoria=9999999;
+             /// this.id_categoria=9999999;
              // console.log("datos nulos");
         }else{      
-         this.NombreDiaComprobar='libre';
-          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria;
+          this.NombreDiaComprobar='libre';
+
+          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+ this.fecha_sql;
           this.$axios
           .get(this.url_base + url)
           .then((response) => {
@@ -609,14 +634,15 @@ export default {
             cantidad_pedido: element.cantidad_pedido,
             descripcion: element.descripcion,
             usastock: element.usastock,
+           fecha_pedido: element.fecha_pedido,
           });
         });
         this.modelUser.detallePedido = lista;
         let data = this.modelUser;
-        console.log(data);       
+        //console.log(data);       
         //envia al socket  php no borrar  
         this.conn.send(JSON.stringify(data));
-     
+        this.Enviado();
         this.prompt = false;
         this.Cancelar();
      }

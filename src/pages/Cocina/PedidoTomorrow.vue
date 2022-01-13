@@ -84,7 +84,13 @@ export default defineComponent({
     },
     nameDia: function () {
       return this.itemTomorrow.map(function (item) {
-        return moment(new Date(item.fecha_pedido)).format("dddd");
+
+          let array =item.fecha_pedido.split('-');
+          let dia =array[2];
+          let mes =array[1];
+          let anio=array[0];
+          let fecha1 =anio+'/'+mes+'/'+dia;
+        return moment(new Date(fecha1)).format("dddd");
       });
     },
     formarPeru() {
@@ -95,11 +101,17 @@ export default defineComponent({
       //   let anio =fechas[2];
       //   let fecha_sql =anio+'-'+mes+'-'+dia;
       //   this.modelUser.fecha_pedido=fecha_sql;
-
       //   console.log(this.modelUser.fecha_pedido)
-
+        
       return this.itemTomorrow.map(function (item) {
-        return moment(new Date(item.fecha_pedido)).format("DD-MM-YYYY");
+
+          let array =item.fecha_pedido.split('-');
+          let dia =array[2];
+          let mes =array[1];
+          let anio=array[0];
+          let fecha1 =anio+'/'+mes+'/'+dia;
+
+        return moment(new Date(fecha1)).format("DD/MM/YYYY");
       });
     },
   },

@@ -37,7 +37,7 @@
                   v-model="date"     
                   :events="events"
                   event-color="red"
-                       mask="DD-MM-YYYY" 
+                  mask="DD-MM-YYYY" 
                   @update:model-value="ChangeDate($event)"
                 />
               </q-btn-dropdown>  
@@ -309,9 +309,10 @@ export default {
           let fecha1 =dia+'-'+mes+'-'+anio;
           let fechaSql=anio+'-'+mes+'-'+dia;
         //DD-MM-YYYY
-        this.date=fecha1      
-        this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-        this.get();
+         this.date=fecha1      
+         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
+      
+      this.get();
       }else{           
           let array =e.split('-');
           let dia =array[0];
