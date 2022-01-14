@@ -74,12 +74,11 @@
         <q-item-section>
           <q-item-label>{{ item.nombre_producto }}</q-item-label>
           <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
-          <q-item-label caption lines="1">
-            Cant.: {{ item.cantidad_pedido }} x S/
+          <q-item-label caption lines="1">          Cant.: {{ item.cantidad_pedido }} x S/
             <span class="text-bold">
-              {{ item.precio_venta }}</span
-            ></q-item-label
-          >
+              {{ item.precio_venta }}</span></q-item-label>
+         <q-item-label caption lines="">{{ item.fecha_pedido }}</q-item-label>
+
         </q-item-section>
       </q-item>
     </q-list>
@@ -104,6 +103,7 @@ export default {
     "hora_pedido",
     "cod_auxiliar",
     "estado_pedido",
+    
   ],
   data() {
     return {

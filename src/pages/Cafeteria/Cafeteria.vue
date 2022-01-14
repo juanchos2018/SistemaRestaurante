@@ -38,8 +38,8 @@
               </q-item-section>
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
-                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock)" />
-                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock,item.fecha_pedido)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock,item.fecha_pedido)" />
                   <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto)" />
                 </div>
               </q-item-section>
@@ -124,27 +124,13 @@
                <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm**ss" hint="Hora" />   
             </q-item>          
           </div>   
-
           <div class="col-6">
             <q-item>          
               <q-input bottom-slots   dense outlined class="full-width"  v-model="fechaPeruana"  readonly >
                 <template v-slot:hint>
                   <q-badge outline color="secondary" :label="nombreDia" />
                   </template>
-              </q-input>
-              <!-- <q-input bottom-slots  dense outlined  class="full-width" v-model="fecha_hora"  readonly>   
-                <q-popup-proxy @before-show="updateProxy" cover transition-show="scale" transition-hide="scale">               
-                  <q-date v-model="proxyDate" mask="DD-MM-YYYY"    >
-                    <div class="row items-center justify-end q-gutter-sm">
-                      <q-btn label="Cancel" color="primary" flat v-close-popup />
-                      <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-                  <template v-slot:hint>
-                  <q-badge outline color="secondary" :label="diaEntrega" />
-                  </template>
-              </q-input>       -->
+              </q-input>       
             </q-item>          
           </div>            
         </div>  
@@ -541,34 +527,51 @@ export default {
       );
       this.arrayvacio.splice(indx, 1);
     },
-    MoreProduct(id_producto,stock,usastock) {      
+    MoreProduct(id_producto,stock,usastock,fecha_sql){
+            let obj2 =this.arrayvacio.find((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
+            let position2 = this.arrayvacio.findIndex((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
+            let cantidad_pedido = obj2.cantidad_pedido;
+            let fecha_pedido = obj2.fecha_pedido;
+            let id_produc = obj2.id_producto;
+            let precio = obj2.precio;
+            this.arrayvacio[position2].cantidad_pedido = cantidad_pedido + 1;
+            this.arrayvacio[position2].total =  precio * this.arrayvacio[position2].cantidad_pedido;
+            this.arrayvacio[position2].stock = stock;    
+
+     },
+    MoreProductAnterior(id_producto,stock,usastock,fecha_sql) {      
       if (usastock==1) {
-            let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
-            let position = this.arrayvacio.findIndex(
-              (x) => x.id_producto == id_producto
-            );
-            let cantidad_pedido = obj.cantidad_pedido;
-            if (cantidad_pedido==stock) {
-                this.Mucho();
-            }else{
-              let precio = obj.precio;
-              let producto =obj.producto;
-              this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
-              this.arrayvacio[position].total =
-              precio * this.arrayvacio[position].cantidad_pedido;
-              this.AgregaoItem(producto);
-            }
+            let obj2 =this.arrayvacio.find((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
+            let position2 = this.arrayvacio.findIndex((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
+            let cantidad_pedido = obj2.cantidad_pedido;
+            let fecha_pedido = obj2.fecha_pedido;
+            let id_produc = obj2.id_producto;
+            let precio = obj2.precio;
+            this.arrayvacio[position2].cantidad_pedido = cantidad_pedido + 1;
+            this.arrayvacio[position2].total =  precio * this.arrayvacio[position2].cantidad_pedido;
+            this.arrayvacio[position2].stock = stock;    
+            // let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
+            // let position = this.arrayvacio.findIndex( (x) => x.id_producto == id_producto);
+            // let cantidad_pedido = obj.cantidad_pedido;
+            // if (cantidad_pedido==stock) {
+            //     this.Mucho();
+            // }else{
+            //   let precio = obj.precio;
+            //   let producto =obj.producto;
+            //   this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+            //   this.arrayvacio[position].total =
+            //   precio * this.arrayvacio[position].cantidad_pedido;
+            //   this.AgregaoItem(producto);
+            // }
+
       }else{  
-          let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
-            let position = this.arrayvacio.findIndex(
-              (x) => x.id_producto == id_producto
-            );
+              let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
+              let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto);
               let cantidad_pedido = obj.cantidad_pedido;           
               let precio = obj.precio;
               let producto =obj.producto;
               this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
-              this.arrayvacio[position].total =
-              precio * this.arrayvacio[position].cantidad_pedido;
+              this.arrayvacio[position].total = precio * this.arrayvacio[position].cantidad_pedido;
               this.AgregaoItem(producto);            
       }     
      
@@ -580,7 +583,7 @@ export default {
               position: "top",
         });
     },
-    MinusProduct(id_producto) {
+    MinusProduct(id_producto,fecha_sql) {
       let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
       let position = this.arrayvacio.findIndex(
         (x) => x.id_producto == id_producto

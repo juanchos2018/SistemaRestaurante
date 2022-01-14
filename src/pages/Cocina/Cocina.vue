@@ -56,7 +56,7 @@
                 :fecha_pedido="props.row.fecha_pedido"
                 :hora_pedido="props.row.hora_pedido"
                 :estado_pedido="props.row.estado_pedido"
-                :total="props.row.totalpedido"
+                :total="props.row.totalpedido"             
                 v-on:update="modificar"
               ></card-pedido>
             </div>

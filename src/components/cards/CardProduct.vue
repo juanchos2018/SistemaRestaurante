@@ -2,7 +2,7 @@
   <q-card
     class="my-card colorborde"
     @click="
-      aggrear(
+      aggrear2(
         data.id_producto,
         data.nombre_producto,
         data.precio_venta,
@@ -157,30 +157,28 @@ export default defineComponent({
                               arrayva.value[position2].stock = stock;                        
 
                             }  else{
-                              let fechas = fecha_sql.split("-");
-                              let anio = fechas[0];
-                              let mes = fechas[1];
-                              let dia = fechas[2];
-                              let fechape = dia + "-" + mes + "-" + anio;      
-                              
-                              let fecha1 =anio+'/'+mes+'/'+dia;
-                              let  nombreDia =moment(new Date(fecha1)).format('dddd'); 
-
-                              const objeto = {
-                                id_producto: id_producto,
-                                producto: title,
-                                cantidad_pedido: 1,
-                                id_categoria: id_categoria,
-                                precio: parseFloat(preci),
-                                total: parseFloat(preci),
-                                descripcion: "",
-                                stock: stock,
-                                usastock: usastock,
-                                reservado: "",
-                                fecha_pedido: fecha_sql,
-                                fecha_peruana:nombreDia+'-'+ fechape,
-                              };
-                              arrayva.value.push(objeto);                               
+                                  let fechas = fecha_sql.split("-");
+                                  let anio = fechas[0];
+                                  let mes = fechas[1];
+                                  let dia = fechas[2];
+                                  let fechape = dia + "-" + mes + "-" + anio;    
+                                  let fecha1 =anio+'/'+mes+'/'+dia;
+                                  let  nombreDia =moment(new Date(fecha1)).format('dddd'); 
+                                  const objeto = {
+                                    id_producto: id_producto,
+                                    producto: title,
+                                    cantidad_pedido: 1,
+                                    id_categoria: id_categoria,
+                                    precio: parseFloat(preci),
+                                    total: parseFloat(preci),
+                                    descripcion: "",
+                                    stock: stock,
+                                    usastock: usastock,
+                                    reservado: "",
+                                    fecha_pedido: fecha_sql,
+                                    fecha_peruana:nombreDia+'-'+ fechape,
+                                  };
+                                  arrayva.value.push(objeto);                               
                             }   
                          }
                   } else {
@@ -209,10 +207,93 @@ export default defineComponent({
                         };                     
                         arrayva.value.push(objeto);
                   }
-                }
+          }
       }
+      
     };
-    return { aggrear, fin };
+     const aggrear2 = ( id_producto, title,  preci,  id_categoria, stock, usastock, fecha_sql) => {
+  
+                let obj = arrayva.value.find((x) => x.fecha_pedido == fecha_sql);
+                if (obj) {
+                        let position = arrayva.value.findIndex((x) => x.fecha_pedido == fecha_sql);
+                        let cantidad_pedido = obj.cantidad_pedido;
+                        let fecha_pedido = obj.fecha_pedido;
+                        let id_produc = obj.id_producto;
+
+                        if (id_produc == id_producto) {
+                              let precio = obj.precio;
+                              arrayva.value[position].cantidad_pedido = cantidad_pedido + 1;
+                              arrayva.value[position].total =   precio * arrayva.value[position].cantidad_pedido;
+                              arrayva.value[position].stock = stock;
+                             
+                        } else {
+                            let obj2 =arrayva.value.find((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
+                            let position2 = arrayva.value.findIndex((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
+                          if (obj2) {
+                              let cantidad_pedido = obj2.cantidad_pedido;
+                              let fecha_pedido = obj2.fecha_pedido;
+                              let id_produc = obj2.id_producto;
+                              let precio = obj2.precio;
+                              arrayva.value[position2].cantidad_pedido = cantidad_pedido + 1;
+                              arrayva.value[position2].total =  precio * arrayva.value[position2].cantidad_pedido;
+                              arrayva.value[position2].stock = stock;                        
+
+                            }  else{
+                                  let fechas = fecha_sql.split("-");
+                                  let anio = fechas[0];
+                                  let mes = fechas[1];
+                                  let dia = fechas[2];
+                                  let fechape = dia + "-" + mes + "-" + anio;    
+                                  let fecha1 =anio+'/'+mes+'/'+dia;
+                                  let  nombreDia =moment(new Date(fecha1)).format('dddd'); 
+                                  const objeto = {
+                                    id_producto: id_producto,
+                                    producto: title,
+                                    cantidad_pedido: 1,
+                                    id_categoria: id_categoria,
+                                    precio: parseFloat(preci),
+                                    total: parseFloat(preci),
+                                    descripcion: "",
+                                    stock: stock,
+                                    usastock: usastock,
+                                    reservado: "",
+                                    fecha_pedido: fecha_sql,
+                                    fecha_peruana:nombreDia+'-'+ fechape,
+                                  };
+                                  arrayva.value.push(objeto);                               
+                            }   
+                         }
+                  } else {
+
+                        let fechas = fecha_sql.split("-");
+                        let anio = fechas[0];
+                        let mes = fechas[1];
+                        let dia = fechas[2];
+
+                        let fechape = dia + "-" + mes + "-" + anio;
+                        let fecha1 =anio+'/'+mes+'/'+dia;
+                        let  nombreDia =moment(new Date(fecha1)).format('dddd'); 
+                        const objeto = {
+                          id_producto: id_producto,
+                          producto: title,
+                          cantidad_pedido: 1,
+                          id_categoria: id_categoria,
+                          precio: parseFloat(preci),
+                          total: parseFloat(preci),
+                          descripcion: "",
+                          stock: stock,
+                          usastock: usastock,
+                          reservado: "",
+                          fecha_pedido: fecha_sql,
+                          fecha_peruana: nombreDia+'-'+fechape,
+                        };                     
+                        arrayva.value.push(objeto);
+                  }
+          
+      
+      
+    };
+    return { aggrear, fin,aggrear2 };
   },
   computed: {
     ...mapState(["url_base", "url_izipay"]),

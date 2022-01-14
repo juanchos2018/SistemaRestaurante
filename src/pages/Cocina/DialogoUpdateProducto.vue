@@ -168,8 +168,8 @@ export default {
     Update(){     
       let me = this;
       let url ="/Controller/ProductoController.php?tipo=editpro";   
-      me.modelo.estado=me.Estado==true?1:0;   
-      me.modelo.usastock = me.Stock==true?1:0;
+       me.modelo.estado=me.Estado==true?1:0;   
+       me.modelo.usastock = me.Stock==true?1:0;
        me.modelo.dia_uno=me.dia_uno==true?1:0;
        me.modelo.dia_dos=me.dia_dos==true?1:0; 
        me.modelo.dia_tres=me.dia_tres==true?1:0; 
@@ -184,7 +184,7 @@ export default {
         data: data,
       })
         .then(function (response) {
-           //console.log(response);
+           console.log(response);
           let result = response.data;
           if (result.afect>0) {             
           //  me.Limpiar();
