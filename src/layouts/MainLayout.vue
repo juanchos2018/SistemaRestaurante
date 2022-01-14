@@ -3,9 +3,14 @@
     <q-header elevated>
       <q-toolbar class="bg-red-1">
         <q-tabs v-model="tab" shrink>      
-          <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/Cafeteria" exact label="Cafeteria" />
-          <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="Mi Pedido" />
-          <q-route-tab   icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="Historial" />
+
+                  <q-tab name="cafeteria"  icon="fas fa-cookie-bite" label="Cafeteria"   @click="Cafeteria" />
+                   <q-tab name="mipedido"  icon="fas fa-cookie-bite"  label="MiPedido"  @click="MiPedido" />
+                    <q-tab name="historial" icon="fab fa-get-pocket"  label="Historial"  @click="Historial" />
+
+          <!-- <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/Cafeteria" exact label="Cafeteria" />
+          <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="MiPedido" />
+          <q-route-tab   icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="Historial" /> -->
 
           <!-- v-if="!esCocinero"
 v-if="!esCocinero"
@@ -77,7 +82,7 @@ export default defineComponent({
       leftDrawerOpen,
       search,
       storage,
-      tab: ref(""),
+      tab: ref("cafeteria"),
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },     
@@ -127,6 +132,19 @@ export default defineComponent({
       this.$q.sessionStorage.clear();
       localStorage.removeItem('Qsesion');
     },
+    Cafeteria(){
+      //to="/Sistema/Cafeteria"
+        this.$router.push({ path: "/Sistema/Cafeteria" });
+    },
+      MiPedido(){
+      //to="/Sistema/Cafeteria"
+        this.$router.push({ path: "/Sistema/MiPedido" });
+    },
+    Historial(){
+          this.$router.push({ path: "/Sistema/MisPedidos" });
+    } 
+
+
   },
 });
 </script>

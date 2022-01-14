@@ -4,7 +4,7 @@
       <q-item-section>
         <q-item-label>{{tipoEnvio}} {{ diaEntrega }} - {{ fecha_pedido }}</q-item-label>
         <q-item-label caption>
-         a las:    {{ hora_pedido }}
+         {{ hora_pedido }}
         </q-item-label>
       </q-item-section>
         <q-item-section side top>           

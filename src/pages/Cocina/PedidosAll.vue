@@ -143,6 +143,15 @@ export default defineComponent({
     ChangeDate(e) {
       if (e == null) {
         this.nombreDia = moment(new Date(this.fecha_actual)).format("dddd");
+          let array =this.fecha_actual.split('/');
+          let dia =array[2];
+          let mes =array[1];
+          let anio=array[0];
+          let fecha1 =dia+'-'+mes+'-'+anio;
+          let fechaSql=anio+'-'+mes+'-'+dia;
+        //DD-MM-YYYY
+         this.date=fecha1      
+         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
         this.get();
 
       } else {
