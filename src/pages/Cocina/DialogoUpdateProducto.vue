@@ -18,7 +18,6 @@
                 <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
               </q-item>
             </div>
-
           <div class="col-3">
               <q-item>                
                 <q-checkbox v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
@@ -28,7 +27,6 @@
               <!-- <q-item>                 
                 <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock" />                 
               </q-item> -->
-
                <q-item>                 
                 <!-- disable readonly  -->
                 <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock"  min="1" :readonly="Stock==true ? false : true"/>                 
@@ -68,7 +66,7 @@
           </div>
           <q-card-actions align="right">
             <q-btn flat label="Cerrar" color="primary" v-close-popup />
-            <q-btn color="primary" label="Editar" type="submit" />
+            <q-btn color="primary" label="Guardar" type="submit" />
           </q-card-actions>
         </q-form>
       </q-card>

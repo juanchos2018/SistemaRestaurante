@@ -80,7 +80,7 @@
                   <q-icon name="dashboard" />
                 </q-item-section>
 
-                <q-item-section> Categoria </q-item-section>
+                <q-item-section> Productos </q-item-section>
               </q-item>
              
               <q-item

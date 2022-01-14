@@ -8,7 +8,7 @@
         </q-item-label>
       </q-item-section>
        <q-item-section side top>
-         ENTREGADO
+            ENTREGADO
         </q-item-section>
     </q-item>
     <q-list bordered padding>
@@ -72,8 +72,19 @@ export default {
   computed: {
  
     nombreDia: function () {
-      
-         return moment(new Date(this.fecha_pedido)).format("dddd");
+
+
+
+        let array = this.fecha_pedido.split("-");
+        let dia = array[0];
+        let mes = array[1];
+        let anio = array[2];
+
+        let fecha1 = anio + "/" + mes + "/" + dia;
+        let fechaSql = anio + "-" + mes + "-" + dia;
+
+
+        return moment(new Date(fecha1)).format("dddd");
     },
   },
   methods: {

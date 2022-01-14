@@ -163,6 +163,36 @@ export default {
           // console.log(this.cod_auxiliar);
           if (step == 4) {
             //poner aqui ocpcion de pregunta ?
+                    this.$q.dialog({
+                      title: 'Confirmar',
+                      message: 'Desea anular este pedido?',
+                      cancel: true,
+                      persistent: true
+                    }).onOk(() => {
+                      // console.log('>>>> OK')
+                    }).onOk(() => {
+                      // console.log('>>>> second OK catcher')
+                         const datas = {
+                            estado_pedido: step,
+                            id_pedido: this.id_pedido,
+                            lista: [],
+                            tipo: "Update",
+                            cod_auxiliar: this.cod_auxiliar,
+                          };
+                          this.$emit("update", datas);
+                          this.$q.notify({
+                            message: "Pedido Anulado",
+                            color: "accent",
+                            position: "top",
+                          });
+
+                    }).onCancel(() => {
+                      // console.log('>>>> Cancel')
+                    }).onDismiss(() => {
+                      // console.log('I am triggered on both OK and Cancel')
+                    })
+
+
           } else {
             const datas = {
               estado_pedido: step,

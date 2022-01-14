@@ -12,7 +12,7 @@
           <button class="kr-payment-button"  value="200"></button>
           <div class="kr-form-error"></div>
         </div>   -->
-         
+           <!-- <q-btn color="primary" label="conculstar" @click="Consultar" /> -->
          <q-form method="post" @submit.prevent="Validate">   
 
         <q-card
@@ -26,7 +26,7 @@
               </q-avatar>
             </q-item-section>
 
-            <q-item-section class="text-white">
+            <q-item-section class="text-white text-bold ">
               <q-item-label>Inicio de Sesion</q-item-label>
                  <!-- <q-select  dark color="white" outlined v-model="modelo.TIPO_USUARIO" :options="options" label="Seleccione" /> -->
               <q-item-label caption>
@@ -65,7 +65,16 @@
               ></q-btn>
             </q-item-section>
           </q-item>
+
+        <!-- <q-chip square color="primary" text-color="white" @click="me" >
+              Click aqui si o tienes un Usuario
+         </q-chip>
+
+  <label for="" @click="me"  class="">   Click aqui si o tienes un Usuario</label> -->
+
+                <a @click="me">No estas Resgistrado? click qui</a>  
         </q-card>
+            
    </q-form>
     <q-form action="https://some-url.com" method="post" @submit.prevent="Validate">
         <q-card
@@ -105,7 +114,9 @@
               icon="arrow_right_alt"
             ></q-btn>
           </q-card-section>
+                <a @click="me" class="a2 text-center">No estas Resgistrado? click qui</a>  
         </q-card>
+        
          </q-form>
       </q-page>
     </q-page-container>
@@ -135,12 +146,25 @@ export default defineComponent({
       }
     })     
     const modelo = reactive({ COD_USUARIO: '',DES_PASSWORD:'',TIPO_USUARIO:'' })
+    const me=()=>{
+        $q.dialog({
+        title: ' Aún no ¿No estás registrado?',
+        message: 'Escríbenos al WhatsApp +51 952647927 o llama al (052) 638720 anexo 1200.'
+      }).onOk(() => {
+        // console.log('OK')
+      }).onCancel(() => {
+        // console.log('Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    }
     const  errors= {
         COD_USUARIO: ref(false),
         DES_PASSWORD: ref(false)            
       }
   
     return {      
+      me,
       date: ref('2022/01/11'), 
          fecha_actual: moment(new Date()).local().format("YYYY-MM-DD"),
       TokenIziay,  
@@ -158,6 +182,18 @@ export default defineComponent({
     ...mapState(['url_base'],['url_izipay'])   
   }, 
   methods: {
+    Memsaje(){
+       this.$q.dialog({
+        title: ' Aún no ¿No estás registrado?',
+        message: 'Escríbenos al WhatsApp +51 952647927 o llama al (052) 638720 anexo 1200.'
+      }).onOk(() => {
+        // console.log('OK')
+      }).onCancel(() => {
+        // console.log('Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    },  
     Ingresar(){  
         let me =this;
         me.$q.loading.show({
@@ -311,6 +347,43 @@ let headers={
          spinner: QSpinnerCube,
         })  
     },
+
+    Consultar(){
+     
+      let url = "/Controller/prueba.php";
+      this.$axios
+        .get(this.url_base + url)
+        .then((response) => {      
+         // this.itemCocina = response.data;
+          let array =response.data;
+          console.log(array)
+
+          let nuevoObjeto = {}
+//Recorremos el arreglo 
+              array.forEach( x => {
+                //Si la ciudad no existe en nuevoObjeto entonces
+                //la creamos e inicializamos el arreglo de profesionales. 
+                if( !nuevoObjeto.hasOwnProperty(x.COD_USUARIO)){
+                     nuevoObjeto[x.COD_USUARIO] = {
+                         profesionales: []
+                     }
+                }
+                
+                //Agregamos los datos de profesionales. 
+                  nuevoObjeto[x.COD_USUARIO].profesionales.push({
+                    nombre: x.nombre_producto,
+              
+                  })
+                
+              })
+
+                console.log(nuevoObjeto)
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
     GenerarPago(){
         let me =this;            
        let url ="/GenerarPago.php";
@@ -411,5 +484,23 @@ let headers={
       width:150px !important;
 
   } 
+
+  a {
+   font-weight: bold;
+  text-decoration: none;
+  color: white;
+  margin-left:35%;
+  margin-top: 20%;
+  font-size: 16px;
+}
+
+  .a2 {
+   font-weight: bold;
+  text-decoration: none;
+  color: white;  
+   margin-left:-1%;
+  margin-top: 20%;
+  font-size: 14px;
+}
 
 </style>

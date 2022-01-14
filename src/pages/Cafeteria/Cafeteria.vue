@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
-    <q-layout view="lhh LpR lfr" container style="height: 90vh" class="shadow-2 rounded-borders">
+    <q-layout view="lhh LpR lfr" container style="height: 88vh" class="shadow-2 rounded-borders">
       <q-drawer side="right" show-if-above v-model="rightDrawerOpen" bordered :breakpoint="500" :width="drawerWidth" class="no-margin no-padding">
         <div class="q-pa-sm no-margin no-padding">    
           <q-bar style="min-width: 250px;" class="bg-teal text-white rounded-borders">
@@ -23,9 +23,9 @@
                 <q-item-label v-else caption lines="1">
                   {{ item.descripcion }}
                 </q-item-label>
-                 <q-item-label  caption lines="1">
+                 <!-- <q-item-label  caption lines="1">
                     {{ item.fecha_peruana }}
-                </q-item-label>
+                </q-item-label> -->
                 <q-popup-edit v-model="item.descripcion" :title="item.producto" auto-save v-slot="scope">
                   <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
                 </q-popup-edit>
@@ -45,8 +45,8 @@
               </q-item-section>
             </q-item>
           </q-list>
-          <div class="q-pa-lg flex flex-center">
-            <q-pagination v-model="page" :min="current" :max="Math.ceil(arrayvacio.length / totalPages)" :input="true" input-class="text-orange-10">
+          <div class="q-pa-lg flex flex-center" v-if="getDatas.length>5">            
+            <q-pagination    v-model="page" :min="current" :max="Math.ceil(arrayvacio.length / totalPages)" :input="true" input-class="text-orange-10">
             </q-pagination>
           </div>
           <q-banner inline-actions class="text-white bg-red absolute-bottom">
@@ -213,7 +213,6 @@ export default {
       date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       fecha_actual,
       fecha_sql,
-
       timeactual:ref(moment.utc().add(7,'hours').format('hh:mm:ss') ),     
       datehoy : Date.now(),     
       fecha_hora,
@@ -222,14 +221,12 @@ export default {
       optionsFn (fecha_hora) {
         return fecha_hora >= '2022/01/15' && fecha_hora <= '2022/01/20'
       },
-
       updateProxy () {
         //proxyDate.value = date2.value
       },
       save () {
         fecha_hora.value = proxyDate.value
-      },    
-        
+      },            
       Token:ref(''),
       modelUser,
       index_categoria:0,
@@ -241,6 +238,7 @@ export default {
       drawerWidth,
       toggleRightDrawer() {
         rightDrawerOpen.value = !rightDrawerOpen.value;
+
       },
       itemCategoria,
       itemProducto,
@@ -327,12 +325,16 @@ export default {
     cantfilas() {
       return this.arrayvacio;
     },
-    SumTotal() {
-      var result = this.arrayvacio.reduce(function (acc, obj) {
+    SumTotal() {      
+       if (this.arrayvacio.length>0) {
+           this.rightDrawerOpen=true;
+       }
+       var result = this.arrayvacio.reduce(function (acc, obj) {         
         return acc + obj.total;
       }, 0);
       return result;
     },
+
     fechaPeruana(){
       // date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
         let fechas =this.date.split('-');
@@ -476,7 +478,7 @@ export default {
          this.GetProducto2();
       }else{    
           // this.nombreDia=moment(new Date(e)).format('dddd');
-          // this.arrayvacio=[];
+           this.arrayvacio=[];
           // console.log(this.nombreDia);
           let array =e.split('-');
           let dia =array[0];
@@ -527,7 +529,7 @@ export default {
       );
       this.arrayvacio.splice(indx, 1);
     },
-    MoreProduct(id_producto,stock,usastock,fecha_sql){
+    MoreProductPorFechas(id_producto,stock,usastock,fecha_sql){
             let obj2 =this.arrayvacio.find((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
             let position2 = this.arrayvacio.findIndex((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
             let cantidad_pedido = obj2.cantidad_pedido;
@@ -538,7 +540,37 @@ export default {
             this.arrayvacio[position2].total =  precio * this.arrayvacio[position2].cantidad_pedido;
             this.arrayvacio[position2].stock = stock;    
 
-     },
+    },
+    MoreProduct(id_producto,stock,usastock,fecha_sql) {      
+    //  if (usastock==1) {
+            let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
+            let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto );
+            let cantidad_pedido = obj.cantidad_pedido;
+          //  if (cantidad_pedido==stock) {
+              //  this.Mucho();
+          //  }else{
+              let precio = obj.precio;
+              let producto =obj.producto;
+              this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+              this.arrayvacio[position].total =
+              precio * this.arrayvacio[position].cantidad_pedido;
+              this.AgregaoItem(producto);
+         //   }
+      // }else{  
+      //     let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
+      //       let position = this.arrayvacio.findIndex(
+      //         (x) => x.id_producto == id_producto
+      //       );
+      //         let cantidad_pedido = obj.cantidad_pedido;           
+      //         let precio = obj.precio;
+      //         let producto =obj.producto;
+      //         this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+      //         this.arrayvacio[position].total =
+      //         precio * this.arrayvacio[position].cantidad_pedido;
+      //         this.AgregaoItem(producto);            
+      // }     
+     
+    },
     MoreProductAnterior(id_producto,stock,usastock,fecha_sql) {      
       if (usastock==1) {
             let obj2 =this.arrayvacio.find((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
@@ -648,9 +680,7 @@ export default {
         this.Enviado();
         this.prompt = false;
         this.Cancelar();
-     }
-        
-
+      }       
     },
     VerHora(){
       console.log(this.horaActual)
@@ -715,7 +745,7 @@ export default {
       })
         .then(function (response) {
           let result = response.data.resultado;
-          console.log(response);
+        //  console.log(response);
           if (result == "Registrado") {
              alert("Registrado");
             this.Cancelar();

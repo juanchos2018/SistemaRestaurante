@@ -13,10 +13,7 @@
             <q-item-section top>
               <q-item-label lines="1">
                 <span
-                  class="
-                    cursor-pointer
-                    text-body2 text-weight-bold text-primary text-uppercase
-                  "
+                  class="cursor-pointer   text-body2 text-weight-bold text-primary text-uppercase"
                 >
                   {{ nameDia[index] }}</span
                 >
@@ -25,7 +22,13 @@
                 >
               </q-item-label>
             </q-item-section>
-
+   <q-item-label lines="1">
+                <span                 class="cursor-pointer   text-body2 text-weight-bold text-primary text-uppercase"
+                >
+                  {{ item.hora_pedido }}</span
+                >
+             
+              </q-item-label>
             <q-item-section top side>
               <div class="text-grey-8 q-gutter-xs">
                 <q-btn size="12px" flat dense round icon="more_vert" />
@@ -151,6 +154,7 @@ export default defineComponent({
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
+          console.log(response)
           this.itemTomorrow = response.data;
         })
         .catch(function (error) {

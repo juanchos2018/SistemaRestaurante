@@ -16,12 +16,19 @@
       />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="mails">
+
+
+
+           <q-tab-panel name="mails">
         <!-- <p>{{itemCocina}}</p> -->
+
+               <!-- <div v-if="!itemCocina.length">
+              <h6>SIN PEDIDO EL DIA DE HOY </h6>
+        </div> -->
         <q-table
           grid
           :card-container-class="cardContainerClass"
-          title="Pedido"
+          :title="itemCocina.length>0?'Pedidos ':' Sin  Pedidos el dia de hoy'"
           :rows="itemCocina"
           :columns="columns"
           row-key="name"
@@ -56,12 +63,14 @@
                 :fecha_pedido="props.row.fecha_pedido"
                 :hora_pedido="props.row.hora_pedido"
                 :estado_pedido="props.row.estado_pedido"
-                :total="props.row.totalpedido"             
+                :total="props.row.totalpedido"
+             
                 v-on:update="modificar"
               ></card-pedido>
             </div>
           </template>
         </q-table>
+        
       </q-tab-panel>
 
       <q-tab-panel name="alarms">
@@ -112,6 +121,8 @@
               :totalpedido="item.totalpedido"
               :detalle="item.detalle"
               :estado="item.estado_pedido"
+                :fecha_pedido="item.fecha_pedido"
+                  :hora_pedido="item.hora_pedido"
             ></card-anulado>
           </div>
         </div>

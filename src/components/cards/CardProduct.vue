@@ -2,7 +2,7 @@
   <q-card
     class="my-card colorborde"
     @click="
-      aggrear2(
+      aggrear(
         data.id_producto,
         data.nombre_producto,
         data.precio_venta,
@@ -118,97 +118,92 @@ export default defineComponent({
         .onCancel(() => {})
         .onDismiss(() => {});
     };
-    const aggrear = (
-      id_producto,
-      title,
-      preci,
-      id_categoria,
-      stock,
-      usastock,
-      fecha_sql
-    ) => {
-      if (usastock == 1) {
-        if (stock == 0) {
-          fin(title);
-        } else {
-                let obj = arrayva.value.find((x) => x.fecha_pedido == fecha_sql);
-                if (obj) {
-                        let position = arrayva.value.findIndex((x) => x.fecha_pedido == fecha_sql);
+    const aggrear = ( id_producto, title, preci, id_categoria, stock, usastock,fecha_sql) => {
+
+     //  if (usastock==1) {
+       //   if (stock==0) {
+          //     fin(title);
+          //  }
+         //   else{
+
+                  let obj = arrayva.value.find((x) => x.id_producto == id_producto);
+                  if (obj) {
+                        let position = arrayva.value.findIndex((x) => x.id_producto == id_producto);
                         let cantidad_pedido = obj.cantidad_pedido;
-                        let fecha_pedido = obj.fecha_pedido;
-                        let id_produc = obj.id_producto;
-
-                        if (id_produc == id_producto) {
-                              let precio = obj.precio;
-                              arrayva.value[position].cantidad_pedido = cantidad_pedido + 1;
-                              arrayva.value[position].total =   precio * arrayva.value[position].cantidad_pedido;
-                              arrayva.value[position].stock = stock;
-                             
-                        } else {
-                            let obj2 =arrayva.value.find((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
-                            let position2 = arrayva.value.findIndex((x) => x.fecha_pedido == fecha_sql && x.id_producto==id_producto);
-                          if (obj2) {
-                              let cantidad_pedido = obj2.cantidad_pedido;
-                              let fecha_pedido = obj2.fecha_pedido;
-                              let id_produc = obj2.id_producto;
-                              let precio = obj2.precio;
-                              arrayva.value[position2].cantidad_pedido = cantidad_pedido + 1;
-                              arrayva.value[position2].total =  precio * arrayva.value[position2].cantidad_pedido;
-                              arrayva.value[position2].stock = stock;                        
-
-                            }  else{
-                                  let fechas = fecha_sql.split("-");
-                                  let anio = fechas[0];
-                                  let mes = fechas[1];
-                                  let dia = fechas[2];
-                                  let fechape = dia + "-" + mes + "-" + anio;    
-                                  let fecha1 =anio+'/'+mes+'/'+dia;
-                                  let  nombreDia =moment(new Date(fecha1)).format('dddd'); 
-                                  const objeto = {
-                                    id_producto: id_producto,
-                                    producto: title,
-                                    cantidad_pedido: 1,
-                                    id_categoria: id_categoria,
-                                    precio: parseFloat(preci),
-                                    total: parseFloat(preci),
-                                    descripcion: "",
-                                    stock: stock,
-                                    usastock: usastock,
-                                    reservado: "",
-                                    fecha_pedido: fecha_sql,
-                                    fecha_peruana:nombreDia+'-'+ fechape,
-                                  };
-                                  arrayva.value.push(objeto);                               
-                            }   
-                         }
-                  } else {
+                    //    if (cantidad_pedido>=stock) {
+                      //      Mucho()
+                   //     }else{
+                          let precio =obj.precio;
+                          arrayva.value[position].cantidad_pedido = cantidad_pedido + 1; 
+                          arrayva.value[position].total = precio * arrayva.value[position].cantidad_pedido;   
+                          arrayva.value[position].stock = stock;   
+                      //  }                    
+                  }else{
 
                         let fechas = fecha_sql.split("-");
                         let anio = fechas[0];
                         let mes = fechas[1];
                         let dia = fechas[2];
-
                         let fechape = dia + "-" + mes + "-" + anio;
                         let fecha1 =anio+'/'+mes+'/'+dia;
-                        let  nombreDia =moment(new Date(fecha1)).format('dddd'); 
-                        const objeto = {
-                          id_producto: id_producto,
-                          producto: title,
-                          cantidad_pedido: 1,
-                          id_categoria: id_categoria,
-                          precio: parseFloat(preci),
-                          total: parseFloat(preci),
-                          descripcion: "",
-                          stock: stock,
-                          usastock: usastock,
-                          reservado: "",
-                          fecha_pedido: fecha_sql,
-                          fecha_peruana: nombreDia+'-'+fechape,
-                        };                     
-                        arrayva.value.push(objeto);
+                        let nombreDia =moment(new Date(fecha1)).format('dddd'); 
+
+                       const objeto = {
+                        id_producto: id_producto,
+                        producto: title,
+                        cantidad_pedido: 1,
+                        id_categoria:id_categoria,
+                        precio: parseFloat(preci),
+                        total: parseFloat(preci) ,
+                        descripcion:'',
+                        stock:stock,
+                        usastock:usastock,
+                        reservado:'',
+                        fecha_pedido: fecha_sql,
+                        fecha_peruana: nombreDia+'-'+fechape,
+                      };     
+                      arrayva.value.push(objeto); 
                   }
-          }
-      }
+                   $q.notify({
+                  message: "Agregado "+title,
+                  color: "accent",
+                  position: "top",
+                });
+         //   }
+
+     //   }
+        // else{
+        //       let obj = arrayva.value.find((x) => x.id_producto == id_producto);
+        //       if (obj) {  
+        //            let position = arrayva.value.findIndex((x) => x.id_producto == id_producto);
+        //            let cantidad_pedido = obj.cantidad_pedido;
+        //            let precio =obj.precio;
+        //            arrayva.value[position].cantidad_pedido = cantidad_pedido + 1; 
+        //            arrayva.value[position].total = precio * arrayva.value[position].cantidad_pedido;  
+        //       }else{
+        //            const objeto = {
+        //                 id_producto: id_producto,
+        //                 producto: title,
+        //                 cantidad_pedido: 1,
+        //                 id_categoria:id_categoria,
+        //                 precio: parseFloat(preci),
+        //                 total: parseFloat(preci) ,
+        //                 descripcion:'',
+        //                 stock:stock,
+        //                 usastock:usastock,
+        //                 reservado:''
+        //               };     
+        //               arrayva.value.push(objeto); 
+        //       }
+        //        $q.notify({
+        //       message: "Agregado "+title,
+        //       color: "accent",
+        //       position: "top",
+        //     });
+        // }  
+
+
+
       
     };
      const aggrear2 = ( id_producto, title,  preci,  id_categoria, stock, usastock, fecha_sql) => {

@@ -4,8 +4,8 @@
       <q-toolbar class="bg-red-1">
         <q-tabs v-model="tab" shrink>      
           <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/Cafeteria" exact label="Cafeteria" />
-          <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="MiPedido" />
-          <q-route-tab   icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="MisPedidos" />
+          <q-route-tab   icon="fas fa-cookie-bite" to="/Sistema/MiPedido" exact label="Mi Pedido" />
+          <q-route-tab   icon="fab fa-get-pocket" to="/Sistema/MisPedidos" exact label="Historial" />
 
           <!-- v-if="!esCocinero"
 v-if="!esCocinero"

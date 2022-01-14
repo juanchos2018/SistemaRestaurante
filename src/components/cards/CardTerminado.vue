@@ -4,10 +4,8 @@
       <q-item-section>
         <q-item-label lines="1">
           <span class="text-weight-medium"
-            >{{ area }}- Piso {{ piso_especialidad }}</span          >
-       
+            >{{ area }}- Piso {{ piso_especialidad }}</span>       
         </q-item-label>
-
         <q-item-label
           lines="1"
           class="text-weight-bold text-primary text-uppercase"
@@ -23,8 +21,7 @@
       </q-item-section>
         <q-item-section side top class=" text-green-9 text-bold">
          ENTREGADO
-        </q-item-section>
-    
+        </q-item-section>    
     </q-item>
     <q-separator></q-separator>
      <q-list bordered padding>
@@ -72,22 +69,22 @@ export default {
   methods: {
   
   },
-   computed: {
-    diaEntrega: function () {
-      let fechas = this.fecha_pedido.split("-");
-      let dia = fechas[0];
-      let mes = fechas[1];
-      let anio = fechas[2];
-      let fecha_sql = anio + "-" + mes + "-" + dia;
-      let nombre_dia_hoy = moment(new Date(this.fecha_actual)).format("dddd");
-      let nombre_dia_envio = moment(fecha_sql).format("dddd");
-      if (nombre_dia_hoy == nombre_dia_envio) {
-        this.tipoEnvio = "Hoy ";
-      } else {
-        this.tipoEnvio = "Para ";
-      }
-      return moment(fecha_sql).format("dddd");
-    },
+    computed: {
+      diaEntrega: function () {
+        let fechas = this.fecha_pedido.split("-");
+        let dia = fechas[0];
+        let mes = fechas[1];
+        let anio = fechas[2];
+        let fecha_sql = anio + "-" + mes + "-" + dia;
+        let nombre_dia_hoy = moment(new Date(this.fecha_actual)).format("dddd");
+        let nombre_dia_envio = moment(fecha_sql).format("dddd");
+        if (nombre_dia_hoy == nombre_dia_envio) {
+          this.tipoEnvio = "Hoy ";
+        } else {
+          this.tipoEnvio = "Para ";
+        }
+        return moment(fecha_sql).format("dddd");
+      },
   },
 };
 </script>

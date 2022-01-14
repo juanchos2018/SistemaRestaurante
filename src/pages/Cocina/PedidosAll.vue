@@ -3,14 +3,14 @@
     <q-toolbar class="bg-red-1 q-my-md shadow-2">
       <div class="text-h5 text-bold">-</div>
       <q-space />
-      <div class="text-h5 text-bold">S/ {{ SumTotal }}</div>
+      <div class="text-h5 text-bold">S/ {{ SumTotal }}aa</div>
     </q-toolbar>
 
 
-      <q-radio name="shape" v-model="shape" val="Todos" label="Todos"  />
+      <!-- <q-radio name="shape" v-model="shape" val="Todos" label="Todos"  />
       <q-radio name="shape" v-model="shape" val="Nuevo" label="Nuevo" />
       <q-radio name="shape" v-model="shape" val="Entregado" label="Entregado" />
-      <q-radio name="shape" v-model="shape" val="Rechazado" label="Rechazado" />
+      <q-radio name="shape" v-model="shape" val="Rechazado" label="Rechazado" /> -->
 
     <q-btn-dropdown
       color="red"
@@ -28,6 +28,7 @@
 
     <br />
     <br />
+        <br />
     <div v-if="!itemallorder.length">
       <h5>SIN REGISTROS</h5>
     </div>
@@ -110,11 +111,12 @@ export default defineComponent({
   methods: {
     get() {
       let tipo = "getallorder";
+   //   this.fecha_actual
       let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
         .get(this.url_base + url)
         .then((response) => {
-          ///  console.log(response)
+            console.log(response)
           this.itemallorder = response.data;
         })
         .catch(function (error) {
@@ -122,22 +124,22 @@ export default defineComponent({
         })
         .finally(() => {});
     },
-    search(event) {
-      let fecha = event;
-      let tipo = "fecha";
-      let url =
-        "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + fecha;
-      this.$axios
-        .get(this.url_base + url)
-        .then((response) => {
-          console.log(response);
-          this.itemallorder = response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(() => {});
-    },
+    // search(event) {
+    //   let fecha = event;
+    //   let tipo = "fecha";
+    //   let url =
+    //     "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + fecha;
+    //   this.$axios
+    //     .get(this.url_base + url)
+    //     .then((response) => {
+    //       console.log(response);
+    //       this.itemallorder = response.data;
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     })
+    //     .finally(() => {});
+    // },
     ChangeDate(e) {
       if (e == null) {
         this.nombreDia = moment(new Date(this.fecha_actual)).format("dddd");

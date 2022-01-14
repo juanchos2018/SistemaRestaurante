@@ -7,6 +7,7 @@
           {{ hora_pedido }}
         </q-item-label>
       </q-item-section>
+         
         <q-item-section side top>            
            <span class="text-weight-medium" v-if="estado_pedido==0"> NUEVO</span>
            <span class="text-weight-medium" v-else-if="estado_pedido==1"> PROCESO</span>
@@ -14,6 +15,16 @@
            <span class="text-weight-medium" v-else-if="estado_pedido==3"> ENTREGADO</span>
            <span class="text-weight-medium" v-else-if="estado_pedido==4"> ANULADO</span>
         </q-item-section>
+        
+    </q-item>
+    <q-item>
+      
+        <q-item-label
+          lines="1"
+          class="text-weight-bold text-primary text-uppercase"
+        >
+          <span class="cursor-pointer">{{ des_auxiliar }}</span>
+        </q-item-label>
     </q-item>
     <q-list bordered padding>
       <q-item v-for="item in detalle" :key="item.id_pedido_detalle">

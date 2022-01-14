@@ -2,12 +2,26 @@
   <q-page class="q-pa-sm">
      <q-tabs v-model="tab" dense align="justify" class="bg-primary text-white shadow-2" :breakpoint="0">
       <q-tab name="mails" icon="alarm" label="Proceso" />
-      <q-tab name="success" icon="alarm" label="Entregado" />
+      <q-tab name="success" icon="fas fa-check" label="Recibido" />
+    
       <q-tab name="alarms" icon="fas fa-exclamation-triangle" label="Rechazado" />
     </q-tabs>
      <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="mails">
+         <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"   class="float-right"  >
+               <q-date
+                  v-model="date"     
+                  :events="events"
+                  event-color="red"
+                  mask="DD-MM-YYYY" 
+                  @update:model-value="ChangeDate($event)"
+                />
+              </q-btn-dropdown>  
+          <br><br><br>
        <div class="row q-col-gutter-sm">     
+          <div v-if="!itemCocina.length">
+              <h5>SIN PEDIDO PARA EL DIA DE HOY </h5>
+            </div>
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
             v-for="item in itemCocina"
@@ -74,6 +88,9 @@ import CardRejected from "components/cards/CardRejected.vue";
 import CardSuccess from "components/cards/CardSuccess.vue";
 import { mapState } from "vuex";
 
+import moment from "moment";
+import "moment/locale/es";
+
 export default defineComponent({
   name: "MiPedido",
   components: {CardMiPedido,CardRejected,CardSuccess},
@@ -85,23 +102,28 @@ export default defineComponent({
     let itemRejected = ref([]);
     let itemSucess = ref([]);
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
+    const  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
     return {
       tab: ref("mails"),
       itemRejected,
       itemCocina,    
       itemSucess,
       step:ref(0),
-    
+      fecha_actual,
+      date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       done1,
       done2,
       done3,      
       modelo,
       conn:null,
+      events: [],
+      nombreDia:'',    
      
     };
    },
    created(){ 
       let existe = this.$q.sessionStorage.has("Qsesion");    
+      this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
       if (existe==false) {
          this.$router.push({ path: "/" });
       }
@@ -117,6 +139,7 @@ export default defineComponent({
       this.get();   
       this.getSucess();
       this.getrecjected();
+      this.getCalendar();
       this.conn.onopen = (e) => {
        console.log("WebSocket Mi : " + e);
      };
@@ -186,8 +209,56 @@ export default defineComponent({
         })
         .finally(() => {});
     },
-      UpdateStart(obj){
-   //  console.log(obj);
+    getCalendar() {
+      let tipo = "calendarcli";
+      let url = "/Controller/PedidoController.php?tipo=" + tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
+      this.$axios
+        .get(this.url_base + url)
+        .then((response) => {    
+          this.events = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+     },
+     ChangeDate(e){
+       let tipo = "getmiroder";   
+       if (e==null) {      
+           let array =this.fecha_actual.split('/');
+          let dia =array[2];
+          let mes =array[1];
+          let anio=array[0];
+          let fecha1 =dia+'-'+mes+'-'+anio;
+          let fechaSql=anio+'-'+mes+'-'+dia;    
+          this.date=fecha1      
+          this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');      
+          this.get();
+       }else{           
+          let array =e.split('-');
+          let dia =array[0];
+          let mes =array[1];
+          let anio=array[2];
+          let fecha1 =anio+'/'+mes+'/'+dia;
+          let fechaSql=anio+'-'+mes+'-'+dia;
+          this.nombreDia =moment(new Date(fecha1)).format('dddd');   
+        //    console.log(fechaSql)
+          let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+fechaSql+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;;
+          this.$axios
+          .get(this.url_base + url)
+          .then((response) => {        
+           
+            this.itemCocina = response.data;
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .finally(() => {});  
+      }
+    },
+
+    UpdateStart(obj){
+ 
       let me = this;
       let url ="/Controller/PedidoController.php";         
       let data = obj;

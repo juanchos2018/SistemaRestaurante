@@ -6,6 +6,7 @@
         <q-item-label caption>
           {{ hora_pedido }}
         </q-item-label>
+            <!-- <q-item-label>{{ des_auxiliar }}</q-item-label> -->
       </q-item-section>
     </q-item>
     <q-list bordered padding>
