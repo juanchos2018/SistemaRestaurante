@@ -76,8 +76,7 @@ export default defineComponent({
     const storage = ref(0.26);
    // const $q = useQuasar();
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
-    return {
-    
+    return {    
       modelo,
       leftDrawerOpen,
       search,
@@ -134,13 +133,16 @@ export default defineComponent({
     },
     Cafeteria(){
       //to="/Sistema/Cafeteria"
+        this.tab="cafeteria"
         this.$router.push({ path: "/Sistema/Cafeteria" });
     },
       MiPedido(){
       //to="/Sistema/Cafeteria"
+         this.tab="mipedido"
         this.$router.push({ path: "/Sistema/MiPedido" });
     },
     Historial(){
+          this.tab="historial"
           this.$router.push({ path: "/Sistema/MisPedidos" });
     } 
 

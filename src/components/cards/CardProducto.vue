@@ -1,9 +1,9 @@
 <template>
   <q-card class="my-card rounded-card colorborde" flat >
     <q-card-section horizontal>
-      <q-card-section class="col-5 flex flex-center">
+      <!-- <q-card-section class="col-5 flex flex-center">
         <q-img :src="url_base+photo" />
-      </q-card-section>
+      </q-card-section> -->
       <q-card-section class="q-pt-xs">
         <div class="text-h6 q-mt-sm q-mb-xs">{{ nombre_producto }}</div>  
         <div class="text-subtitle2">{{ descripcion }}</div>     
@@ -44,16 +44,14 @@
         </q-tooltip>
       </q-btn>
      <q-space />
-        <q-file
-      :model-value="files"
-      @update:model-value="updateFiles"
-      label="Imagen"
-      outlined
-      multiple
-      :clearable="!cargar"
-    
-   
-    >
+        <!-- <q-file
+          :model-value="files"
+          @update:model-value="updateFiles"
+          label="Imagen"
+          outlined
+          multiple
+          :clearable="!cargar"   
+       >
       <template v-slot:file="{ index, file }">
         <q-chip
           class="full-width q-my-xs"
@@ -67,7 +65,6 @@
             :color="uploadProgress[index].color"
             track-color="grey-2"
           />
-
           <q-avatar>
             <q-icon :name="uploadProgress[index].icon" />
           </q-avatar>
@@ -75,13 +72,11 @@
           <div class="ellipsis relative-position">
             {{ file.name }}
           </div>
-
           <q-tooltip>
             {{ file.name }}
           </q-tooltip>
         </q-chip>
       </template>
-
       <template v-slot:after v-if="canUpload">
         <q-btn
           color="primary"
@@ -93,7 +88,7 @@
           :loading="cargar"
         />
       </template>
-    </q-file>
+    </q-file> -->
   
     </q-card-actions>
   </q-card>

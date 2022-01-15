@@ -62,11 +62,12 @@
       </q-drawer>
       <q-page-container>
         <q-page style="padding-top: 55px" class="q-pa-sm">
-          <div>                   
+          <div>     
              <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
                   v-model="date"     
                   mask="DD-MM-YYYY" 
+                  :options="optionsFn"
                   @update:model-value="ChangeDate($event)"
                 />
               </q-btn-dropdown>  
@@ -89,8 +90,9 @@
                   shrink
                   stretch
                   active-color="red-1"
+                  v-model="tab"
                 >
-               <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria" :icon="item.logo"   @click="
+               <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria"  :name="item.nombre_categoria" :icon="item.logo"   @click="
                       GetProduct(item.id_categoria, item.nombre_categoria)" />
                 </q-tabs>                 
               <q-space />
@@ -111,7 +113,7 @@
         <div class="row">
           <div class="col-6">
             <q-item>
-              <q-input dense outlined class="full-width" type="number" max='9' label="Piso " v-model="modelUser.piso_especialidad" />
+              <q-input dense outlined class="full-width" type="number" max='9' label="Piso " maxlength="1" v-model="modelUser.piso_especialidad" />
             </q-item>
           </div>
           <div class="col-6">
@@ -121,7 +123,7 @@
           </div>   
           <div class="col-6">
             <q-item>        
-               <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm**ss" hint="Hora" />   
+               <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm**ss" hint="Hora de recepcion" />   
             </q-item>          
           </div>   
           <div class="col-6">
@@ -195,14 +197,16 @@ export default {
         detallePedido: [],
         TotalPedido: 0,
         color: "bg-positive", });    
-      //  let  fecha_hora=ref(moment(new Date()).format("DD/MM/YYYY"))
+        //let  fecha_hora=ref(moment(new Date()).format("DD/MM/YYYY"))
         let todaysDate = new Date();
         const date2 = ref(moment(new Date()).local().format("DD/MM/YYYY"))
         const proxyDate = ref(moment(new Date()).local().format("DD-MM-YYYY"))
         const fecha_hora=ref(moment(new Date()).local().format("DD-MM-YYYY"));
         let  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
+        let  fecha_actual2= ref(moment(new Date()).format("YYYY/MM/DD"));
         let  fecha_sql= ref(moment(new Date()).format("YYYY-MM-DD"));
     return {
+      tab:ref(''),
       proxyDate,
       date2,
       modelo,
@@ -212,14 +216,15 @@ export default {
       time: ref(''),
       date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       fecha_actual,
+      fecha_actual2,
       fecha_sql,
       timeactual:ref(moment.utc().add(7,'hours').format('hh:mm:ss') ),     
       datehoy : Date.now(),     
       fecha_hora,
       todaysDate,   
       date1: ref('2019/02/01'),
-      optionsFn (fecha_hora) {
-        return fecha_hora >= '2022/01/15' && fecha_hora <= '2022/01/20'
+      optionsFn (fecha_actual) {
+        return fecha_actual>= moment(new Date()).format('YYYY/MM/DD')
       },
       updateProxy () {
         //proxyDate.value = date2.value
@@ -238,7 +243,6 @@ export default {
       drawerWidth,
       toggleRightDrawer() {
         rightDrawerOpen.value = !rightDrawerOpen.value;
-
       },
       itemCategoria,
       itemProducto,
@@ -278,7 +282,20 @@ export default {
         this.modelo.DES_AUXILIAR = obj.DES_AUXILIAR;
         this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
         this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
-        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
+        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
+
+        const datoscli = localStorage.getItem("Qsesion");
+        let objd = JSON.parse(datoscli);
+
+        //  if (obj.AREA=="AREA_NN" ) {
+        //   this.modelUser.area="";
+        // }else{
+        //     this.modelUser.area=obj.AREA;
+        // }
+         this.modelUser.piso_especialidad = objd.Piso;
+
+       
+    // console.log(obj);
     } 
     
     this.conn.onopen = (e) => {
@@ -298,7 +315,6 @@ export default {
         }else{
           /// this.Error();
         } 
-
     };    
   },
   computed: {
@@ -402,7 +418,8 @@ export default {
               }              
            });
 
-          this.GetProduct(this.itemCategoria[0].id_categoria);      
+          this.GetProduct(this.itemCategoria[0].id_categoria);    
+          this.tab=  this.itemCategoria[0].nombre_categoria;
           this.nombrecategoria = this.itemCategoria[0].nombre_categoria;
           this.id_categoria=this.itemCategoria[0].id_categoria;
         })
@@ -418,6 +435,7 @@ export default {
       }else{
          // this.fecha_sql= moment(new Date()).format("YYYY-MM-DD");
           this.nombrecategoria = nombre;
+           this.tab=  nombre;
           this.id_categoria=id_categoria;
          // console.log(id_categoria)
           let tipo="dia";
@@ -489,7 +507,7 @@ export default {
           this.fecha_sql=fechaSql;
           this.nombreDia =moment(new Date(fecha1)).format('dddd'); 
 
-        let tipo="dia";      
+         let tipo="dia";      
                  
         if (this.nombreDia=='domingo') {
            console.log('no entra a la peticion ');
@@ -661,7 +679,17 @@ export default {
        
         let lista = [];
         this.modelUser.TotalPedido = this.SumTotal;
-       
+       // let obj = this.$q.sessionStorage.getItem("Qsesion");
+      //  obj.Piso=this.modelUser.piso_especialidad;
+
+
+        const datoscli = localStorage.getItem("Qsesion");
+        const objd = JSON.parse(datoscli);
+        objd.Piso = this.modelUser.piso_especialidad;
+        const updateo = JSON.stringify(objd);
+        localStorage.setItem("Qsesion", updateo);
+
+      ///  console.log(obj);
         this.arrayvacio.forEach((element) => {
           lista.push({
             id_categoria: element.id_categoria,

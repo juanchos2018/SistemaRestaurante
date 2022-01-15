@@ -215,7 +215,7 @@ export default defineComponent({
         if (result.existe=="si") {  
           
           if (result.error=='si') {
-               me.$q.dialog({
+              me.$q.dialog({
               dark: true,
               title: 'Ups',
               message: result.msg
@@ -226,7 +226,7 @@ export default defineComponent({
           }else{
              let area ='';   
             if (result.AREA==null) {
-              area='AREA NN';
+              area='AREA_NN';
               //console.log('area nulla');
             }else{
               area=result.AREA;
@@ -235,7 +235,8 @@ export default defineComponent({
                         COD_MEDICO:result.COD_MEDICO,
                         DES_AUXILIAR:result.DES_AUXILIAR,
                         LOGUEO:'Qsesion',
-                        AREA:area}
+                        AREA:area,
+                        Piso:1}
            //  me.$q.localStorage.set("Qsesion", objeto)
              me.$store.dispatch("guardarDatos",objeto);  
               //const value = $q.localStorage.getItem(key)

@@ -3,7 +3,7 @@
     <q-toolbar class="bg-red-1 q-my-md shadow-2">
       <div class="text-h5 text-bold">-</div>
       <q-space />
-      <div class="text-h5 text-bold">S/ {{ SumTotal }}aa</div>
+      <div class="text-h5 text-bold">S/ {{ SumTotal }}</div>
     </q-toolbar>
 
 

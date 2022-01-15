@@ -5,8 +5,7 @@
         <q-item-label>{{ nombreDia }} - {{ fecha_pedido }}</q-item-label>
         <q-item-label caption>
           {{ hora_pedido }}
-        </q-item-label>
-            <!-- <q-item-label>{{ des_auxiliar }}</q-item-label> -->
+        </q-item-label>         
       </q-item-section>
     </q-item>
     <q-list bordered padding>
@@ -20,10 +19,7 @@
            <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }} x <span class="text-green text-bold"> {{item.precio_venta}}</span></q-item-label>
         </q-item-section>
 
-        <q-item-section side top>
-          <!-- <q-item-label caption>5 min ago</q-item-label> -->
-          <!-- <q-icon name="star" color="yellow" /> -->
-          <!-- @click="estrellas(item.id_pedido_detalle,item.id_producto)" -->
+        <q-item-section side top>      
           <q-rating
             size="18px"
             v-model="item.estrellas"
@@ -67,7 +63,14 @@ export default {
   },
   computed: {
     nombreDia: function () {
-      return moment(new Date(this.fecha_pedido)).format("dddd");
+      let array = this.fecha_pedido.split("-");
+        let dia = array[0];
+        let mes = array[1];
+        let anio = array[2];
+
+        let fecha1 = anio + "/" + mes + "/" + dia;
+        let fechaSql = anio + "-" + mes + "-" + dia;
+      return moment(new Date(fecha1)).format("dddd");
  
     },
   },

@@ -2,8 +2,7 @@
   <q-page class="q-pa-sm">
      <q-tabs v-model="tab" dense align="justify" class="bg-primary text-white shadow-2" :breakpoint="0">
       <q-tab name="mails" icon="alarm" label="Proceso" />
-      <q-tab name="success" icon="fas fa-check" label="Recibido" />
-    
+      <q-tab name="success" icon="fas fa-check" label="Recibido" />    
       <q-tab name="alarms" icon="fas fa-exclamation-triangle" label="Rechazado" />
     </q-tabs>
      <q-tab-panels v-model="tab" animated>
@@ -38,6 +37,7 @@
               :fecha_pedido="item.fecha_pedido"
               :hora_pedido="item.hora_pedido"
               :total="item.totalpedido"
+              v-on:anularPedido="anularPedido"
             
             ></card-mi-pedido>
           </div>
@@ -61,8 +61,7 @@
           </div>
         </div>
       </q-tab-panel>
-      <q-tab-panel name="alarms">
-    
+      <q-tab-panel name="alarms">    
         <div class="row q-col-gutter-sm">
           <div class="col-md-3 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemRejected" :key="item.id_pedido">
             <card-rejected  :id_pedido="item.id_pedido"
@@ -73,7 +72,8 @@
             :estado="item.estado_pedido"
             :fecha_pedido="item.fecha_pedido"
             :hora_pedido="item.hora_pedido"
-            :total="item.totalpedido"></card-rejected>
+            :total="item.totalpedido">
+            </card-rejected>
           </div>
         </div>
       </q-tab-panel>
@@ -104,13 +104,13 @@ export default defineComponent({
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
     const  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
     return {
+      date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       tab: ref("mails"),
       itemRejected,
       itemCocina,    
       itemSucess,
       step:ref(0),
-      fecha_actual,
-      date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
+      fecha_actual,    
       done1,
       done2,
       done3,      
@@ -149,7 +149,7 @@ export default defineComponent({
          let es =  recibe.estado_pedido;
          let cod_auxiliar=recibe.cod_auxiliar;         
          if (es=="2" && cod_auxiliar==this.modelo.COD_AUXILIAR) {  
-            this.check();
+             this.check();
          }   
      };
   },
@@ -182,7 +182,7 @@ export default defineComponent({
         .finally(() => {});
     },    
     getrecjected(){
-        let tipo="rejected";
+      let tipo="rejected";
       let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
         .get(this.url_base+url)
@@ -260,15 +260,17 @@ export default defineComponent({
     UpdateStart(obj){
  
       let me = this;
+      let tipo="start"
       let url ="/Controller/PedidoController.php";         
       let data = obj;
+      console.log(obj);
       this.$axios({
         method: "PUT",
         url: me.url_base+url,
         data: data,
       })
         .then(function (response) {
-         //  console.log(response);
+           console.log(response);
           let result = response.data;
           me.get();
               me.$q.notify({
@@ -281,6 +283,47 @@ export default defineComponent({
         .catch((error) => {
           console.log(error);
         });
+    },
+    anularPedido(id_pedido){  
+      let me = this;
+      let url ="/Controller/PedidoController.php";   
+      let lista=[];
+      //  cod_auxiliar:this.modelo.COD_AUXILIAR,
+      let data ={
+          tipo:'Update',
+          id_pedido:id_pedido,        
+          estado_pedido:4,
+          lista:lista
+      }
+      this.conn.send(JSON.stringify(data));
+
+      // this.$axios({
+      //   method: "PUT",
+      //   url: me.url_base+url,
+      //   data: data,
+      // })
+      //   .then(function (response) {
+      //    //  console.log(response);
+      //     let result = response.data;
+      //     if (result.editado=='si') {
+      //             me.get();
+      //             me.$q.notify({
+      //             message: result.mensaje,
+      //             color: "accent",
+      //             position: "top",
+      //         });
+      //     }else{
+      //          me.$q.notify({
+      //             message:  result.mensaje,
+      //             color: "accent",
+      //             position: "top",
+      //           });
+      //     }    
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+
     },
     rcv(str) {
        this.get();

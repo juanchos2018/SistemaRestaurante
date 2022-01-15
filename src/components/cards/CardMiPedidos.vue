@@ -17,25 +17,21 @@
            <q-item-label v-else-if="estado_pedido==2" class="text-green text-bold">
               LISTO
            </q-item-label>
-        </q-item-section>
+            <q-btn
+            class="gt-xs"
+            size="12px"
+            flat
+            dense
+            round
+            icon="delete"
+            @click="Mensaje"         
+          />
+        </q-item-section>      
     </q-item>
-        <q-separator />
+    <q-separator />
     <div class="row">
       <div class="col-7">
-        <q-list class="rounded-borders q-pt-xs">
-          <!-- <q-item
-            clickable
-            v-for="item in detalle"
-            :key="item.id_pedido_detalle"
-          >         
-            <q-item-section>
-              <q-item-label class="text-subtitle2"
-                >{{ item.nombre_producto }} -
-                {{ item.cantidad_pedido }}</q-item-label
-              >
-              <q-item-label caption>{{ item.descripcion }}</q-item-label>
-            </q-item-section>
-          </q-item> -->
+        <q-list class="rounded-borders q-pt-xs">       
           <q-item v-for="item in detalle" :key="item.id_pedido_detalle" class="no-margin ">
             <q-item-section avatar  class="no-margin">
               <q-icon color="primary" :name="item.logo" size="xs" />
@@ -145,7 +141,41 @@ export default {
         return  moment(fecha_sql).format('dddd');
     },
   },
-  methods: {},
+  methods: {
+    Mensaje(){  
+      if (this.estado_pedido==0) {
+           this.$q.dialog({
+            title: 'Confirmar',
+            message: 'Desea Anular este Pedido',
+            cancel: true,
+            persistent: true,
+            class:'colorborde'
+          }).onOk(() => {
+            // console.log('>>>> OK')
+            this.$emit('anularPedido',this.id_pedido);
+          }).onOk(() => {
+            // console.log('>>>> second OK catcher')
+          }).onCancel(() => {
+            // console.log('>>>> Cancel')
+          }).onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          })
+      }else{
+          this.$q.dialog({
+            title: 'Mensaje',
+            message: 'Este  pedido ya estan en Proceso !'
+          }).onOk(() => {
+            // console.log('OK')
+          }).onCancel(() => {
+            // console.log('Cancel')
+          }).onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          })
+      }
+      
+    },
+   
+  },
 };
 </script>
 

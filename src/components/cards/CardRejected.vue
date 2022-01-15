@@ -1,5 +1,5 @@
 <template>
-  <q-card class="my-card">
+  <q-card class="my-card colorborde">
     <q-item>
       <q-item-section>
         <q-item-label>{{ nombreDia }} - {{ fecha_pedido }}</q-item-label>
@@ -75,5 +75,11 @@ export default {
 .q-stepper__tab--active,
 .q-stepper__tab--done {
   color: #b71408;
+}
+
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
 }
 </style>
