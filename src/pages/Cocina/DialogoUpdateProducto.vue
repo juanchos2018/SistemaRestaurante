@@ -5,6 +5,7 @@
         <q-form  @submit.prevent="Validate">
           <q-card-section>
             <div class="text-h6">Modificar Producto</div>
+            <p>{{modelo}}</p>
           </q-card-section>
           <q-separator />
           <div class="row">
@@ -18,17 +19,28 @@
                 <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
               </q-item>
             </div>
-          <div class="col-3">
+             <div class="col-8">
+              <q-item>    
+                         <!-- :value="modelo.id_subcategoria" -->
+                <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="modelo.id_subcategoria" :options="itemSubcategoria" :value="modelo.nombre_subcategoria"   
+                   label="Sub Categoria" :readonly="subcategoriabool==true ? false : true"   >
+                  
+                </q-select>
+              </q-item>
+            </div>
+            <div class="col-4">
+              <q-item>
+                  <q-checkbox v-model="subcategoriabool" label="Subcategoria" color="red" />
+              </q-item>
+            </div>
+
+            <div class="col-3">
               <q-item>                
                 <q-checkbox v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
               </q-item>
             </div>
-              <div class="col-4">
-              <!-- <q-item>                 
-                <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock" />                 
-              </q-item> -->
-               <q-item>                 
-                <!-- disable readonly  -->
+              <div class="col-4">           
+               <q-item>     
                 <q-input dense outlined class="full-width" type="number" label="Stock" v-model="modelo.stock"  min="1" :readonly="Stock==true ? false : true"/>                 
               </q-item>
             </div>
@@ -77,9 +89,11 @@
 
 <script>
 import moment from "moment";
-import Vue from "vue";
+//import Vue from "vue";
 import { mapState } from "vuex";
 import { useQuasar } from 'quasar'
+import { ref } from 'vue'
+
 
 export default {
   name: "dialogo-add-producto",
@@ -89,6 +103,11 @@ export default {
       required: true,
       default: false,
     },  
+    id_categoria: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   data() {
     return { 
@@ -96,23 +115,32 @@ export default {
       Stock:false,
       isLoading: false,
       Show: this.DialogoEditProducto, 
-  
+      id_subcategoria: ref(null),
       fecha_actual: moment().format("DD/MM/YYYY"),
       hora_actual: moment().format("HH:mm:ss"),
-
+      itemSubcategoria:[],
+      subcategoriabool:ref(true),
       validate: false,
       modelo: {
         id_producto: 0,
         nombre_producto: "",
         descripcion: "",
         id_categoria: 0,
+        id_subcategoria: 0,
+        nombre_subcategoria:ref(null),
         precio_venta: 0,
         estado: 1,
         stock: 1,
         fecha: "",
         imagen: "",
         usastock:0,
-        estrellas:0
+        estrellas:0,
+        dia_uno:0,
+        dia_dos:0,
+        dia_tres:0,
+        dia_cuatro:0,
+        dia_cinco:0,
+        dia_seis:0
       },
       dia_uno: true,
       dia_dos: true,
@@ -128,8 +156,8 @@ export default {
 
     };
   },
-  mounted: function () {
-  
+  mounted(){
+    this.getsubcategoria( this.id_categoria)
   },
   watch: {
     DialogoEditProducto() {
@@ -138,9 +166,37 @@ export default {
   },
   created() {},
   computed: {
-    ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
+    ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2","id_categoria_store"]),
   },
   methods: {   
+    getsubcategoria(id_categoria){
+      let me = this;
+      me.itemSubcategoria=[];      
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
+      let tipo="lista";
+      let url =  "/Controller/SubCategoriaController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
+       //   console.log(url);
+      me.$axios
+        .get(url_b + url)
+        .then((response) => {
+          ///console.log(response);
+          let elementos=[];
+          elementos=response.data;
+        // this.itemSubcategoria = response.data;
+            if (elementos.length>0) {
+              // console.log(elementos.length)
+          //               console.log("eentra daqui 2"); 
+                      elementos.map(function(x){
+                            me.itemSubcategoria.push({label: x.nombre_subcategoria,value:x.id_subcategoria});
+                }); 
+            }
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    
+    },
     View(id) {
       let me = this;
       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
@@ -158,11 +214,17 @@ export default {
             me.dia_tres=me.modelo.dia_tres==1?true:false; 
             me.dia_cuatro=me.modelo.dia_cuatro==1?true:false; 
             me.dia_cinco=me.modelo.dia_cinco==1?true:false; 
-            me.dia_seis=me.modelo.dia_seis==1?true:false;            
+            me.dia_seis=me.modelo.dia_seis==1?true:false;  
+             
+           // me.modelo.id_subcategoria=me.modelo.dia_seis==1?true:false;   
+        
+
+                     
           })
         .catch((error) => {
           console.log(error);
         });
+        me.getsubcategoria(me.id_categoria);
     },
     Update(){     
       let me = this;
@@ -177,31 +239,33 @@ export default {
        me.modelo.dia_cinco=me.dia_cinco==true?1:0; 
        me.modelo.dia_seis=me.dia_seis==true?1:0;   
 
+       me.modelo.id_subcategoria=me.id_subcategoria.value;
+
       let data = me.modelo;
-      this.$axios({
-        method: "PUT",
-        url: url_b+url,
-        data: data,
-      })
-        .then(function (response) {
-           console.log(response);
-          let result = response.data;
-          if (result.afect>0) {             
-          //  me.Limpiar();
-            me.ListarProductos(me.modelo.id_categoria);
-            me.CerrarModal();
-            me.$q.notify({
-              message: "Producto Editado!",
-              color: "accent",
-              position: "top",
-            });        
-          } else {
-            /// me.Existe();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+       console.log(data);
+      // this.$axios({
+      //   method: "PUT",
+      //   url: url_b+url,
+      //   data: data,
+      // })
+      //   .then(function (response) {
+      //      console.log(response);
+      //     let result = response.data;
+      //     if (result.afect>0) {
+      //       me.ListarProductos(me.modelo.id_categoria);
+      //       me.CerrarModal();
+      //       me.$q.notify({
+      //         message: "Producto Editado!",
+      //         color: "accent",
+      //         position: "top",
+      //       });        
+      //     } else {
+          
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
    
     },
     ListarProductos(id_categoria) {

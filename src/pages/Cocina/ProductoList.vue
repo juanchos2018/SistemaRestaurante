@@ -14,7 +14,7 @@
        <div class="row q-col-gutter-sm">
       <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemProducto" :key="item.id">
         <card-producto :id_producto="item.id_producto" :nombre_producto="item.nombre_producto" :descripcion="item.descripcion" :precio_venta="item.precio_ventas" :nombre_categoria="item.nombre_categoria" :logo="item.logo" :stock="item.stock"  :usastock="item.usastock" :photo="item.imagen" 
-          :lunes="item.dia_uno"  :martes="item.dia_dos"   :miercoles="item.dia_tres"  :jueves="item.dia_cuatro" :viernes="item.dia_cinco" :sabado="item.dia_seis" v-on:UpdateProduct="UpdateProduct" @getproduct="getproduct"></card-producto>
+          :lunes="item.dia_uno"  :martes="item.dia_dos"   :miercoles="item.dia_tres"  :jueves="item.dia_cuatro" :viernes="item.dia_cinco" :sabado="item.dia_seis" v-on:updateProduct="UpdateProduct" @getproduct="getproduct"></card-producto>
       </div>
     </div>
     </div>   
@@ -22,12 +22,9 @@
         <tables-basic :data="itemProducto"  v-on:UpdateProduct="UpdateProduct"></tables-basic>
     </div>      
 
-    <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get" v-on:subcategoria="subcategoria" ref="dialogaddproducto"></dialogo-add-producto>
-    <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto"  ref="dialogoupdaute" v-on:GetProductos="Get"></dialogo-update-producto>
-
+    <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto"    v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get" v-on:subcategoria="subcategoria" ref="dialogaddproducto"></dialogo-add-producto>
+    <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto" v-bind:id_categoria="modelo.id_categoria"  v-on:GetProductos="Get" ref="dialogoupdaute"></dialogo-update-producto>
     <dialogo-subcategoria   @CerrarModalsub="CerrarModalsub" :DialogoSubCategoria="DialogoSubcategoria" v-bind:id_categoria="modelo.id_categoria"  v-on:getsubcategoria="getsubcategoria" ></dialogo-subcategoria>
-
-
   </q-page>
 </template>
 

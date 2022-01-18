@@ -7,6 +7,7 @@
             <div class="text-h6">Agregar Producto</div>
             <!-- <p>{{itemSubcategoria}}</p>
             <p>{{id_categoria}}</p> -->
+            <!-- <p>{{modelo}}</p> -->
           </q-card-section>
           <q-separator />         
           <div class="row">
@@ -17,17 +18,12 @@
             </div>
             <div class="col-12">
               <q-item>
-                <q-input  dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion"  >
-                  <!-- <template v-slot:hint>
-                      <q-badge outline color="primary" label="Agrega SubCategoria" @click="SubCategoria" />
-                    </template> -->
+                <q-input  dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion"  >                
                 </q-input>
               </q-item>
             </div>
-
-
             
-              <div class="col-8">
+            <div class="col-8">
               <q-item>
                 <!-- <p>{{id_subcategoria.value}}</p> -->
                 <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="id_subcategoria" :options="itemSubcategoria" label="Sub Categoria" :readonly="subcategoriabool==true ? false : true" >
@@ -37,7 +33,7 @@
                 </q-select>
               </q-item>
             </div>
-             <div class="col-4">
+            <div class="col-4">
               <q-item>
                   <q-checkbox v-model="subcategoriabool" label="Subcategoria" color="red" />
               </q-item>
@@ -192,7 +188,6 @@ export default {
        }else{
           return this.estadoStock
        }
-
     }
   },
   methods: {
@@ -220,7 +215,7 @@ export default {
       }else{
           me.modelo.id_subcategoria = 0;
       }    
-      console.log(me.modelo);  
+      //console.log(me.modelo);  
       let data = me.modelo;
       this.$axios({
         method: "POST",
@@ -263,7 +258,7 @@ export default {
       let me = this;
       me.itemSubcategoria=[];
       if (id_categoria==0) {
-        console.log("viene vacio we ");
+      //  console.log("viene vacio we ");
         id_categoria=me.id_categoria_store;
 
       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  

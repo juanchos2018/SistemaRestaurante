@@ -33,7 +33,7 @@
     </div>
 
     <q-card-actions>
-      <q-btn flat round icon="fas fa-edit" @click="UpdateProduct">
+      <q-btn flat round icon="fas fa-edit" @click="updateProduct">
         <q-tooltip
           anchor="top middle"
           self="bottom middle"
@@ -354,11 +354,11 @@ export default {
     }
   },
   methods: {
-    UpdateProduct() {
-      this.$emit("UpdateProduct", this.id_producto);
+    updateProduct() {
+      this.$emit("updateProduct", this.id_producto);
     },
     listar(){
-      this.$emit("getproduct");
+     // this.$emit("getproduct");
     }
   },
 };
