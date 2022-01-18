@@ -141,10 +141,17 @@ import CardAnulado from "components/cards/CardAnulado.vue";
 
 import useSound from "vue-use-sound";
 import buttonSfx from "../../assets/timbre.mp3";
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed,Vue } from "vue";
 import { mapState } from "vuex";
 import moment from "moment";
 import "moment/locale/es";
+
+
+
+import VueMobileDetection from 'vue-mobile-detection'
+//Vue.use(VueMobileDetection)
+
+
 export default {
   name: "Cocina",
   components: {
@@ -229,8 +236,12 @@ export default {
     }
   },
   mounted() {
+    this.Detectar();
     this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-    this.conn = new WebSocket(this.url_socket);
+    //this.conn = new WebSocket(this.url_socket2);
+    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
+   
+
     this.get();
     this.getCalendar();
     this.getTerminados();
@@ -238,6 +249,9 @@ export default {
     this.conn.onopen = (e) => {
       console.log("conectado Co : " + e);
     };
+    this.conn.onerror = function (errorEvent) {
+				console.log("WebSocket ERROR: " + JSON.stringify(errorEvent, null, 4));
+		};
     this.conn.onmessage = (e) => {
       // console.log(e.data)
       let jsonre = JSON.parse(e.data);
@@ -258,7 +272,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["url_base", "url_izipay", "url_socket"]),
+    ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
     getData2() {
       return this.getData().slice(
         (this.page - 1) * this.totalPages,
@@ -283,11 +297,29 @@ export default {
     },
   },
   methods: {
+    Detectar(){      
+      //console.log(this.$q.screen.width );
+      //console.log(this.$q.platform.is.mobile);
+      let ismobile=this.$q.platform.is.mobile;
+
+
+
+    //=== 1080 && this.$q.platform.is.mobile
+
+      // let detector = new MobileDetect(window.navigator.userAgent)
+      // console.log( "Mobile: " + detector.mobile());
+      // console.log( "Phone: " + detector.phone());
+      // console.log( "Tablet: " + detector.tablet());
+      // console.log( "OS: " + detector.os());
+      // console.log( "userAgent: " + detector.userAgent());
+    },
     get() {
       let tipo = "nuevo";
+      
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+this.fecha_actual;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {      
           this.itemCocina = response.data;
         })
@@ -298,9 +330,10 @@ export default {
     },
     getCalendar() {
       let tipo = "calendar";
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {    
           this.events = response.data;
         })
@@ -332,10 +365,11 @@ export default {
           let fecha1 =anio+'/'+mes+'/'+dia;
           let fechaSql=anio+'-'+mes+'-'+dia;
 
-          this.nombreDia =moment(new Date(fecha1)).format('dddd');     
+          this.nombreDia =moment(new Date(fecha1)).format('dddd');   
+          let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
           let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+fechaSql;
           this.$axios
-          .get(this.url_base + url)
+          .get(url_b + url)
           .then((response) => {        
             ///console.log(response);
             this.itemCocina = response.data;
@@ -349,9 +383,10 @@ export default {
 
     getTerminados() {
       let tipo = "terminado";
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
       let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
           this.itemTerminado = response.data;
           //  console.log(response.data);
@@ -363,9 +398,10 @@ export default {
     },
     getRjecteds() {
       let tipo = "rejectedcock";
+        let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
       let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
           this.itemRejected = response.data;
           //  console.log(response.data);

@@ -1,19 +1,15 @@
 <template>
   <q-page class="q-pa-sm">
-
     <label for="" class="text-h6">Producto de la Categoria  {{modelo.nombre_categoria}}</label>
-<br />
+    <br />
     <br />
      <q-btn-group push>
         <q-btn push icon="fas fa-id-card" @click="TipoVista=true" />
         <q-btn push  icon="fas fa-table"  @click="TipoVista=false"/>      
-    </q-btn-group>
-    
+    </q-btn-group>    
     <q-btn position="right" class="float-right" color="primary" label="Nuevo Producto" @click="AddProducto" />
     <br />
-    <br />
- 
-
+    <br />    
     <div v-if="TipoVista">
        <div class="row q-col-gutter-sm">
       <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12" v-for="item in itemProducto" :key="item.id">
@@ -24,9 +20,13 @@
     </div>   
     <div v-else > 
         <tables-basic :data="itemProducto"  v-on:UpdateProduct="UpdateProduct"></tables-basic>
-    </div>   
-    <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get"></dialogo-add-producto>
+    </div>      
+
+    <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto" v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get" v-on:subcategoria="subcategoria" ref="dialogaddproducto"></dialogo-add-producto>
     <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto"  ref="dialogoupdaute" v-on:GetProductos="Get"></dialogo-update-producto>
+
+    <dialogo-subcategoria   @CerrarModalsub="CerrarModalsub" :DialogoSubCategoria="DialogoSubcategoria" v-bind:id_categoria="modelo.id_categoria"  v-on:getsubcategoria="getsubcategoria" ></dialogo-subcategoria>
+
 
   </q-page>
 </template>
@@ -54,6 +54,9 @@ export default defineComponent({
     DialogoUpdateProducto: defineAsyncComponent(() =>
       import("./DialogoUpdateProducto")
     ),
+    DialogoSubcategoria: defineAsyncComponent(() =>
+      import("./DialogoSubcategoria")
+    ),  
     TablesBasic: defineAsyncComponent(() => import('components/tables/TableBasic'))
 
   },
@@ -61,7 +64,9 @@ export default defineComponent({
     return {     
       DialogoEditProducto: false,      
       DialogoAddProducto: false,     
+      DialogoSubcategoria: false,     
       itemProducto: [],
+      itemSubcategoria: [],
       TipoVista:true,   
       id_producto:0,
       modelo: {
@@ -72,23 +77,27 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(["url_base"]),
+      ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
   },
   mounted() {  
-    //console.log("iid es :" + this.id_categoria);
+      //console.log("iid es :" + this.id_categoria);
       this.modelo.id_categoria = parseInt(this.id_categoria);
       this.Get(this.modelo.id_categoria);
       this.InfoCategoria();
   },
   methods: {
+    subcategoria(){
+       this.DialogoSubcategoria = true;
+    },
     AddProducto() {
       this.DialogoAddProducto = true;
     },
     Get(idcategoria) {
       let url =
         "/Controller/ProductoControllerCo.php?id_categoria=" + idcategoria;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
          // console.log(response);
           this.itemProducto = response.data;
@@ -100,9 +109,10 @@ export default defineComponent({
     },
     getproduct() {
       //console.log("desde ihjo")
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
       let url =  "/Controller/ProductoControllerCo.php?id_categoria=" + this.modelo.id_categoria;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
           //console.log(response);
           this.itemProducto = response.data;
@@ -112,11 +122,30 @@ export default defineComponent({
         })
         .finally(() => {});
     },
+    getsubcategoria(id){
+       console.log("regtorna");
+       console.log(id);
+       this.$refs.dialogaddproducto.getsubcategoria(id);
+
+      // let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
+      // let tipo="lista";
+      // let url =  "/Controller/SubCategoriaController.php?tipo="+tipo+"&id_categoria=" + this.modelo.id_categoria;
+      // this.$axios
+      //   .get(url_b + url)
+      //   .then((response) => {       
+      //     this.itemSubcategoria = response.data;
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   })
+      //   .finally(() => {});
+    },
     InfoCategoria(){
         let tipo="view";
+        let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
         let url = "/Controller/CategoriaController.php?tipo="+tipo+"&id_categoria="+this.id_categoria;
        this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
           this.modelo = response.data;
           // console.log(response.data)
@@ -150,6 +179,9 @@ export default defineComponent({
     UpdateProduct(id){      
         this.$refs.dialogoupdaute.View(id);
         this.DialogoEditProducto = true;    
+    },
+    CerrarModalsub(){
+        this.DialogoSubcategoria = false;
     }
   },
 });

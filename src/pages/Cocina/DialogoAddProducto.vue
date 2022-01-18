@@ -5,7 +5,8 @@
         <q-form  @submit.prevent="Validate">
           <q-card-section>
             <div class="text-h6">Agregar Producto</div>
-            <!-- <p>{{modelo}}</p> -->
+            <!-- <p>{{itemSubcategoria}}</p>
+            <p>{{id_categoria}}</p> -->
           </q-card-section>
           <q-separator />         
           <div class="row">
@@ -16,7 +17,29 @@
             </div>
             <div class="col-12">
               <q-item>
-                <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion"  />
+                <q-input  dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion"  >
+                  <!-- <template v-slot:hint>
+                      <q-badge outline color="primary" label="Agrega SubCategoria" @click="SubCategoria" />
+                    </template> -->
+                </q-input>
+              </q-item>
+            </div>
+
+
+            
+              <div class="col-8">
+              <q-item>
+                <!-- <p>{{id_subcategoria.value}}</p> -->
+                <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="id_subcategoria" :options="itemSubcategoria" label="Sub Categoria" :readonly="subcategoriabool==true ? false : true" >
+                    <template v-slot:hint >
+                      <q-badge outline color="primary" label="Agrega SubCategoria" @click="SubCategoria"  />
+                    </template>
+                </q-select>
+              </q-item>
+            </div>
+             <div class="col-4">
+              <q-item>
+                  <q-checkbox v-model="subcategoriabool" label="Subcategoria" color="red" />
               </q-item>
             </div>
             <div class="col-3">
@@ -98,25 +121,26 @@ export default {
   data() {
     return {    
       Estado: true,
-      Stock:true,
+      Stock:false,
       NombreEstado:'Activo',
       isLoading: false,
       Show: this.DialogoTareaEditar,
       fecha_actual: moment().format("DD/MM/YYYY"),
       hora_actual: moment().format("HH:mm:ss"),
+      subcategoriabool:ref(false),
       validate: false,
       dia_uno: ref(true),
       dia_dos: ref(true),
       dia_tres: ref(true),
       dia_cuatro: ref(true),
       dia_cinco: ref(true),
-      dia_seis: ref(true),
-
+      dia_seis: ref(true), 
       modelo: {
         id_producto: 0,
         nombre_producto: "",
         descripcion: "",
         id_categoria: 0,
+        id_subcategoria: 0,
         precio_producto: null,
         estado: 1,
         stock: 0,
@@ -131,17 +155,23 @@ export default {
         dia_cinco:1,
         dia_seis:1
       },
-
       errors: {
         nombre_producto: false,
         descripcion: false,
         precio_producto: false      
-      }
-
+      },
+      itemSubcategoria:[],
+      id_subcategoria: ref(null),
+      options: [
+        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
+      ]
     };
   },
   mounted: function () {
-   
+    this.modelo.id_categoria = this.id_categoria;   
+    this.getsubcategoria( this.id_categoria);
+///    console.log(this.id_categoria_store)
+     
   },
   watch: {
     DialogoAddProducto() {
@@ -151,18 +181,19 @@ export default {
       this.rango = this.porcentaje;
     },
   },
-  created() {},
+  created() {
+     this.modelo.id_categoria = this.id_categoria;   
+  },
  computed: {
-    ...mapState(["url_base"]), 
-      estadoStock: function () {
+     ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2","id_categoria_store"]),
+    estadoStock: function () {
        if (this.Stock) {
           return this.modelo.stock=0
        }else{
           return this.estadoStock
        }
 
-      }
-
+    }
   },
   methods: {
     toggleCheckboxes(event){    
@@ -172,24 +203,33 @@ export default {
         this.modelo.stock=0;
       }
     },
+    SubCategoria(){     
+      if (this.subcategoriabool) {
+         this.$emit('subcategoria',true)
+      }    
+    },
     Store() {
       let me = this;
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
       let url ="/Controller/ProductoController.php";
       me.modelo.id_categoria = me.id_categoria;      
       me.modelo.estado = me.Estado==true?1:0;
       me.modelo.usastock = me.Stock==true?1:0;      
-
+      if (me.subcategoriabool==true) {
+          me.modelo.id_subcategoria = me.id_subcategoria.value;
+      }else{
+          me.modelo.id_subcategoria = 0;
+      }    
+      console.log(me.modelo);  
       let data = me.modelo;
       this.$axios({
         method: "POST",
-        url: me.url_base+ url,
+        url: url_b+ url,
         data: data,
       })
-        .then(function (response) {
-          //  console.log(response);
+        .then(function (response) {    
           let result = response.data.resultado;
-          if (result == "Registrado") {
-            // alert("Registrado");
+          if (result == "Registrado") {            
             me.Limpiar();
             me.ListarProductos(me.modelo.id_categoria);
             me.CerrarModal();
@@ -199,9 +239,9 @@ export default {
               position: "top",
             });  
           } else {
-            /// me.Existe();
+           
           }
-            me.Limpiar();
+           me.Limpiar();
         })
         .catch((error) => {
           console.log(error);
@@ -209,8 +249,7 @@ export default {
     },
     ListarProductos(id_categoria) {
       this.$emit("GetProductos", id_categoria);
-    },  
-  
+    },    
     CerrarModal() {
       this.$emit("CerrarModal");
     },
@@ -220,8 +259,59 @@ export default {
       this.modelo.precio_producto = 0;
       // this.modelo.nombre_producto="";
     },
-    Validate() {
+    getsubcategoria(id_categoria){
+      let me = this;
+      me.itemSubcategoria=[];
+      if (id_categoria==0) {
+        console.log("viene vacio we ");
+        id_categoria=me.id_categoria_store;
+
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
+      let tipo="lista";
+      let url =  "/Controller/SubCategoriaController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
+      me.$axios
+        .get(url_b + url)
+        .then((response) => {
+          console.log(response);
+          let elementos=[];
+          elementos=response.data;
+         // this.itemSubcategoria = response.data;
+          elementos=response.data;   
+                  elementos.map(function(x){
+                        me.itemSubcategoria.push({label: x.nombre_subcategoria,value:x.id_subcategoria});
+            }); 
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+
+        
+      }else{
+     
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
+      let tipo="lista";
+      let url =  "/Controller/SubCategoriaController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
+      me.$axios
+        .get(url_b + url)
+        .then((response) => {
+          console.log(response);
+          let elementos=[];
+          elementos=response.data;
+         // this.itemSubcategoria = response.data;
+          elementos=response.data;   
+                  elementos.map(function(x){
+                        me.itemSubcategoria.push({label: x.nombre_subcategoria,value:x.id_subcategoria});
+            }); 
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+      }
    
+    },
+    Validate() {   
       this.errors.nombre_producto = this.modelo.nombre_producto == "" ? true : false;
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
       this.errors.precio_producto = this.modelo.precio_producto == null? true : false;

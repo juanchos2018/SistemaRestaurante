@@ -18,7 +18,7 @@
               LISTO
            </q-item-label>
             <q-btn
-            class="gt-xs"
+            
             size="12px"
             flat
             dense

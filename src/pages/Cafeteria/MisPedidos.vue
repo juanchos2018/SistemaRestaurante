@@ -40,6 +40,7 @@ export default defineComponent({
       itemhistory,
       step: ref(0),            
       modelo,
+      conn:null,
      
     };
    },
@@ -50,7 +51,8 @@ export default defineComponent({
       }    
    },
    mounted() {
-      let  conn= new WebSocket(this.url_socket);
+     //  let  conn= new WebSocket(this.url_socket);
+        this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
       let existe = this.$q.sessionStorage.has("Qsesion");     
       if (existe==true) {
           let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -60,14 +62,15 @@ export default defineComponent({
      this.get();
    },
   computed: {
-   ...mapState(["url_base",'url_izipay','url_socket']),
+   ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
   },
   methods: {      
     get(){
       let tipo="history";
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
-        .get(this.url_base+url)
+        .get(url_b+url)
         .then((response) => {
        ///  console.log(response)
           this.itemhistory = response.data;         
@@ -80,11 +83,12 @@ export default defineComponent({
     UpdateStart(obj){
    //  console.log(obj);
       let me = this;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url ="/Controller/PedidoController.php";         
       let data = obj;
       this.$axios({
         method: "PUT",
-        url: me.url_base+url,
+        url: url_b+url,
         data: data,
       })
         .then(function (response) {

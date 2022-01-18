@@ -16,8 +16,8 @@
       v-on:listar="Get"
     ></table-custom-grid>
 
-    <q-dialog v-model="visiblemodal" @hide="CerrarModal">
-      <q-card style="width: 500px; max-width: 80vw">
+    <q-dialog v-model="visiblemodal" @hide="CerrarModal" >
+      <q-card style="width: 500px; max-width: 80vw" class="colorborde">
         <q-form @submit.prevent="Validate">
           <q-card-section>
             <div class="text-h6">Nueva Categoria</div>
@@ -126,7 +126,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState(["url_base"]),
+     ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
   },
   mounted() {
     this.Get();
@@ -160,12 +160,13 @@ export default defineComponent({
     Store() {
       let me = this;
       // me.modelo.nombre_categoria=nombre;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/CategoriaController.php";
       me.modelo.estado = me.Estado==true?1:0;
       const data = me.modelo;
       this.$axios({
         method: "POST",
-        url: me.url_base + url,
+        url: url_b + url,
         data: data,
       })
         .then(function (response) {
@@ -192,9 +193,10 @@ export default defineComponent({
     },
     Get() {
       let tipo="lista";
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/CategoriaController.php?tipo="+tipo;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
           this.itemCategoria = response.data;
           // console.log(response.data)
@@ -226,4 +228,10 @@ export default defineComponent({
 </script>
 
 <style>
+
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
 </style>

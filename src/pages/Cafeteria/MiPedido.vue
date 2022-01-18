@@ -129,7 +129,8 @@ export default defineComponent({
       }
    },
    mounted() {
-      this.conn= new WebSocket(this.url_socket);
+    //   let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
+      this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
       let existe = this.$q.sessionStorage.has("Qsesion");     
       if (existe==true) {
           let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -154,7 +155,7 @@ export default defineComponent({
      };
   },
   computed: {
-   ...mapState(["url_base",'url_izipay','url_socket']),
+   ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
     nombreDia: function () {
       return moment(this.fecha_pedido).format("dddd");
     },
@@ -170,8 +171,9 @@ export default defineComponent({
     get(){
       let tipo="mio";
       let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       this.$axios
-        .get(this.url_base+url)
+        .get(url_b+url)
         .then((response) => {
        //   console.log(response)
           this.itemCocina = response.data;         
@@ -183,9 +185,10 @@ export default defineComponent({
     },    
     getrecjected(){
       let tipo="rejected";
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
-        .get(this.url_base+url)
+        .get(url_b+url)
         .then((response) => {
           //console.log(response);
           this.itemRejected = response.data;         
@@ -197,9 +200,10 @@ export default defineComponent({
     },
     getSucess(){
       let tipo="success";
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
-        .get(this.url_base+url)
+        .get(url_b+url)
         .then((response) => {     
          // console.log(response)  
           this.itemSucess = response.data;         
@@ -211,9 +215,10 @@ export default defineComponent({
     },
     getCalendar() {
       let tipo = "calendarcli";
+       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/PedidoController.php?tipo=" + tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {    
           this.events = response.data;
         })
@@ -243,9 +248,10 @@ export default defineComponent({
           let fechaSql=anio+'-'+mes+'-'+dia;
           this.nombreDia =moment(new Date(fecha1)).format('dddd');   
         //    console.log(fechaSql)
+          let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
           let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+fechaSql+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;;
           this.$axios
-          .get(this.url_base + url)
+          .get(url_b + url)
           .then((response) => {        
            
             this.itemCocina = response.data;
@@ -261,12 +267,13 @@ export default defineComponent({
  
       let me = this;
       let tipo="start"
-      let url ="/Controller/PedidoController.php";         
+      let url ="/Controller/PedidoController.php";   
+       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;      
       let data = obj;
       console.log(obj);
       this.$axios({
         method: "PUT",
-        url: me.url_base+url,
+        url: url_b+url,
         data: data,
       })
         .then(function (response) {
@@ -286,6 +293,7 @@ export default defineComponent({
     },
     anularPedido(id_pedido){  
       let me = this;
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
       let url ="/Controller/PedidoController.php";   
       let lista=[];
       //  cod_auxiliar:this.modelo.COD_AUXILIAR,

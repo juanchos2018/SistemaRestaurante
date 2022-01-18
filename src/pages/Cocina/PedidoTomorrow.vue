@@ -81,7 +81,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState(["url_base"]),
+   ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
     nombreDia: function () {
       return moment(new Date(this.fecha_actual)).format("dddd");
     },
@@ -150,9 +150,10 @@ export default defineComponent({
 
     Get() {
       let tipo = "tomorrow";
+       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
       let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
           console.log(response)
           this.itemTomorrow = response.data;

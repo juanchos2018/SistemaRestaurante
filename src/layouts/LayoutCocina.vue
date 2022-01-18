@@ -51,7 +51,7 @@
 
             <q-toolbar-title>{{ modelo.DES_AUXILIAR }}</q-toolbar-title>
           </q-toolbar>
-          <hr />
+      <q-separator color="red" inset />
           <q-scroll-area style="height: 100%">
             <q-list padding>
               <q-item
@@ -77,7 +77,7 @@
                 v-ripple
               >
                 <q-item-section avatar>
-                  <q-icon name="dashboard" />
+                  <q-icon name="dashboard"  />
                 </q-item-section>
 
                 <q-item-section> Productos </q-item-section>

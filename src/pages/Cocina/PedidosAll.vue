@@ -5,8 +5,6 @@
       <q-space />
       <div class="text-h5 text-bold">S/ {{ SumTotal }}</div>
     </q-toolbar>
-
-
       <!-- <q-radio name="shape" v-model="shape" val="Todos" label="Todos"  />
       <q-radio name="shape" v-model="shape" val="Nuevo" label="Nuevo" />
       <q-radio name="shape" v-model="shape" val="Entregado" label="Entregado" />
@@ -28,7 +26,7 @@
 
     <br />
     <br />
-        <br />
+    <br />
     <div v-if="!itemallorder.length">
       <h5>SIN REGISTROS</h5>
     </div>
@@ -70,6 +68,7 @@ export default defineComponent({
     let itemallorder = ref([]);
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
     const fecha_actual = ref(moment(new Date()).format("YYYY/MM/DD"));
+    const fecha_sql = ref(moment(new Date()).format("YYYY-MM-DD"));
     let nombreDia = ref("");
     return {
       shape: ref('Todos'),
@@ -79,6 +78,7 @@ export default defineComponent({
       modelo,
       nombreDia,
       fecha_actual,
+      fecha_sql,
       moment,
     };
   },
@@ -89,7 +89,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    // let  conn= new WebSocket(this.url_socket);
+
     this.nombreDia = moment(new Date(this.fecha_actual)).format("dddd");
     let existe = this.$q.sessionStorage.has("Qsesion");
     if (existe == true) {
@@ -100,7 +100,7 @@ export default defineComponent({
     this.get();
   },
   computed: {
-    ...mapState(["url_base", "url_izipay", "url_socket"]),
+    ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
     SumTotal() {
       var result = this.itemallorder.reduce(function (acc, obj) {
         return acc + parseFloat(obj.totalpedido);
@@ -110,14 +110,17 @@ export default defineComponent({
   },
   methods: {
     get() {
-      let tipo = "getallorder";
-   //   this.fecha_actual
-      let url = "/Controller/PedidoController.php?tipo=" + tipo;
+      //let tipo = "getallorder";
+      let tipo = "fecha";
+      //this.fecha_actual
+      //let url = "/Controller/PedidoController.php?tipo=" + tipo;
+       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
+      let url =  "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + this.fecha_sql;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
-            console.log(response)
-          this.itemallorder = response.data;
+            //console.log(response)
+            this.itemallorder = response.data;
         })
         .catch(function (error) {
           console.log(error);
@@ -152,7 +155,7 @@ export default defineComponent({
         //DD-MM-YYYY
          this.date=fecha1      
          this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-        this.get();
+         this.get();
 
       } else {
         let array = e.split("-");
@@ -163,9 +166,10 @@ export default defineComponent({
         let fechaSql = anio + "-" + mes + "-" + dia;
         this.nombreDia = moment(new Date(fecha1)).format("dddd");
         let tipo = "fecha";
-          let url =  "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + fechaSql;
-          this.$axios
-            .get(this.url_base + url)
+            let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
+        let url =  "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + fechaSql;
+        this.$axios
+            .get(url_b + url)
             .then((response) => {
               //console.log(response);
               this.itemallorder = response.data;
@@ -174,8 +178,6 @@ export default defineComponent({
               console.log(error);
             })
             .finally(() => {});
-
-
       }
     },
   },

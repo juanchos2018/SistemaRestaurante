@@ -151,7 +151,7 @@ export default {
       this.get();
   },
   computed: {
-    ...mapState(["url_base"]),    
+  ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),  
   },
   methods: {
        get() {

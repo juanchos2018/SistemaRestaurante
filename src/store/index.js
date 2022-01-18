@@ -8,10 +8,14 @@ export default function () {
   const Store = new Vuex.Store({
     namespaced: true,
     name: "global",
-      state: {  url_base: 'http://192.168.3.219/ApiCafeteria',
-      DatosUsuario:{},
+      state: { 
+      url_base2: 'http://192.168.3.219/ApiCafeteria',
+      url_base:  'http://161.132.198.54/ApiCafeteria',    
       url_izipay:'http://192.168.3.219/pasarela',
       url_socket:'ws://192.168.3.219:8090',
+      url_socket2:'ws://161.132.198.54:8090',
+      id_categoria_store:'',
+      DatosUsuario:{},
       carrito:[] ,
       tipoMensaje:'',
       systemNotify: {
@@ -22,7 +26,10 @@ export default function () {
     mutations: {   
       setUsuario(state,obj){
         state.DatosUsuario=obj
-      },  
+      }, 
+      setIdcategoria(state,id_categoria){
+        state.id_categoria_store=id_categoria
+      },   
       showNotify:(state,show)=>{
         state.systemNotify.openNoti=show;
       },
@@ -109,6 +116,9 @@ export default function () {
       TipoUsuario(state){
         return state.user
       },
+      GetIcategoria(state){
+        return state.id_categoria_store
+      },
       
     },
     actions: {    
@@ -119,7 +129,9 @@ export default function () {
         const parsed = JSON.stringify(obj);
         localStorage.setItem("Qsesion", parsed)
         },
-      // this.cats = JSON.parse(localStorage.getItem('cats'));
+        guardarIdcategoria({commit},id_categoria){
+          commit("setIdcategoria",id_categoria)  
+        },  
       
     },
 

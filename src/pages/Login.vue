@@ -179,7 +179,7 @@ export default defineComponent({
       };
   },
    computed: {
-    ...mapState(['url_base'],['url_izipay'])   
+   ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]), 
   }, 
   methods: {
     Memsaje(){
@@ -202,14 +202,17 @@ export default defineComponent({
          spinner: QSpinnerCube,
         })      
        let url ="/Controller/LoginController.php";
+
+       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
        const data = me.modelo;
         this.$axios({
         method: "POST",
-        url: me.url_base+ url,
+        url: url_b+ url,
         data: data,       
       })
         .then(function(response) {     
         me.$q.loading.hide()   
+      //   alert(response);
         let result =response.data;
          // console.log(response);
         if (result.existe=="si") {  
@@ -264,6 +267,7 @@ export default defineComponent({
         })
         .catch((error) => {
           console.log(error); 
+       //   alert(error);
           me.$q.loading.hide()           
         });      
     },

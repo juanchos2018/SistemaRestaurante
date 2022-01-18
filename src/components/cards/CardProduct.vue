@@ -57,7 +57,58 @@
         <q-item-label caption>
           {{ data.descripcion }}
         </q-item-label>
-        <q-item-label lines="1">
+     
+          
+     
+
+      </q-item-section>     
+    </q-item>
+
+      <q-item  >
+        <q-item-section>
+              <q-item-label class="text-h6 text-bold text-green">
+       S/ {{ data.precio_ventas }}
+        </q-item-label>       
+        </q-item-section>
+  <q-item-section side top>
+     <q-item-label v-if="data.usastock == 1" >
+          stock : <q-icon name="fas fa-infinity" size="24px"></q-icon>
+        </q-item-label>
+        <q-item-label v-else>
+          <span class="text-green text-bold" >
+            <q-icon name="fas fa-infinity" size="24px"></q-icon
+          ></span>
+         
+        </q-item-label>
+       <q-item-label v-if="data.usastock == 1" >
+          <q-badge 
+          fab
+          color="primary"
+          :label="data.stock > 0 ? 'Disponible' : 'Agotado'"  
+           
+        />
+        </q-item-label>
+  <q-item-label v-else >
+            <q-badge  
+          fab
+          color="primary"
+          label="Libre"  
+       
+        />
+        </q-item-label> 
+  </q-item-section>
+
+        
+
+
+
+      </q-item>
+
+    
+    <q-separator />
+      <q-item  v-ripple>
+        <q-item-section>
+         <q-item-label lines="1">
           <q-rating
             size="22px"
             v-model="data.estrellas"
@@ -66,51 +117,9 @@
             readonly
           />
         </q-item-label>
-      </q-item-section>
-      <q-item-section side top>
-        <q-item-label v-if="data.usastock == 1">
-          stock : <q-icon name="fas fa-infinity" size="24px"></q-icon>
-        </q-item-label>
-        <q-item-label v-else>
-          <span class="text-green text-bold">
-            <q-icon name="fas fa-infinity" size="24px"></q-icon
-          ></span>
-         
-        </q-item-label>
-         <q-badge v-if="data.usastock == 1"
-          fab
-          color="primary"
-          :label="data.stock > 0 ? 'Disponible' : 'Agotado'"  
-        />
-         <q-badge  v-else
-          fab
-          color="primary"
-          label="Libre"   
-        />
-      </q-item-section>
+        </q-item-section>
+      </q-item>
 
-      <!-- <q-card-section>
-      <div v-if="data.usastock == 1">
-        <q-badge
-          fab
-          color="primary"
-          :label="data.stock > 0 ? 'Disponible' : 'Agotado'"
-          class="absolute"
-          style="top: 0; right: 12px; transform: translateY(-50%)"
-        />
-      </div>
-      <div v-else>
-        <q-badge
-          fab
-          color="primary"
-          label="Libre"
-          class="absolute"
-          style="top: 0; right: 12px; transform: translateY(-50%)"
-        />
-      </div>
-    </q-card-section> -->
-    </q-item>
-    <q-separator />
   </q-card>
 </template>
 

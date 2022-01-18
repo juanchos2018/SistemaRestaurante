@@ -275,7 +275,8 @@ export default {
     this.GetCategoria();
     this.setTime();
     this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-    this.conn= new WebSocket(this.url_socket);
+    //this.conn= new WebSocket(this.url_socket2);
+    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
     let existe = this.$q.sessionStorage.has("Qsesion"); 
     if (existe==true) {     
         let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -318,7 +319,7 @@ export default {
     };    
   },
   computed: {
-    ...mapState(["url_base",'url_izipay','url_socket','carrito']),
+     ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
     getData3() {
       return this.getData().slice(
         (this.page - 1) * this.cantfilas.length,
@@ -402,8 +403,9 @@ export default {
       //   .finally(() => {});
 
       let url = "/Controller/CategoriaController.php?tipo="+tipo;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       this.$axios
-        .get(this.url_base + url)
+        .get(url_b + url)
         .then((response) => {
            // this.itemCategoria = response.data;
             let array=response.data;
@@ -441,8 +443,10 @@ export default {
           let tipo="dia";
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
         // let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
-          this.$axios
-            .get(this.url_base + url)
+        
+         let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+        this.$axios
+            .get(url_b + url)
             .then((response) => {
               //console.log(response)
               this.itemProducto = response.data;
@@ -459,8 +463,10 @@ export default {
     //  let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + this.id_categoria;
       let tipo="dia";
       let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
-      this.$axios
-        .get(this.url_base + url)
+    
+         let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+    this.$axios
+        .get(url_b + url)
         .then((response) => {
           this.itemProducto = response.data;
         })
@@ -521,8 +527,9 @@ export default {
           this.NombreDiaComprobar='libre';
 
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+ this.fecha_sql;
-          this.$axios
-          .get(this.url_base + url)
+          let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+    this.$axios
+          .get(url_b + url)
           .then((response) => {
             this.itemProducto = response.data;
           //  console.log(response)
@@ -765,10 +772,11 @@ export default {
       this.modelUser.TotalPedido = this.SumTotal;
 
       let url = "/Controller/PedidoController.php";
+         let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       const data = this.modelUser;
       this.$axios({
         method: "POST",
-        url: this.url_base + url,
+        url: url_b + url,
         data: data,
       })
         .then(function (response) {
@@ -837,13 +845,14 @@ export default {
     GenerarPago(){
        let me =this;            
        let url ="/GenerarPago.php";
+        let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
         const data={
           amount:50,
           currency:'PE'
            }
             this.$axios({
             method: "POST",
-            url: me.url_izipay+ url,
+            url: url_b+ url,
             data:data,              
           })
             .then(function(response) {     

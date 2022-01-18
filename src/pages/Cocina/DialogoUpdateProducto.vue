@@ -138,15 +138,16 @@ export default {
   },
   created() {},
   computed: {
-    ...mapState(["url_base"]), 
+    ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
   },
   methods: {   
     View(id) {
       let me = this;
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
       let url ="/Controller/ProductoControllerCo.php?id_producto="+id;
       this.$axios({
         method: "GET",
-        url: me.url_base+url,      
+        url: url_b+url,      
       })
         .then(function (response) {            
             me.modelo={...response.data};     
@@ -165,6 +166,7 @@ export default {
     },
     Update(){     
       let me = this;
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
       let url ="/Controller/ProductoController.php?tipo=editpro";   
        me.modelo.estado=me.Estado==true?1:0;   
        me.modelo.usastock = me.Stock==true?1:0;
@@ -178,7 +180,7 @@ export default {
       let data = me.modelo;
       this.$axios({
         method: "PUT",
-        url: me.url_base+url,
+        url: url_b+url,
         data: data,
       })
         .then(function (response) {

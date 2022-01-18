@@ -64,6 +64,7 @@ export default {
   methods: {
      Detalle(){   
       const id_categoria = parseInt(this.id_categoria);
+      this.$store.dispatch("guardarIdcategoria",id_categoria);  
       this.$router.push({name:"/ProductoList",params:{ id_categoria} });    
      },
      Editar(id,nombre_categoria,logo,estado){ 
