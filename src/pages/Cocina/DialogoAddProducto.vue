@@ -7,12 +7,16 @@
             <div class="text-h6">Agregar Producto</div>
             <!-- <p>{{itemSubcategoria}}</p>
             <p>{{id_categoria}}</p> -->
-            <p>{{modelo}}</p>
+            <!-- <p>{{modelo}}</p>
+            <q-badge color="secondary" multi-line>
+            Model: "{{ model }}"  </q-badge> -->
+         
+
           </q-card-section>
           <q-separator />         
           <div class="row">
             <div class="col-12">
-              <q-item>
+              <q-item>            
                 <q-input dense autogrow outlined class="full-width" label="Nombre de Producto *" v-model="modelo.nombre_producto" />
               </q-item>
             </div>
@@ -23,13 +27,12 @@
               </q-item>
             </div>
             
-            <div class="col-12">
+            <div class="col-12" v-if="subcategoria==1">
               <q-item>
-                <!-- <p>{{id_subcategoria.value}}   :readonly="subcategoriabool==true ? false : true"    </p> -->
-                <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="modelo.nombre_subcategoria" :options="itemSubcategoria" label="Sub Categoria"  >
-                    <template v-slot:hint >
-                      <q-badge outline color="primary" label="Agrega SubCategoria" @click="SubCategoria"  />
-                    </template>
+                <!-- <p>{{id_subcategoria.value}}   bottom-slots   :readonly="subcategoriabool==true ? false : true"    </p> -->
+                <q-select   dense autogrow outlined class="full-width"   v-model="model" :options="itemSubcategorias" label="Sub Categoria"   @update:model-value="
+                    handleChange($event)
+                  " >                   
                 </q-select>
               </q-item>
             </div>
@@ -52,7 +55,7 @@
             <div class="col-4">
               <q-item>
                   <q-input
-                  filled
+                
                   v-model="modelo.precio_producto"
                   label="Precio *"
                   mask="#.##"
@@ -60,8 +63,11 @@
                   reverse-fill-mask
                   dense
                   autogrow
+                  outlined
                   input-class="text-right"
+                  :readonly="estadoPrecio==true ? false : true" 
                 />    
+                <!-- dense autogrow outlined -->
               </q-item>
             </div>
              
@@ -72,7 +78,7 @@
                 <q-checkbox v-model="dia_dos" label="Ma" color="red" />
                 <q-checkbox v-model="dia_tres" label="Mi" color="red" />
                 <q-checkbox v-model="dia_cuatro" label="Ju" color="red" />
-                 <q-checkbox v-model="dia_cinco" label="Vi" color="red" />
+                <q-checkbox v-model="dia_cinco" label="Vi" color="red" />
                 <q-checkbox v-model="dia_seis" label="Sa" color="red" />
               </div>
                  </q-item>
@@ -113,9 +119,15 @@ export default {
       required: true,
       default: 0,
     },
+    subcategoria: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   data() {
     return {    
+      model: ref([]),
       Estado: true,
       Stock:false,
       NombreEstado:'Activo',
@@ -138,7 +150,7 @@ export default {
         id_categoria: 0,
         id_subcategoria: 0,
         nombre_subcategoria:'',
-        precio_producto: null,
+        precio_producto: 0,
         estado: 1,
         stock: 0,
         fecha: "",
@@ -157,11 +169,23 @@ export default {
         descripcion: false,
         precio_producto: false      
       },
-      itemSubcategoria:[],
+      itemSubcategorias:[],
       id_subcategoria: ref(null),
       options: [
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-      ]
+        {
+          label: 'Google',
+          value: 'Google',
+          description: 'Search engine',
+         
+        },
+        {
+          label: 'Facebook',
+          value: 'Facebook',
+          description: 'Social media',
+          
+        },
+      
+      ]     
     };
   },
   mounted: function () {
@@ -189,7 +213,20 @@ export default {
        }else{
           return this.estadoStock
        }
+    },
+    estadoPrecio(){
+      //para ver si la ctegoria usa usbcategoria we 
+      if (this.subcategoria==1) {
+           if (this.model.description==1) {
+             return true;
+        }else{         
+            return false;
+        }
+      }else{
+          return true;
+      }      
     }
+
   },
   methods: {
     toggleCheckboxes(event){    
@@ -211,15 +248,24 @@ export default {
       me.modelo.id_categoria = me.id_categoria;      
       me.modelo.estado = me.Estado==true?1:0;
       me.modelo.usastock = me.Stock==true?1:0;      
-
-
-      // if (me.subcategoriabool==true) {
-      //     me.modelo.id_subcategoria = me.id_subcategoria.value;
-      // }else{
-      //     me.modelo.id_subcategoria = 0;
-      // }    
       
-      console.log(me.modelo);  
+       me.modelo.dia_uno=me.dia_uno==true?1:0;
+       me.modelo.dia_dos=me.dia_dos==true?1:0; 
+       me.modelo.dia_tres=me.dia_tres==true?1:0; 
+       me.modelo.dia_cuatro=me.dia_cuatro==true?1:0; 
+       me.modelo.dia_cinco=me.dia_cinco==true?1:0; 
+       me.modelo.dia_seis=me.dia_seis==true?1:0; 
+       
+      if (me.subcategoria==1) {
+          me.modelo.id_subcategoria=me.model.value;
+          if (me.model.description==0) {
+              me.modelo.precio_producto=0;
+          }
+      }else{
+
+      }
+       
+
       let data = me.modelo;
       this.$axios({
         method: "POST",
@@ -258,12 +304,18 @@ export default {
       this.modelo.precio_producto = 0;
       // this.modelo.nombre_producto="";
     },
+    handleChange(val){
+   //   console.log(val);
+      if (val.description==0) {
+          this.modelo.precio_producto=0
+      }
+    },
     getsubcategoria(id_categoria){
       let me = this;
-      me.itemSubcategoria=[];
+      me.itemSubcategorias=[];
       if (id_categoria==0) {
       //  console.log("viene vacio we ");
-        id_categoria=me.id_categoria_store;
+       id_categoria=me.id_categoria_store;
 
       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
       let tipo="lista";
@@ -271,13 +323,13 @@ export default {
       me.$axios
         .get(url_b + url)
         .then((response) => {
-          console.log(response);
+        //  console.log(response);
           let elementos=[];
           elementos=response.data;
          // this.itemSubcategoria = response.data;
           elementos=response.data;   
                   elementos.map(function(x){
-                        me.itemSubcategoria.push({label: x.nombre_subcategoria,value:x.id_subcategoria});
+                        me.itemSubcategorias.push({label: x.nombre_subcategoria,value:x.id_subcategoria,description:x.precio});
             }); 
         })
         .catch(function (error) {
@@ -294,13 +346,13 @@ export default {
       me.$axios
         .get(url_b + url)
         .then((response) => {
-          console.log(response);
+        //  console.log(response);
           let elementos=[];
           elementos=response.data;
          // this.itemSubcategoria = response.data;
           elementos=response.data;   
                   elementos.map(function(x){
-                        me.itemSubcategoria.push({label: x.nombre_subcategoria,value:x.id_subcategoria});
+                        me.itemSubcategorias.push({label: x.nombre_subcategoria,value:x.id_subcategoria,description:x.precio});
             }); 
         })
         .catch(function (error) {
@@ -313,10 +365,22 @@ export default {
     Validate() {   
       this.errors.nombre_producto = this.modelo.nombre_producto == "" ? true : false;
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
-      this.errors.precio_producto = this.modelo.precio_producto == null? true : false;
-      this.errors.precio_producto = this.modelo.precio_producto == '0.00'? true : false;
-    //0.00
-        if (this.errors.nombre_producto) {
+      if (this.subcategoria==1) {
+          if (this.model.description==1) {
+             this.errors.precio_producto = this.modelo.precio_producto == null? true : false;
+             this.errors.precio_producto = this.modelo.precio_producto == 'null'? true : false;
+             this.errors.precio_producto = this.modelo.precio_producto == ''? true : false;
+             this.errors.precio_producto = this.modelo.precio_producto == '0.00'? true : false;
+          }
+      }  
+      else{
+           this.errors.precio_producto = this.modelo.precio_producto == null? true : false;
+           this.errors.precio_producto = this.modelo.precio_producto == 'null'? true : false;
+           this.errors.precio_producto = this.modelo.precio_producto == ''? true : false;
+           this.errors.precio_producto = this.modelo.precio_producto == '0.00'? true : false;
+      }   
+  
+      if (this.errors.nombre_producto) {
             this.validate = true;
             this.$q.dialog({
               dark: true,
@@ -330,38 +394,54 @@ export default {
         } else {
           this.validate = false;
         }
-
-         if (this.errors.descripcion) {
-          this.validate = true;
-          this.$q.dialog({
-              dark: true,
-              title: 'Ups',
-              message: 'Falta Llenar campos'
-            }).onOk(() => {            
-            }).onCancel(() => {       
-            }).onDismiss(() => {             
-            })
-          return false;
+        if (this.errors.descripcion) {
+            this.validate = true;
+            this.$q.dialog({
+                dark: true,
+                title: 'Ups',
+                message: 'Falta Llenar campos'
+              }).onOk(() => {            
+              }).onCancel(() => {       
+              }).onDismiss(() => {             
+              })
+            return false;
         } else {
           this.validate = false;
         }
-
-
+        if (this.subcategoria==1) {
+             if (this.model.description==1) {
+              if (this.errors.precio_producto) {
+                this.validate = true;
+                this.$q.dialog({
+                  dark: true,
+                  title: 'Ups',
+                  message: 'El Campo Precio debe ser mayor a cero'
+                }).onOk(() => {            
+                }).onCancel(() => {       
+                }).onDismiss(() => {             
+                })
+              return false;
+              } else {
+                this.validate = false;
+              }   
+           }
+        } else{
           if (this.errors.precio_producto) {
-          this.validate = true;
-          this.$q.dialog({
-              dark: true,
-              title: 'Ups',
-              message: 'El Campo Precio debe ser mayor a cero'
-            }).onOk(() => {            
-            }).onCancel(() => {       
-            }).onDismiss(() => {             
-            })
-          return false;
-        } else {
-          this.validate = false;
+                this.validate = true;
+                this.$q.dialog({
+                  dark: true,
+                  title: 'Ups',
+                  message: 'El Campo Precio debe ser mayor a cero'
+                }).onOk(() => {            
+                }).onCancel(() => {       
+                }).onDismiss(() => {             
+                })
+              return false;
+              } else {
+                this.validate = false;
+              } 
         }
-   
+       
         if (!this.validate) {
            this.$q.dialog({        
             title: 'Agregar',

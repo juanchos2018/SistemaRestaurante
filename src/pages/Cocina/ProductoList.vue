@@ -22,8 +22,8 @@
         <tables-basic :data="itemProducto"  v-on:UpdateProduct="UpdateProduct"></tables-basic>
     </div>      
 
-    <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto"    v-bind:id_categoria="modelo.id_categoria" v-on:GetProductos="Get" v-on:subcategoria="subcategoria" ref="dialogaddproducto"></dialogo-add-producto>
-    <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto" v-bind:id_categoria="modelo.id_categoria"  v-on:GetProductos="Get" ref="dialogoupdaute"></dialogo-update-producto>
+    <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto"    v-bind:id_categoria="modelo.id_categoria"  v-bind:subcategoria="modelo.subcategoria"  v-on:GetProductos="Get" v-on:subcategoria="subcategoria"   ref="dialogaddproducto"></dialogo-add-producto>
+    <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto" v-bind:id_categoria="modelo.id_categoria"  v-bind:subcategoria="modelo.subcategoria"  v-on:GetProductos="Get" ref="dialogoupdaute"></dialogo-update-producto>
     <dialogo-subcategoria   @CerrarModalsub="CerrarModalsub" :DialogoSubCategoria="DialogoSubcategoria" v-bind:id_categoria="modelo.id_categoria"  v-on:getsubcategoria="getsubcategoria" ></dialogo-subcategoria>
   </q-page>
 </template>
@@ -70,6 +70,8 @@ export default defineComponent({
         id_categoria: 0,
         nombre_categoria: "",
         estado: 1,
+        subcategoria:0
+
       },
     };
   },

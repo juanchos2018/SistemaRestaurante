@@ -45,6 +45,11 @@
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
               </q-item>
+            </div>           
+              <div class="col-4">
+              <q-item>
+                <q-checkbox v-model="Subcategoria" :label="Subcategoria==true ? 'Subcategoria':'No/Usar'" />
+              </q-item>
             </div>
             <div class="col-12">
               <br /><br />
@@ -108,6 +113,7 @@ export default defineComponent({
       nombre_categoria: "",
       estado: 0,
       logo: "fas fa-cocktail",
+      subcategoria:0
     });
 
     let visiblemodal = ref(false);
@@ -115,6 +121,7 @@ export default defineComponent({
       visiblemodal,
       itemCategoria: ref([]),
       Estado: ref(true),
+      Subcategoria: ref(true),
       modelo,
       logos,
     };
@@ -163,6 +170,7 @@ export default defineComponent({
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/CategoriaController.php";
       me.modelo.estado = me.Estado==true?1:0;
+      me.modelo.subcategoria = me.Subcategoria==true?1:0;
       const data = me.modelo;
       this.$axios({
         method: "POST",
