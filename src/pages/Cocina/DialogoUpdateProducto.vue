@@ -22,9 +22,8 @@
              <div class="col-8">
               <q-item>    
                          <!-- :value="modelo.id_subcategoria" -->
-                <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="modelo.id_subcategoria" :options="itemSubcategoria" :value="modelo.nombre_subcategoria"   
-                   label="Sub Categoria" :readonly="subcategoriabool==true ? false : true"   >
-                  
+                <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="modelo.nombre_subcategoria" :options="itemSubcategoria" :value="modelo.nombre_subcategoria"   
+                   label="Sub Categoria" :readonly="subcategoriabool==true ? false : true"   >                  
                 </q-select>
               </q-item>
             </div>
@@ -237,35 +236,37 @@ export default {
        me.modelo.dia_tres=me.dia_tres==true?1:0; 
        me.modelo.dia_cuatro=me.dia_cuatro==true?1:0; 
        me.modelo.dia_cinco=me.dia_cinco==true?1:0; 
-       me.modelo.dia_seis=me.dia_seis==true?1:0;   
-
-       me.modelo.id_subcategoria=me.id_subcategoria.value;
-
-      let data = me.modelo;
-       console.log(data);
-      // this.$axios({
-      //   method: "PUT",
-      //   url: url_b+url,
-      //   data: data,
-      // })
-      //   .then(function (response) {
-      //      console.log(response);
-      //     let result = response.data;
-      //     if (result.afect>0) {
-      //       me.ListarProductos(me.modelo.id_categoria);
-      //       me.CerrarModal();
-      //       me.$q.notify({
-      //         message: "Producto Editado!",
-      //         color: "accent",
-      //         position: "top",
-      //       });        
-      //     } else {
+       me.modelo.dia_seis=me.dia_seis==true?1:0;         
+    
+        let value = me.modelo.nombre_subcategoria.value;
+        //me.modelo.id_subcategoria="";
+        me.modelo.id_subcategoria=value;
+        console.log(value);
+        let data = me.modelo;
+        console.log(data);
+      this.$axios({
+        method: "PUT",
+        url: url_b+url,
+        data: data,
+      })
+        .then(function (response) {
+           console.log(response);
+          let result = response.data;
+          if (result.afect>0) {
+            me.ListarProductos(me.modelo.id_categoria);
+            me.CerrarModal();
+            me.$q.notify({
+              message: "Producto Editado!",
+              color: "accent",
+              position: "top",
+            });        
+          } else {
           
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
    
     },
     ListarProductos(id_categoria) {

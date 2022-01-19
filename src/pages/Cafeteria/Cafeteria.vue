@@ -62,7 +62,44 @@
       </q-drawer>
       <q-page-container>
         <q-page style="padding-top: 55px" class="q-pa-sm">
-          <div>     
+          <div>    
+
+              <q-btn-dropdown
+      split
+      class="glossy"
+      color="teal"
+      label="Folders"
+      @click="onMainClick"
+    >
+      <q-list>
+        <q-item clickable v-close-popup @click="onItemClick">
+          <q-item-section avatar>
+            <q-avatar icon="folder" color="primary" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Photos</q-item-label>
+            <q-item-label caption>February 22, 2016</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-icon name="info" color="amber" />
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable v-close-popup @click="onItemClick">
+          <q-item-section avatar>
+            <q-avatar icon="assignment" color="secondary" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Vacation</q-item-label>
+            <q-item-label caption>February 22, 2016</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-icon name="info" color="amber" />
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-btn-dropdown>
+
              <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
                   v-model="date"     
@@ -92,8 +129,45 @@
                   active-color="red-1"
                   v-model="tab"
                 >
-               <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria"  :name="item.nombre_categoria" :icon="item.logo"   @click="
-                      GetProduct(item.id_categoria, item.nombre_categoria)" />
+               <!-- <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria"  :name="item.nombre_categoria" :icon="item.logo"   @click="
+                      GetProduct(item.id_categoria, item.nombre_categoria)" /> -->
+                       <q-btn-dropdown
+                        split
+                        class="glossy"
+                        color="teal"
+                        label="Folders"
+                        @click="onMainClick"
+                      >
+                        <q-list>
+                          <q-item clickable v-close-popup @click="onItemClick">
+                            <q-item-section avatar>
+                              <q-avatar icon="folder" color="primary" text-color="white" />
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>Photos</q-item-label>
+                              <q-item-label caption>February 22, 2016</q-item-label>
+                            </q-item-section>
+                            <q-item-section side>
+                              <q-icon name="info" color="amber" />
+                            </q-item-section>
+                          </q-item>
+
+                          <q-item clickable v-close-popup @click="onItemClick">
+                            <q-item-section avatar>
+                              <q-avatar icon="assignment" color="secondary" text-color="white" />
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>Vacation</q-item-label>
+                              <q-item-label caption>February 22, 2016</q-item-label>
+                            </q-item-section>
+                            <q-item-section side>
+                              <q-icon name="info" color="amber" />
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+                      </q-btn-dropdown>
+
+
                 </q-tabs>                 
               <q-space />
               <div class="q-gutter-sm row items-center no-wrap">
@@ -263,6 +337,13 @@ export default {
       pagination: {
         rowsPerPage: 6,
       },   
+      onMainClick () {
+        // console.log('Clicked on main button')
+      },
+
+      onItemClick () {
+        // console.log('Clicked on an Item')
+      }
     };
   },
   created() {

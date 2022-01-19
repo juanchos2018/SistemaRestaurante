@@ -7,7 +7,7 @@
             <div class="text-h6">Agregar Producto</div>
             <!-- <p>{{itemSubcategoria}}</p>
             <p>{{id_categoria}}</p> -->
-            <!-- <p>{{modelo}}</p> -->
+            <p>{{modelo}}</p>
           </q-card-section>
           <q-separator />         
           <div class="row">
@@ -23,21 +23,21 @@
               </q-item>
             </div>
             
-            <div class="col-8">
+            <div class="col-12">
               <q-item>
-                <!-- <p>{{id_subcategoria.value}}</p> -->
-                <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="id_subcategoria" :options="itemSubcategoria" label="Sub Categoria" :readonly="subcategoriabool==true ? false : true" >
+                <!-- <p>{{id_subcategoria.value}}   :readonly="subcategoriabool==true ? false : true"    </p> -->
+                <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="modelo.nombre_subcategoria" :options="itemSubcategoria" label="Sub Categoria"  >
                     <template v-slot:hint >
                       <q-badge outline color="primary" label="Agrega SubCategoria" @click="SubCategoria"  />
                     </template>
                 </q-select>
               </q-item>
             </div>
-            <div class="col-4">
+            <!-- <div class="col-4">
               <q-item>
                   <q-checkbox v-model="subcategoriabool" label="Subcategoria" color="red" />
               </q-item>
-            </div>
+            </div> -->
             <div class="col-3">
               <q-item>
                 <q-checkbox v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
@@ -137,6 +137,7 @@ export default {
         descripcion: "",
         id_categoria: 0,
         id_subcategoria: 0,
+        nombre_subcategoria:'',
         precio_producto: null,
         estado: 1,
         stock: 0,
@@ -199,9 +200,9 @@ export default {
       }
     },
     SubCategoria(){     
-      if (this.subcategoriabool) {
+    //  if (this.subcategoriabool) {
          this.$emit('subcategoria',true)
-      }    
+    //  }    
     },
     Store() {
       let me = this;
@@ -210,12 +211,15 @@ export default {
       me.modelo.id_categoria = me.id_categoria;      
       me.modelo.estado = me.Estado==true?1:0;
       me.modelo.usastock = me.Stock==true?1:0;      
-      if (me.subcategoriabool==true) {
-          me.modelo.id_subcategoria = me.id_subcategoria.value;
-      }else{
-          me.modelo.id_subcategoria = 0;
-      }    
-      //console.log(me.modelo);  
+
+
+      // if (me.subcategoriabool==true) {
+      //     me.modelo.id_subcategoria = me.id_subcategoria.value;
+      // }else{
+      //     me.modelo.id_subcategoria = 0;
+      // }    
+      
+      console.log(me.modelo);  
       let data = me.modelo;
       this.$axios({
         method: "POST",
@@ -240,7 +244,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-        });
+      });
     },
     ListarProductos(id_categoria) {
       this.$emit("GetProductos", id_categoria);
