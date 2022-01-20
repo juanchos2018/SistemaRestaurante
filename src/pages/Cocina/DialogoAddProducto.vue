@@ -11,7 +11,7 @@
             <q-badge color="secondary" multi-line>
             Model: "{{ model }}"  </q-badge> -->
          
-
+  
           </q-card-section>
           <q-separator />         
           <div class="row">
@@ -27,15 +27,20 @@
               </q-item>
             </div>
             
-            <div class="col-12" v-if="subcategoria==1">
-              <q-item>
-                <!-- <p>{{id_subcategoria.value}}   bottom-slots   :readonly="subcategoriabool==true ? false : true"    </p> -->
-                <q-select   dense autogrow outlined class="full-width"   v-model="model" :options="itemSubcategorias" label="Sub Categoria"   @update:model-value="
+            <!-- <div class="col-12" v-if="subcategoria==1">
+              <q-item>             
+                <q-select    bottom-slots  dense autogrow outlined class="full-width"   v-model="model" :options="itemSubcategorias" label="Sub Categoria"   @update:model-value="
                     handleChange($event)
-                  " >                   
+                  " >        
+                     <template v-slot:hint >
+                      <q-badge outline color="primary" label="Agrega SubCategoria" @click="SubCategoria"  />
+                    </template>           
                 </q-select>
               </q-item>
             </div>
+             -->
+
+
             <!-- <div class="col-4">
               <q-item>
                   <q-checkbox v-model="subcategoriabool" label="Subcategoria" color="red" />
@@ -54,8 +59,7 @@
             </div>
             <div class="col-4">
               <q-item>
-                  <q-input
-                
+                  <q-input                
                   v-model="modelo.precio_producto"
                   label="Precio *"
                   mask="#.##"
@@ -65,9 +69,9 @@
                   autogrow
                   outlined
                   input-class="text-right"
-                  :readonly="estadoPrecio==true ? false : true" 
+                
                 />    
-                <!-- dense autogrow outlined -->
+                <!-- dense autogrow outlined      :readonly="estadoPrecio==true ? false : true"   -->
               </q-item>
             </div>
              
@@ -101,6 +105,7 @@
 
 
 <script>
+
 import moment from "moment";
 import { ref } from 'vue'
 
@@ -256,15 +261,14 @@ export default {
        me.modelo.dia_cinco=me.dia_cinco==true?1:0; 
        me.modelo.dia_seis=me.dia_seis==true?1:0; 
        
-      if (me.subcategoria==1) {
-          me.modelo.id_subcategoria=me.model.value;
-          if (me.model.description==0) {
-              me.modelo.precio_producto=0;
-          }
-      }else{
+      // if (me.subcategoria==1) {
+      //     me.modelo.id_subcategoria=me.model.value;
+      //     if (me.model.description==0) {
+      //         me.modelo.precio_producto=0;
+      //     }
+      // }else{
 
-      }
-       
+      // }       
 
       let data = me.modelo;
       this.$axios({
@@ -323,14 +327,17 @@ export default {
       me.$axios
         .get(url_b + url)
         .then((response) => {
-        //  console.log(response);
+         console.log(response);
           let elementos=[];
           elementos=response.data;
          // this.itemSubcategoria = response.data;
-          elementos=response.data;   
+         if (elementos.length>0) {
+              elementos=response.data;   
                   elementos.map(function(x){
                         me.itemSubcategorias.push({label: x.nombre_subcategoria,value:x.id_subcategoria,description:x.precio});
             }); 
+         }
+        
         })
         .catch(function (error) {
           console.log(error);

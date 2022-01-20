@@ -80,7 +80,7 @@
               <h5>SIN PRODUCTOS</h5>
             </div>
             <div class="col-md-3 col-lg-3 col-sm-6 col-xs-6" v-for="item in itemProducto" :key="item.id_producto">
-              <card-product :data="item"  ></card-product>
+              <card-product :data="item"  v-on:AgregarCarrito="AgregarCarrito" ></card-product>
             </div>
           </div>
           <q-page-sticky position="top" expand class="bg-dark text-white">
@@ -105,6 +105,7 @@
         </q-page>
       </q-page-container>
     </q-layout>
+
     <q-dialog v-model="prompt" persistent>
       <q-card >
         <q-card-section>
@@ -143,6 +144,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <modal-complementos  @CerrarModal="CerrarModalcomplemento" :ModalComplemento="ModalComplemento"   > </modal-complementos>
   </q-page>
 </template>
 
@@ -169,6 +171,9 @@ export default {
   components: {
     CardProduct: defineAsyncComponent(() =>
       import("components/cards/CardProduct")
+    ),
+    ModalComplementos: defineAsyncComponent(() =>
+      import("./ModalComplementos")
     ),
   },
 
@@ -264,6 +269,7 @@ export default {
       pagination: {
         rowsPerPage: 6,
       },   
+      ModalComplemento:ref(false),
       onMainClick () {
         // console.log('Clicked on main button')
       },
@@ -392,6 +398,9 @@ export default {
     onItemClick(){
 
     },
+    CerrarModalcomplemento(){
+      this.ModalComplemento=false;
+    },
     ListarCarroState(){
         console.log("de state");
         console.log(this.carrito);
@@ -456,7 +465,7 @@ export default {
         this.$axios
             .get(url_b + url)
             .then((response) => {
-              //console.log(response)
+              console.log(response)
               this.itemProducto = response.data;
             })
             .catch(function (error) {
@@ -766,6 +775,14 @@ export default {
           });
       }
     },
+    AgregarCarrito(modelo){
+      if (modelo.usasubcategoria==1) {
+          this.ModalComplemento=true;
+      }else{
+
+      }
+      console.log(modelo);
+    },
     StorePedido2() {
       let lista = [];    
       this.arrayvacio.forEach((element) => {
@@ -778,7 +795,6 @@ export default {
       });
       this.modelUser.detallePedido = lista;
       this.modelUser.TotalPedido = this.SumTotal;
-
       let url = "/Controller/PedidoController.php";
          let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       const data = this.modelUser;

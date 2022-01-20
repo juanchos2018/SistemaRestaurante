@@ -3,6 +3,20 @@
     padding
     class="flex justify-center"
   >
+
+
+
+
+
+
+
+
+
+
+ class="q-splitter__panel q-splitter__before"
+
+
+
     <div
       class="full-width q-gutter-xl"
       style="max-width: 650px;"

@@ -231,16 +231,16 @@ export default {
       me.$axios
         .get(url_b + url)
         .then((response) => {
-      //    console.log(response);        
+         console.log(response);        
           elementos=response.data;
        //  me.itemSubcategoria = response.data;
-           // if (elementos.length>0) {            
+           if (elementos.length>0) {            
                   elementos.map(function(x){
                     //  me.itemSubcategoria.push({label: x.nombre_subcategoria,value:x.id_subcategoria});
                     me.itemSubcategorias.push({label: x.nombre_subcategoria,value:x.id_subcategoria,description:x.precio});
                 }); 
             //    console.log(me.itemSubcategorias)
-            //}
+            }
         })
         .catch(function (error) {
           console.log(error);

@@ -20,6 +20,8 @@
       <q-card style="width: 500px; max-width: 80vw" class="colorborde">
         <q-form @submit.prevent="Validate">
           <q-card-section>
+            <p>{{modelo}}</p>
+            <p>{{itemsubcategorias}}</p>
             <div class="text-h6">Nueva Categoria</div>
           </q-card-section>
           <q-separator />
@@ -46,11 +48,22 @@
                 <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
               </q-item>
             </div>           
-              <div class="col-4">
+             <div class="col-4">
               <q-item>
-                <q-checkbox v-model="Subcategoria" :label="Subcategoria==true ? 'Subcategoria':'No/Usar'" />
+                <q-checkbox v-model="Subcategoria" :label="Subcategoria==true ? 'Subcategoria':'Sin/Subcategoria'" />
               </q-item>
             </div>
+
+
+             <div class="col-12"  v-if="Subcategoria==true" >
+              <q-item>
+                  <q-checkbox v-model="Entrada" label="Entrada"  @click="AgregarSubcategoira('entrada')" />
+                  <q-checkbox v-model="Postre"  label="Postre" @click="AgregarPostre('postre')"/>
+              </q-item>
+            </div>
+
+
+
             <div class="col-12">
               <br /><br />
               <q-card bordered>
@@ -113,7 +126,8 @@ export default defineComponent({
       nombre_categoria: "",
       estado: 0,
       logo: "fas fa-cocktail",
-      subcategoria:0
+      subcategoria:0,
+      lista:[]
     });
 
     let visiblemodal = ref(false);
@@ -124,6 +138,9 @@ export default defineComponent({
       Subcategoria: ref(true),
       modelo,
       logos,
+      itemsubcategorias:ref([]),
+      Entrada:ref(false),
+      Postre:ref(false),
     };
   },
   created() {    
@@ -145,6 +162,26 @@ export default defineComponent({
     },
     CerrarModal() {
       this.visiblemodal = false;
+    },
+    AgregarSubcategoira(valor){
+      if (this.Entrada==true) {
+          this.itemsubcategorias.push({id:1,nombre:valor});
+      }else{
+           const indx = this.itemsubcategorias.findIndex(
+        (v) => v.id === 1
+      );
+      this.itemsubcategorias.splice(indx, 1);
+      }
+    },
+    AgregarPostre(valor){
+       if (this.Postre==true) {      
+        this.itemsubcategorias.push({id:2,nombre:valor});
+      }else{       
+          const indx = this.itemsubcategorias.findIndex(
+        (v) => v.id === 2
+      );
+      this.itemsubcategorias.splice(indx, 1);
+      }
     },
     Validate() {
       if (this.modelo.nombre_categoria == "") {
@@ -171,14 +208,29 @@ export default defineComponent({
       let url = "/Controller/CategoriaController.php";
       me.modelo.estado = me.Estado==true?1:0;
       me.modelo.subcategoria = me.Subcategoria==true?1:0;
+      let lista = [];
+      if (me.Subcategoria==true) {
+       
+           this.itemsubcategorias.forEach((element) => {
+          lista.push({
+            id: element.id,
+            nombre: element.nombre          
+          });
+        });
+
+      }
+      me.modelo.lista = lista;
       const data = me.modelo;
+
+      console.log(data);
+
       this.$axios({
         method: "POST",
         url: url_b + url,
         data: data,
       })
         .then(function (response) {
-          // console.log(response);
+         console.log(response);
           let result = response.data.resultado;
           if (result == "Registrado") {
             me.Mensaje();

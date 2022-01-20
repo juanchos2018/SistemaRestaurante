@@ -9,10 +9,10 @@ export default function () {
     namespaced: true,
     name: "global",
       state: { 
-      url_base2: 'http://192.168.3.219/ApiCafeteria',
+      url_base2: 'http://192.168.1.209/ApiCafeteria',
       url_base:  'http://161.132.198.54/ApiCafeteria',    
       url_izipay:'http://192.168.3.219/pasarela',
-      url_socket:'ws://192.168.3.219:8090',
+      url_socket:'ws://192.168.1.209:8090',
       url_socket2:'ws://161.132.198.54:8090',
       id_categoria_store:'',
       DatosUsuario:{},
