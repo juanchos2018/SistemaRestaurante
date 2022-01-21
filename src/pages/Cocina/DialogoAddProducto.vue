@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
     <q-dialog v-model="Show" @hide="CerrarModal">
-      <q-card style="width: 500px; max-width: 80vw;">
+      <q-card  class="colorborde">
         <q-form  @submit.prevent="Validate">
           <q-card-section>
             <div class="text-h6">Agregar Producto</div>
@@ -471,3 +471,11 @@ export default {
   },
 };
 </script>
+
+<style>
+.colorborde {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
+</style>

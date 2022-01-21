@@ -24,14 +24,13 @@
       </q-card-section>      
     </q-card-section>
     <div class="q-gutter-sm">
-      <q-checkbox  disable  val="lu" color="red" label="lu" v-model="dialunes"  size="xs" readonly/>         
-       <q-checkbox  val="ma" color="red" label="ma"  size="xs" v-model="diamartes" />   
-        <q-checkbox  val="mi" color="red" label="mi"   size="xs" v-model="diamiercoles"/>         
-       <q-checkbox  val="ju" color="red" label="ju"  size="xs" v-model="diajueves"/>  
-        <q-checkbox  val="vi" color="red" label="vi"  size="xs" v-model="diaviernes"/>  
-          <q-checkbox  val="sa" color="red" label="sa"  size="xs" v-model="diasabado"/> 
+       <q-checkbox  val="lu" color="red" label="lu" v-model="dialunes"  size="xs" disable/>         
+       <q-checkbox  val="ma" color="red" label="ma" size="xs" v-model="diamartes"  disable />   
+       <q-checkbox  val="mi" color="red" label="mi" size="xs" v-model="diamiercoles" disable/>         
+       <q-checkbox  val="ju" color="red" label="ju" size="xs" v-model="diajueves" disable />  
+       <q-checkbox  val="vi" color="red" label="vi" size="xs" v-model="diaviernes" disable/>  
+       <q-checkbox  val="sa" color="red" label="sa" size="xs" v-model="diasabado" disable/> 
     </div>
-
     <q-card-actions>
       <q-btn flat round icon="fas fa-edit" @click="updateProduct">
         <q-tooltip
@@ -157,7 +156,6 @@ export default {
           type: Number,
       default: 0,
     },
-
      jueves: {
       type: Number,
       default: 0,
@@ -169,8 +167,7 @@ export default {
     sabado: {
           type: Number,
       default: 0,
-    },
-
+    }
   },
   emits: ['getproduct'],
   setup(props,{emit}) {

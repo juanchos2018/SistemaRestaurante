@@ -119,9 +119,9 @@ module.exports = configure(function( /* ctx */ ) {
             workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
             workboxOptions: {}, // only for GenerateSW
             manifest: {
-                name: `Quasar App`,
-                short_name: `Quasar App`,
-                description: `A Quasar Framework app`,
+                name: `Cofeteria`,
+                short_name: `Cofeteria`,
+                description: `Cofeteria Clinica la Luz`,
                 display: 'standalone',
                 orientation: 'portrait',
                 background_color: '#ffffff',

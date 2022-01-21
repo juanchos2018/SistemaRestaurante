@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card >
     <q-card-section>
       <div class="text-h6 ">Categorias</div>
     </q-card-section>
@@ -30,9 +30,9 @@
       </q-table>
     </q-card-section>
   </q-card>
-  
+  <!-- style="width: 500px; max-width: 80vw" -->
   <q-dialog v-model="visiblemodal" @hide="CerrarModal">
-    <q-card style="width: 500px; max-width: 80vw">
+    <q-card class="colorborde">
       <q-form @submit.prevent="Validate">
         <q-card-section>
           <div class="text-h6">Modificar Categoria</div>
@@ -55,10 +55,22 @@
             <q-item>                            
                 <q-icon :name="modelo.logo"  size="md"  :key="componentKey" ref="icono" />                  
             </q-item>
-          </div>
+            </div>
             <div class="col-4">
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
+              </q-item>
+            </div>
+            <div class="col-4">
+              <q-item>
+                <q-checkbox v-model="Subcategoria" :label="Subcategoria==true ? 'Subcategoria':'Sin/Subcategoria'"  @update:model-value="change($event)
+            " />
+              </q-item>
+            </div>
+             <div class="col-12"  v-if="Subcategoria==true">              
+              <q-item>
+                  <q-checkbox v-model="Entrada" label="Entrada"  @update:model-value="AgregarSubcategoira($event,'Entrada')" />
+                  <!-- <q-checkbox v-model="Postre"  label="Postre"   @update:model-value="AgregarPostre($event,'Postre')"/> -->
               </q-item>
             </div>
           <div class="col-12">
@@ -141,11 +153,10 @@ export default defineComponent({
       rowsPerPage: getItemsPerPage(),
     });
     let visiblemodal = ref(false);
-    const modelo = ref({id_categoria: 0, nombre_categoria: "",logo:'',estado:0});
+    const modelo = ref({id_categoria: 0, nombre_categoria: "",logo:'',estado:0,subcategoria:0,lista:[]});
     const figura=ref('')
-  
-    return {
-   
+    let datoscateroia=ref({})
+    return {   
       logos,
       columns,
       figura,   
@@ -156,7 +167,12 @@ export default defineComponent({
       pagination,
       visiblemodal,
       componentKey: 0,
+      datoscateroia,
       modelo,
+      Subcategoria: ref(false),
+      Entrada:ref(false),
+      Postre:ref(false),
+      itemsubcategorias:ref([]),
      //  modelo: { id_categoria: 0, nombre_categoria: "",logo:'' },
       cardContainerClass: computed(() => {
         return $q.screen.gt.xs
@@ -168,18 +184,57 @@ export default defineComponent({
       }),
     };
   },
-  watch: {
-    
+  watch: {    
   },
   computed: {
-    ...mapState(["url_base"]),   
+    ...mapState([
+      "url_base",
+      "url_base2",
+      "url_izipay",
+      "url_socket",
+      "url_socket2"
+    ]),
   },
   methods: {
     Editar(data) {
       this.modelo = data;
+      this.itemsubcategorias=[];
       this.Estado=this.modelo.estado==1?true:false;
-     // this.figura = data.logo      
-      this.visiblemodal = true;
+      this.Entrada=false;
+      this.Postre=false;
+     // this.figura = data.logo    
+      let tipo = "view";
+      let url_b =
+      this.$q.platform.is.mobile == true ? this.url_base : this.url_base2;
+      let url = "/Controller/CategoriaController.php?tipo=" + tipo +"&id_categoria=" +  data.id_categoria;
+      this.$axios
+        .get(url_b + url)
+        .then((response) => {
+          this.datoscateroia = response.data;
+            if (this.datoscateroia.subcategoria==1){
+                this.Subcategoria=true;
+            }else{
+                this.Subcategoria=false;
+            }
+              this.itemsubcategorias=this.datoscateroia.lista;
+              let b1 =this.itemsubcategorias.find(x=>x.nombre_subcategoria=='Entrada' && x.estado==1)
+              if (b1) {
+                this.Entrada=true;
+              }else{
+                this.Entrada=false;
+              }
+              // let b2 =this.itemsubcategorias.find(x=>x.nombre_subcategoria=='Postre' && x.estado==1);
+              // if(b2) {
+              //   this.Postre=true;
+              // }else{
+              //   this.Postre=false;
+              // }  
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+        this.visiblemodal = true;
     },
     CerrarModal() {
       this.visiblemodal = false;
@@ -190,7 +245,7 @@ export default defineComponent({
           .dialog({
             dark: true,
             title: "Ups",
-            message: "Falta Llenar campos",
+            message: "Falta Llenar Campos",
           })
           .onOk(() => {})
           .onCancel(() => {})
@@ -202,19 +257,107 @@ export default defineComponent({
     EditarLogo(item){     
       this.modelo.logo=item;         
     },   
+    change(event){
+      console.log(event);
+    },
+    ViewCategoria(){
+      //no uso esto we 
+      let tipo = "view";
+      let url_b =
+      this.$q.platform.is.mobile == true ? this.url_base : this.url_base2;
+      let url = "/Controller/CategoriaController.php?tipo=" +
+        tipo +
+        "&id_categoria=" +
+        this.id_categoria;
+      this.$axios
+        .get(url_b + url)
+        .then((response) => {
+          this.modelo = response.data;
+          // console.log(response.data)
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
+    AgregarSubcategoira(event,valor){
+     //  if (this.datoscateroia.subcategoria==1) {
+          if (event) {
+              let obj =this.itemsubcategorias.find(x=>x.nombre_subcategoria==valor)
+            if (obj) {
+                const indx = this.itemsubcategorias.findIndex( (v) => v.nombre_subcategoria === valor );
+                this.itemsubcategorias[indx].estado=1;
+              }
+            }else{
+                let obj =this.itemsubcategorias.find(x=>x.nombre_subcategoria==valor)
+            if (obj) {
+                const indx = this.itemsubcategorias.findIndex( (v) => v.nombre_subcategoria === valor );
+                this.itemsubcategorias[indx].estado=0;
+            }
+         }
+      // }else{           
+      // }      
+    },
+    AgregarPostre(event,valor){
+    //  if (this.datoscateroia.subcategoria==1) {
+          if (event) {
+          let obj =this.itemsubcategorias.find(x=>x.nombre_subcategoria==valor)
+          if (obj) {
+              const indx = this.itemsubcategorias.findIndex( (v) => v.nombre_subcategoria === valor );
+              this.itemsubcategorias[indx].estado=1;
+          }
+          }else{
+              let obj =this.itemsubcategorias.find(x=>x.nombre_subcategoria==valor)
+          if (obj) {
+              const indx = this.itemsubcategorias.findIndex( (v) => v.nombre_subcategoria === valor );
+              this.itemsubcategorias[indx].estado=0;
+          }
+        }
+   //   }else{
+
+   //   }
+    },
+    Mensajedos() {
+      this.$q
+        .dialog({
+          dark: true,
+          title: "Ups",
+          message: "debe elejir por lo menos una subcategoria",
+        })
+        .onOk(() => {
+          // console.log('OK')
+        })
+        .onCancel(() => {
+          // console.log('Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    },
     Update() {
       let me = this;
       let url = "/Controller/CategoriaController.php?";
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       me.modelo.estado= me.Estado==true?1:0;
-      let data = me.modelo;
-      //console.log(me.modelo);
+      me.modelo.subcategoria= me.Subcategoria==true?1:0;
+      if (me.Subcategoria==true) {
+          if ( me.Entrada==false) {
+               me.Mensajedos();
+          }
+      }else{  
+          for (let index = 0; index < me.itemsubcategorias.length; index++) {          
+              me.itemsubcategorias[index].estado=0;
+          }
+      }
+      me.modelo.lista=me.itemsubcategorias;
+      let data = me.modelo;     
       this.$axios({
         method: "PUT",
-        url: me.url_base + url,
+        url: url_b + url,
         data: data,
       })
-        .then(function (response) {
-          /// console.log(response);
+        .then(function (response) {     
+          console.log(response);     
           let result = response.data;
           if (result.afect > 0) {
             me.$emit("listar");
@@ -225,7 +368,7 @@ export default defineComponent({
               position: "top",
             });
           } else {
-            //console.log(response);
+          
             me.$q
               .dialog({
                 dark: true,
@@ -233,13 +376,13 @@ export default defineComponent({
                 message: "Hubo Algun Error",
               })
               .onOk(() => {
-                // console.log('OK')
+                
               })
               .onCancel(() => {
-                // console.log('Cancel')
+              
               })
               .onDismiss(() => {
-                // console.log('I am triggered on both OK and Cancel')
+                
               });
           }
         })
@@ -251,5 +394,11 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+
+<style>
+.colorborde {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
 </style>

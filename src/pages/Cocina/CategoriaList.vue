@@ -20,8 +20,9 @@
       <q-card style="width: 500px; max-width: 80vw" class="colorborde">
         <q-form @submit.prevent="Validate">
           <q-card-section>
-            <p>{{modelo}}</p>
-            <p>{{itemsubcategorias}}</p>
+            <!-- <p>{{modelo}}</p>
+            <p>{{itemsubcategorias}}</p> -->
+           
             <div class="text-h6">Nueva Categoria</div>
           </q-card-section>
           <q-separator />
@@ -53,17 +54,12 @@
                 <q-checkbox v-model="Subcategoria" :label="Subcategoria==true ? 'Subcategoria':'Sin/Subcategoria'" />
               </q-item>
             </div>
-
-
              <div class="col-12"  v-if="Subcategoria==true" >
               <q-item>
-                  <q-checkbox v-model="Entrada" label="Entrada"  @click="AgregarSubcategoira('entrada')" />
-                  <q-checkbox v-model="Postre"  label="Postre" @click="AgregarPostre('postre')"/>
+                  <q-checkbox v-model="Entrada" label="Entrada"  @update:model-value="AgregarSubcategoira($event,'Entrada')" />
+                  <!-- <q-checkbox v-model="Postre"  label="Postre" @update:model-value="AgregarPostre($event,'Postre')"/> -->
               </q-item>
             </div>
-
-
-
             <div class="col-12">
               <br /><br />
               <q-card bordered>
@@ -92,9 +88,6 @@
     </q-dialog>
   </q-page>
 </template>
-
-
-
 <script>
 import { defineComponent, defineAsyncComponent, ref, reactive } from "vue";
 import { mapState } from "vuex";
@@ -135,12 +128,14 @@ export default defineComponent({
       visiblemodal,
       itemCategoria: ref([]),
       Estado: ref(true),
-      Subcategoria: ref(true),
+      Subcategoria: ref(false),
       modelo,
       logos,
       itemsubcategorias:ref([]),
       Entrada:ref(false),
       Postre:ref(false),
+      itemsubcategoriasdos0:ref([{id:1,nombre_subcategoria:'Entrada',estado:0},{id:2,nombre_subcategoria:'Postre',estado:0}]),
+      itemsubcategoriasdos:ref([{id:1,nombre_subcategoria:'Entrada',estado:0}])
     };
   },
   created() {    
@@ -163,25 +158,35 @@ export default defineComponent({
     CerrarModal() {
       this.visiblemodal = false;
     },
-    AgregarSubcategoira(valor){
-      if (this.Entrada==true) {
-          this.itemsubcategorias.push({id:1,nombre:valor});
-      }else{
-           const indx = this.itemsubcategorias.findIndex(
-        (v) => v.id === 1
-      );
-      this.itemsubcategorias.splice(indx, 1);
-      }
+    AgregarSubcategoira(event,valor){
+       if (event) {
+              let obj =this.itemsubcategoriasdos.find(x=>x.nombre_subcategoria==valor)
+            if (obj) {
+                const indx = this.itemsubcategoriasdos.findIndex( (v) => v.nombre_subcategoria === valor );
+                this.itemsubcategoriasdos[indx].estado=1;
+              }
+            }else{
+                let obj =this.itemsubcategoriasdos.find(x=>x.nombre_subcategoria==valor)
+            if (obj) {
+                const indx = this.itemsubcategoriasdos.findIndex( (v) => v.nombre_subcategoria === valor );
+                this.itemsubcategoriasdos[indx].estado=0;
+            }
+         }    
     },
-    AgregarPostre(valor){
-       if (this.Postre==true) {      
-        this.itemsubcategorias.push({id:2,nombre:valor});
-      }else{       
-          const indx = this.itemsubcategorias.findIndex(
-        (v) => v.id === 2
-      );
-      this.itemsubcategorias.splice(indx, 1);
-      }
+    AgregarPostre(event,valor){
+       if (event) {
+             let obj =this.itemsubcategoriasdos.find(x=>x.nombre_subcategoria==valor)
+            if (obj) {
+                const indx = this.itemsubcategoriasdos.findIndex( (v) => v.nombre_subcategoria === valor );
+                this.itemsubcategoriasdos[indx].estado=1;
+              }
+            }else{
+                let obj =this.itemsubcategoriasdos.find(x=>x.nombre_subcategoria==valor)
+            if (obj) {
+                const indx = this.itemsubcategoriasdos.findIndex( (v) => v.nombre_subcategoria === valor );
+                this.itemsubcategoriasdos[indx].estado=0;
+            }
+      }     
     },
     Validate() {
       if (this.modelo.nombre_categoria == "") {
@@ -202,40 +207,35 @@ export default defineComponent({
       this.modelo.logo = item;
     },
     Store() {
-      let me = this;
-      // me.modelo.nombre_categoria=nombre;
+      let me = this;      
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/CategoriaController.php";
       me.modelo.estado = me.Estado==true?1:0;
-      me.modelo.subcategoria = me.Subcategoria==true?1:0;
-      let lista = [];
-      if (me.Subcategoria==true) {
-       
-           this.itemsubcategorias.forEach((element) => {
-          lista.push({
-            id: element.id,
-            nombre: element.nombre          
-          });
-        });
-
-      }
-      me.modelo.lista = lista;
+      me.modelo.subcategoria = me.Subcategoria==true?1:0;   
+      if (me.Subcategoria==true) {        
+        if (me.Entrada==false) {
+            me.Mensajedos();
+            return;
+        }              
+      }    
+      me.modelo.lista = me.itemsubcategoriasdos;
       const data = me.modelo;
-
-      console.log(data);
-
+      //console.log(data);
       this.$axios({
         method: "POST",
         url: url_b + url,
         data: data,
       })
         .then(function (response) {
-         console.log(response);
+  //       console.log(response);
           let result = response.data.resultado;
           if (result == "Registrado") {
             me.Mensaje();
             me.Get();
             me.modelo.nombre_categoria = "";
+            me.Subcategoria==false;
+            me.Entrada=false;
+            me.Postre=false;
           } else {
             me.Existe();
           }
@@ -272,6 +272,23 @@ export default defineComponent({
           dark: true,
           title: "Ups",
           message: "Nombre de categoria ya existe",
+        })
+        .onOk(() => {
+          // console.log('OK')
+        })
+        .onCancel(() => {
+          // console.log('Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    },
+    Mensajedos() {
+      this.$q
+        .dialog({
+          dark: true,
+          title: "Ups",
+          message: "debe elejir por lo menos una subcategoria",
         })
         .onOk(() => {
           // console.log('OK')

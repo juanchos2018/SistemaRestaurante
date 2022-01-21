@@ -1,10 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
-    <!-- <label for="" class="text-h6">Producto de la Categoria  {{modelo.nombre_categoria}}</label> -->
-    <!-- class="q-splitter__panel q-splitter__before"  style="width: 40%;" -->
     <br />
     <br />
-
     <q-splitter v-model="splitterModel" >
       <template v-slot:before >   
            <br><br>             
@@ -81,19 +78,25 @@
               ></tables-basic>
             </div>
           </q-tab-panel>
-
-
           <q-tab-panel name="alarms">
              <q-btn
               position="right"
               class="float-right"
               color="primary"
-              label="Nuevo Producto"
+              :label="nombre_boton"
               @click="Addcomplemento"
             />
-            <div class="text-h4 q-mb-md">Alarms</div>
+            <!-- TipoVistados -->
+            <!-- <div class="text-h5 q-mb-md">{{nombre_tipo}}</div> -->
+             <q-btn-group push>
+              <q-btn push icon="fas fa-id-card" @click="TipoVistados = true" />
+              <q-btn push icon="fas fa-table" @click="TipoVistados = false" />
+            </q-btn-group>
+<br />
+            <br />
 
-              <div class="row q-col-gutter-sm">
+            <div v-if="TipoVistados==true">
+                <div class="row q-col-gutter-sm">
                 <div
                   class="col-md-4 col-lg-4 col-sm-12 col-xs-12"
                   v-for="item in itemComplemento"
@@ -103,24 +106,41 @@
                     :id_complemento="item.id_complemento"
                     :id_subcategoria="item.id_subcategoria"
                     :nombre_subcategoria="item.nombre_subcategoria"
-                    :descripcion="item.descripcion"              
-                
+                    :descripcion="item.descripcion"   
+                    :lunes="item.dia_uno"
+                    :martes="item.dia_dos"
+                    :miercoles="item.dia_tres"
+                    :jueves="item.dia_cuatro"
+                    :viernes="item.dia_cinco"
+                    :sabado="item.dia_seis"
+                    @updateComplemento="updateComplemento"
                   ></card-complemento>
                 </div>
               </div>
+            </div>
+            <div v-else>
+              <table-basic-complemento
+                :data="itemComplemento"
+                v-on:updateComplemento="updateComplemento"
+              ></table-basic-complemento>
+            </div>
+
+            
          
           </q-tab-panel>
         </q-tab-panels>
       </template>
     </q-splitter>
-
+<!-- v-bind:subcategoria="modelo.subcategoria" -->
     <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto"    v-bind:id_categoria="modelo.id_categoria"  v-bind:subcategoria="modelo.subcategoria"  v-on:GetProductos="Get" v-on:subcategoria="subcategoria"   ref="dialogaddproducto"></dialogo-add-producto>
-    <!-- <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto" v-bind:id_categoria="modelo.id_categoria"  v-bind:subcategoria="modelo.subcategoria"  v-on:GetProductos="Get" ref="dialogoupdaute"></dialogo-update-producto>
+    <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto" v-bind:id_categoria="modelo.id_categoria"    v-on:GetProductos="Get" ref="dialogoupdaute"></dialogo-update-producto>
+  
+   <!--
     <dialogo-subcategoria   @CerrarModalsub="CerrarModalsub" :DialogoSubCategoria="DialogoSubcategoria" v-bind:id_categoria="modelo.id_categoria"  v-on:getsubcategoria="getsubcategoria" ></dialogo-subcategoria>
   -->
+    <dialogo-add-complemento   @CerrarModal="CerrarModalcomplemento" :DialogoAddComplemento="DialogoComplemento"  v-on:getComplemnentos="GetComplemento" ref="dialogcomplemento" ></dialogo-add-complemento>
 
-
-    <dialogo-add-complemento   @CerrarModal="CerrarModalcomplemento" :DialogoAddComplemento="DialogoComplemento"   ref="dialogcomplemento" ></dialogo-add-complemento>
+    <dialogo-update-complemento @CerrarModal="CerrarModal" :DialogoEditComplemento="DialogoEditComplemento"     ref="dialogoupdatecomplemento"></dialogo-update-complemento>
 
   </q-page>
 </template>
@@ -129,8 +149,6 @@
 
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { mapState } from "vuex";
-//import DialogoAddComplemento from "./DialogoAddComplemento.vue";
-
 export default defineComponent({
   name: "ProductoList",
   props: {
@@ -159,24 +177,33 @@ export default defineComponent({
     TablesBasic: defineAsyncComponent(() =>
       import("components/tables/TableBasic")
     ),
+    TableBasicComplemento: defineAsyncComponent(() =>
+      import("components/tables/TableBasicComplemento")
+    ),
     CardComplemento: defineAsyncComponent(() =>
       import("components/cards/CardComplemento")
-    )
+    ),
+     DialogoUpdateComplemento: defineAsyncComponent(() =>
+      import("./DialogoUpdateComplemento")
+    )  
    
   },
   data() {
-    return {
-      
+    return {     
   
       DialogoAddProducto: false,
       DialogoSubcategoria: false,
       DialogoComplemento: false,
-      nombre_boton:'',
+      DialogoEditProducto:false,
+      DialogoEditComplemento:false,
+      nombre_boton:'NUEVO PRODUCTO',
+      nombre_tipo:'',
       itemProducto: [],
       itemSubcategoria: [],
       itemSubCategorias: [],
       itemComplemento: [],
       TipoVista: true,
+      TipoVistados:true,
       id_producto: 0,
       modelo: {
         id_categoria: 0,
@@ -185,14 +212,12 @@ export default defineComponent({
         subcategoria: 0,
       },
       tab: ref("producto"),
-      splitterModel: ref(8),
+      splitterModel: ref(9),
       subcategorias: [],
       datos:{
-         id_subcategoria:0,
+          id_subcategoria:0,
           nombre_subcategoria:''
-      }
-     
-      
+      }    
     };
   },
   computed: {
@@ -227,7 +252,9 @@ export default defineComponent({
       console.log(value);
       this.datos.id_subcategoria=value;
       this.datos.nombre_subcategoria=label;
+      this.nombre_boton="NUEVO "+label;
       this.GetComplemento(value);
+      this.nombre_tipo=label;
 
     },
     GetSubcategorias() {
@@ -358,10 +385,17 @@ export default defineComponent({
     CerrarModal() {
       this.DialogoAddProducto = false;
       this.DialogoEditProducto = false;
+      this.DialogoEditComplemento=false;
+
     },
     UpdateProduct(id) {
       this.$refs.dialogoupdaute.View(id);
+      //console.log(id);
       this.DialogoEditProducto = true;
+    },
+    updateComplemento(id_complemento){
+       this.$refs.dialogoupdatecomplemento.View(id_complemento);    
+       this.DialogoEditComplemento = true;
     },
     CerrarModalsub() {
       this.DialogoSubcategoria = false;

@@ -77,7 +77,7 @@
           <q-item-label caption lines="1">          Cant.: {{ item.cantidad_pedido }} x S/
             <span class="text-bold">
               {{ item.precio_venta }}</span></q-item-label>
-         <q-item-label caption lines="">{{ item.fecha_pedido }}</q-item-label>
+         <q-item-label caption lines="">con : {{ item.entrada }}</q-item-label>
 
         </q-item-section>
       </q-item>

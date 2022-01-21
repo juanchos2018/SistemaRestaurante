@@ -4,13 +4,11 @@
       <q-card style="width: 500px; max-width: 80vw" class="colorborde">
         <q-form @submit.prevent="Validate">
           <q-card-section>
-            <p>{{ modelo }}</p>
-
-            <div class="text-h6">Nueva</div>
+           <div class="text-h6">Nueva</div>
           </q-card-section>
           <q-separator />
           <div class="row">
-            <div class="col-10">
+            <div class="col-12">
               <q-item>
                 <q-input
                   dense
@@ -22,6 +20,18 @@
                 />
               </q-item>
             </div>
+            <div class="col-12">
+                 <q-item>
+                 <div class="q-gutter-sm">
+                <q-checkbox v-model="dia_uno" label="Lu" color="red" />
+                <q-checkbox v-model="dia_dos" label="Ma" color="red" />
+                <q-checkbox v-model="dia_tres" label="Mi" color="red" />
+                <q-checkbox v-model="dia_cuatro" label="Ju" color="red" />
+                <q-checkbox v-model="dia_cinco" label="Vi" color="red" />
+                <q-checkbox v-model="dia_seis" label="Sa" color="red" />
+              </div>
+                 </q-item>
+             </div>
           </div>
           <q-card-actions align="right">
             <q-btn flat label="Cerrar" color="primary" v-close-popup />
@@ -35,6 +45,7 @@
 <script>
 
 import { mapState } from "vuex";
+import { ref } from 'vue'
 
 export default {
   name: "dialogo-add-complemento",
@@ -54,6 +65,12 @@ export default {
         nombre_subcategoria: "",
         descripcion: "",     
       },
+      dia_uno: ref(true),
+      dia_dos: ref(true),
+      dia_tres: ref(true),
+      dia_cuatro: ref(true),
+      dia_cinco: ref(true),
+      dia_seis: ref(true), 
       Show: this.DialogoAddComplemento, 
     };
   },
@@ -101,6 +118,13 @@ export default {
       let me = this;   
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/ComplementoController.php";
+       me.modelo.dia_uno=me.dia_uno==true?1:0;
+       me.modelo.dia_dos=me.dia_dos==true?1:0; 
+       me.modelo.dia_tres=me.dia_tres==true?1:0; 
+       me.modelo.dia_cuatro=me.dia_cuatro==true?1:0; 
+       me.modelo.dia_cinco=me.dia_cinco==true?1:0; 
+       me.modelo.dia_seis=me.dia_seis==true?1:0; 
+
       const data = me.modelo;      
       this.$axios({
         method: "POST",
@@ -112,7 +136,7 @@ export default {
           let result = response.data.resultado;
           if (result == "Registrado") {
             me.Mensaje();
-           // me.Get();
+            me.Get();
             me.modelo.descripcion = "";
           } else {
             //me.Existe();
@@ -121,6 +145,9 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    Get(){
+      this.$emit("getComplemnentos",this.modelo.id_subcategoria)
     },
     Mensaje() {
       this.$q.notify({

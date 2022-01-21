@@ -23,6 +23,10 @@
                 <q-item-label v-else caption lines="1">
                   {{ item.descripcion }}
                 </q-item-label>
+
+                 <q-item-label  caption lines="1">
+                  {{ item.entrada }}
+                </q-item-label>
                  <!-- <q-item-label  caption lines="1">
                     {{ item.fecha_peruana }}
                 </q-item-label> -->
@@ -40,7 +44,7 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock,item.fecha_pedido)" />
                   <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock,item.fecha_pedido)" />
-                  <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto)" />
+                  <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto,item.entrada)" />
                 </div>
               </q-item-section>
             </q-item>
@@ -144,7 +148,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <modal-complementos  @CerrarModal="CerrarModalcomplemento" :ModalComplemento="ModalComplemento"   > </modal-complementos>
+    <modal-complementos  @CerrarModal="CerrarModalcomplemento" :ModalComplemento="ModalComplemento"  v-on:AddEntrada="AddEntrada" ref="modalcomplemento"  > </modal-complementos>
   </q-page>
 </template>
 
@@ -307,7 +311,7 @@ export default {
         // }else{
         //     this.modelUser.area=obj.AREA;
         // }
-         this.modelUser.piso_especialidad = objd.Piso;
+     //   this.modelUser.piso_especialidad = objd.Piso;
 
        
     // console.log(obj);
@@ -403,7 +407,7 @@ export default {
     },
     ListarCarroState(){
         console.log("de state");
-        console.log(this.carrito);
+        //console.log(this.carrito);
     },
     GetCategoria() {
       let tipo="lista";
@@ -454,18 +458,17 @@ export default {
       }else{
          // this.fecha_sql= moment(new Date()).format("YYYY-MM-DD");
           this.nombrecategoria = nombre;
-           this.tab=  nombre;
-          this.id_categoria=id_categoria;
-         // console.log(id_categoria)
+          this.tab=  nombre;
+          this.id_categoria=id_categoria;        
           let tipo="dia";
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
-        // let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + id_categoria;
+     
         
-         let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+        let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
         this.$axios
             .get(url_b + url)
             .then((response) => {
-              console.log(response)
+              //console.log(response)
               this.itemProducto = response.data;
             })
             .catch(function (error) {
@@ -480,8 +483,7 @@ export default {
     //  let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + this.id_categoria;
       let tipo="dia";
       let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
-    
-         let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
     this.$axios
         .get(url_b + url)
         .then((response) => {
@@ -495,32 +497,20 @@ export default {
     rcv(data){
       this.GetProducto2();
     },
-    ChangeDate(e){
-      // let fecha =e;
-      //  console.log(e);
-      // this.nombreDia=moment(new Date(e)).format('dddd');
-      // console.log(this.nombreDia);
-      // console.log(this.nombreDia);
-      if (e==null) {       
-       /// this.date=this.fecha_actual
-      //  this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
+    ChangeDate(e){    
+      if (e==null) {  
           let array =this.fecha_actual.split('/');
           let dia =array[2];
           let mes =array[1];
           let anio=array[0];
           let fecha1 =dia+'-'+mes+'-'+anio;
           let fechaSql=anio+'-'+mes+'-'+dia;
-          this.fecha_sql=fechaSql;
-        //DD-MM-YYYY
-     //   this.fecha_sql=
+          this.fecha_sql=fechaSql;   
          this.date=fecha1;      
-         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');     
-      
+         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');           
          this.GetProducto2();
-      }else{    
-          // this.nombreDia=moment(new Date(e)).format('dddd');
-           this.arrayvacio=[];
-          // console.log(this.nombreDia);
+      }else{              
+          this.arrayvacio=[];        
           let array =e.split('-');
           let dia =array[0];
           let mes =array[1];
@@ -533,7 +523,7 @@ export default {
          let tipo="dia";      
                  
         if (this.nombreDia=='domingo') {
-           console.log('no entra a la peticion ');
+           //console.log('no entra a la peticion ');
            this.NombreDiaComprobar='domingo'
            this.itemProducto = [];
         }else{
@@ -542,10 +532,9 @@ export default {
              // console.log("datos nulos");
         }else{      
           this.NombreDiaComprobar='libre';
-
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+ this.fecha_sql;
           let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
-    this.$axios
+          this.$axios
           .get(url_b + url)
           .then((response) => {
             this.itemProducto = response.data;
@@ -555,7 +544,7 @@ export default {
             console.log(error);
           })
           .finally(() => {});
-        }  
+          }  
         }              
       }
     },
@@ -565,10 +554,8 @@ export default {
     getData() {
       return this.arrayvacio;
     },
-    DeleteItem(id_producto) {
-      const indx = this.arrayvacio.findIndex(
-        (v) => v.id_producto === id_producto
-      );
+    DeleteItem(id_producto,entrada) {
+      const indx = this.arrayvacio.findIndex((v) => v.id_producto === id_producto && v.entrada==entrada);
       this.arrayvacio.splice(indx, 1);
     },
     MoreProductPorFechas(id_producto,stock,usastock,fecha_sql){
@@ -655,6 +642,14 @@ export default {
               message: "Agregado "+ title,
               color: "accent",
               position: "top",
+              actions: [
+                {
+                  label: "X",
+                  color: "white",
+                  handler: () => {                   
+                  },
+                },
+              ],
         });
     },
     MinusProduct(id_producto,fecha_sql) {
@@ -694,25 +689,20 @@ export default {
      }  
      else{
         /// console.log(array)
-          let fechas =this.fecha_hora.split('/');
-          let dia =fechas[0];
-          let mes =fechas[1];
-          let anio =fechas[2];
-          let fechaenviar =anio+'/'+mes+'/'+dia;
-      // this.modelUser.fecha_pedido =moment(new Date(fechaenviar)).format('YYYY/MM/DD');
-       
+        let fechas =this.fecha_hora.split('/');
+        let dia =fechas[0];
+        let mes =fechas[1];
+        let anio =fechas[2];
+        let fechaenviar =anio+'/'+mes+'/'+dia;
         let lista = [];
         this.modelUser.TotalPedido = this.SumTotal;
        // let obj = this.$q.sessionStorage.getItem("Qsesion");
       //  obj.Piso=this.modelUser.piso_especialidad;
-
-
         const datoscli = localStorage.getItem("Qsesion");
         const objd = JSON.parse(datoscli);
         objd.Piso = this.modelUser.piso_especialidad;
         const updateo = JSON.stringify(objd);
         localStorage.setItem("Qsesion", updateo);
-
       ///  console.log(obj);
         this.arrayvacio.forEach((element) => {
           lista.push({
@@ -721,14 +711,15 @@ export default {
             cantidad_pedido: element.cantidad_pedido,
             descripcion: element.descripcion,
             usastock: element.usastock,
-           fecha_pedido: element.fecha_pedido,
+            fecha_pedido: element.fecha_pedido,
+            entrada: element.entrada,
           });
         });
         this.modelUser.detallePedido = lista;
         let data = this.modelUser;
-        //console.log(data);       
+        console.log(data);       
         //envia al socket  php no borrar  
-        this.conn.send(JSON.stringify(data));
+       this.conn.send(JSON.stringify(data));
         this.Enviado();
         this.prompt = false;
         this.Cancelar();
@@ -753,9 +744,26 @@ export default {
           .onDismiss(() => {  });
           
     },
+    LastOrder(){
+      let tipo="lastorder";
+      let url = "/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar=" +this.modelUser.cod_auxiliar;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+     this.$axios
+        .get(url_b + url)
+        .then((response) => {
+            //console.log(response);
+           //this.itemProducto = response.data;
+           this.modelUser.piso_especialidad=response.data.piso_especialidad
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
     MensajeEnviar() {
       this.fecha_pedido=this.fecha_hora;
       if (this.arrayvacio.length > 0) {
+        this.LastOrder();
         this.prompt = true;
       } else {
         this.$q
@@ -775,13 +783,44 @@ export default {
           });
       }
     },
-    AgregarCarrito(modelo){
+    AgregarCarrito(modelo){   
       if (modelo.usasubcategoria==1) {
-          this.ModalComplemento=true;
+          this.$refs.modalcomplemento.GetComplementos(modelo.id_categoria,this.nombreDia);   
+          this.ModalComplemento=true;      
+          this.$refs.modalcomplemento.RecibeModelo(modelo);
       }else{
-
-      }
-      console.log(modelo);
+         let obj = this.arrayvacio.find((x) => x.id_producto == modelo.id_producto);
+         if (obj) {
+            let position = this.arrayvacio.findIndex((x) => x.id_producto == modelo.id_producto );
+            let cantidad_pedido = obj.cantidad_pedido;          
+            let precio = obj.precio;
+            this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+            this.arrayvacio[position].total =  precio * this.arrayvacio[position].cantidad_pedido;
+            this.arrayvacio[position].stock = modelo.stock;         
+         } else{
+            this.arrayvacio.push(modelo);           
+         }
+         this.AgregaoItem(modelo.producto);
+      }     
+    },
+    AddEntrada(modelo){
+         let obj = this.arrayvacio.find((x) => x.id_producto == modelo.id_producto);
+         if (obj) {            
+            let obj2 =this.arrayvacio.find((x) => x.id_producto == modelo.id_producto && x.entrada==modelo.entrada);
+            if (obj2) {
+              let position = this.arrayvacio.findIndex((x) => x.id_producto == obj2.id_producto  && x.entrada==obj2.entrada);
+              let cantidad_pedido = obj2.cantidad_pedido;          
+              let precio = obj2.precio;
+              this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+              this.arrayvacio[position].total =  precio * this.arrayvacio[position].cantidad_pedido;
+              this.arrayvacio[position].stock = modelo.stock;              
+            }else{
+                 this.arrayvacio.push(modelo); 
+            }
+         } else{
+            this.arrayvacio.push(modelo);   
+         }
+         this.AgregaoItem(modelo.producto);
     },
     StorePedido2() {
       let lista = [];    
@@ -796,7 +835,7 @@ export default {
       this.modelUser.detallePedido = lista;
       this.modelUser.TotalPedido = this.SumTotal;
       let url = "/Controller/PedidoController.php";
-         let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       const data = this.modelUser;
       this.$axios({
         method: "POST",
@@ -867,8 +906,8 @@ export default {
         });
     },
     GenerarPago(){
-       let me =this;            
-       let url ="/GenerarPago.php";
+        let me =this;            
+        let url ="/GenerarPago.php";
         let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
         const data={
           amount:50,

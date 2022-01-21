@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
     <q-dialog v-model="Show" @hide="CerrarModal">
-      <q-card style="width: 500px; max-width: 80vw;">
+      <q-card class="colorborde">
         <q-form  @submit.prevent="Validate">
           <q-card-section>
             <div class="text-h6">Modificar Producto</div>
@@ -21,33 +21,15 @@
                 <q-input dense autogrow outlined class="full-width" label="Descripcion *" v-model="modelo.descripcion" />
               </q-item>
             </div>
-             <div class="col-12"  v-if="subcategoria==1">
-              <q-item>    
-                         <!-- :value="modelo.id_subcategoria"   :value="modelo.nombre_subcategoria"   -->
+             <!-- <div class="col-12"  v-if="subcategoria==1">
+              <q-item>   
                 <q-select   bottom-slots  dense autogrow outlined class="full-width" v-model="modelo.nombre_subcategoria" :options="itemSubcategorias"   
                    label="Sub Categoria" :readonly="subcategoriabool==true ? false : true" @update:model-value="
                     handleChange($event)
                   "  >                  
-                </q-select>
-
-                <!-- <q-select
-                  filled
-                  v-model="model"
-                  use-input                
-                  map-options
-                  emit-value
-                  option-value="id"
-                  option-label="name"
-                  use-chips
-                  stack-label
-                  input-debounce="0"
-                  label="Simple filter"
-                  :options="itemSubcategoria"
-               
-               
-                /> -->
+                </q-select>           
               </q-item>
-            </div>
+            </div> -->
             <!-- <div class="col-4">
               <q-item>
                   <q-checkbox v-model="subcategoriabool" label="Subcategoria" color="red" />
@@ -77,10 +59,11 @@
                   dense
                   outlined
                   input-class="text-right"
-                  :readonly="estadoPrecio==true ? false : true" 
+                 
                 
-                />                  </q-item>
-                <!--  :readonly="estadoPrecio==true ? false : true"  -->
+                />                 
+                 </q-item>
+                <!--   :readonly="estadoPrecio==true ? false : true"  :readonly="estadoPrecio==true ? false : true"  -->
             </div>
               <div class="col-12">
                  <q-item>
@@ -131,12 +114,7 @@ export default {
       type: Number,
       required: true,
       default: 0,
-    },
-    subcategoria: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+    },    
   },
   data() {
     return { 
@@ -188,9 +166,8 @@ export default {
   },
   mounted(){
   //  if (this.subcategoria==1) {
-        this.getsubcategoria(this.id_categoria)
-   // }
-    
+     //   this.getsubcategoria(this.id_categoria)
+   // }    
   },
   watch: {
     DialogoEditProducto() {
@@ -202,8 +179,6 @@ export default {
      ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2","id_categoria_store"]),
     //  estadoPrecio(){
     //   if (this.subcategoria==1) {
-
-
     //       return false;
     //   }else{
     //       return true;
@@ -220,8 +195,7 @@ export default {
       }else{
       //  console.log("vienve lleno")
         idcate=me.id_categoria
-      }
-     
+      }     
       let elementos=[];
       me.itemSubcategorias=[];      
       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
@@ -248,6 +222,8 @@ export default {
         .finally(() => {});    
     },
     View(id) {
+        console.log("compoennte");
+      console.log(id);
       let me = this;
       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
       let url ="/Controller/ProductoControllerCo.php?id_producto="+id;
@@ -266,21 +242,20 @@ export default {
             me.dia_cinco=me.modelo.dia_cinco==1?true:false; 
             me.dia_seis=me.modelo.dia_seis==1?true:false;  
             
-            if (me.modelo.id_subcategoria>0) {
-                   let obj = { ...me.itemSubcategorias.find(x=>x.value==me.modelo.id_subcategoria)}
-                 // console.log(obj);
-                if (obj.description==1) {
-                   //console.log("true");
-                     me.estadoPrecio=true;
-                }else{
-                   //  console.log("false");
-                     // console.log(obj);
-                     me.estadoPrecio=false;
-                }
-            }else{
-               //  console.log("sin subcategopria");
-                 me.estadoPrecio=true;
-            }
+            // if (me.modelo.id_subcategoria>0) {
+            //        let obj = { ...me.itemSubcategorias.find(x=>x.value==me.modelo.id_subcategoria)}
+      
+            //     if (obj.description==1) {
+                  
+            //          me.estadoPrecio=true;
+            //     }else{
+                   
+            //          me.estadoPrecio=false;
+            //     }
+            // }else{
+        
+            //      me.estadoPrecio=true;
+            // }
          
             //console.log(me.modelo);
             //me.itemSubcategoria[0].value=me.modelo.id_subcategoria;
@@ -370,7 +345,7 @@ export default {
     Limpiar() {
       this.modelo.nombre_producto = "";
       this.modelo.descripcion = "";
-      this.modelo.precio_producto = 0;
+      this.modelo.precio_venta = 0;
       // this.modelo.nombre_producto="";
     },
     Validate() {
@@ -378,6 +353,10 @@ export default {
       this.errors.nombre_producto = this.modelo.nombre_producto == "" ? true : false;
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
      // this.errors.precio_producto = this.modelo.precio_producto == 0? true : false;
+      this.errors.precio_venta = this.modelo.precio_venta == null? true : false;
+      this.errors.precio_venta = this.modelo.precio_venta == 'null'? true : false;
+      this.errors.precio_venta = this.modelo.precio_venta == ''? true : false;
+      this.errors.precio_venta = this.modelo.precio_venta == '0.00'? true : false;
 
       if (this.subcategoria==1) {
             if (this.estadoPrecio==true) {
@@ -388,10 +367,7 @@ export default {
             }
         }  
         else{
-            // this.errors.precio_venta = this.modelo.precio_venta == null? true : false;
-            // this.errors.precio_venta = this.modelo.precio_venta == 'null'? true : false;
-            // this.errors.precio_venta = this.modelo.precio_venta == ''? true : false;
-            // this.errors.precio_venta = this.modelo.precio_venta == '0.00'? true : false;
+           
         }  
 
       if (this.errors.nombre_producto) {
@@ -423,7 +399,7 @@ export default {
         } else {
           this.validate = false;
         }
-       if (this.estadoPrecio==true) {
+    //   if (this.estadoPrecio==true) {
           if (this.errors.precio_venta) {
           this.validate = true;
           this.$q.dialog({
@@ -438,7 +414,7 @@ export default {
         } else {
           this.validate = false;
         }
-      }
+     // }
         
         if (this.Stock==true && this.modelo.stock==0 ) {
              this.validate = true;
@@ -478,3 +454,12 @@ export default {
   },
 };
 </script>
+
+
+<style>
+.colorborde {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
+</style>

@@ -16,10 +16,7 @@
       />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
-
-
-
-           <q-tab-panel name="mails">
+       <q-tab-panel name="mails">
         <!-- <p>{{itemCocina}}</p> -->
 
                <!-- <div v-if="!itemCocina.length">
@@ -64,6 +61,7 @@
                 :hora_pedido="props.row.hora_pedido"
                 :estado_pedido="props.row.estado_pedido"
                 :total="props.row.totalpedido"
+              
              
                 v-on:update="modificar"
               ></card-pedido>
@@ -100,6 +98,8 @@
               :estado="item.estado_pedido"
               :fecha_pedido="item.fecha_pedido"
               :hora_pedido="item.hora_pedido"
+           
+              
             ></card-terminado>
           </div>
         </div>
@@ -121,13 +121,13 @@
               :totalpedido="item.totalpedido"
               :detalle="item.detalle"
               :estado="item.estado_pedido"
-                :fecha_pedido="item.fecha_pedido"
-                  :hora_pedido="item.hora_pedido"
+              :fecha_pedido="item.fecha_pedido"
+              :hora_pedido="item.hora_pedido"
+            
             ></card-anulado>
           </div>
         </div>
       </q-tab-panel>
-
     </q-tab-panels>
     <br />
   </q-page>
@@ -145,11 +145,6 @@ import { ref, watch, computed,Vue } from "vue";
 import { mapState } from "vuex";
 import moment from "moment";
 import "moment/locale/es";
-
-
-
-import VueMobileDetection from 'vue-mobile-detection'
-//Vue.use(VueMobileDetection)
 
 
 export default {
@@ -239,8 +234,7 @@ export default {
     this.Detectar();
     this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
     //this.conn = new WebSocket(this.url_socket2);
-    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
-   
+    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);   
 
     this.get();
     this.getCalendar();
@@ -261,8 +255,7 @@ export default {
              this.Sonido();
              this.noti2();
              this.Sonido();
-        }
-       
+        }       
         this.rcv(e.data);
       } else if (jsonre.tipo == "Update") {
         this.get();
@@ -301,11 +294,7 @@ export default {
       //console.log(this.$q.screen.width );
       //console.log(this.$q.platform.is.mobile);
       let ismobile=this.$q.platform.is.mobile;
-
-
-
-    //=== 1080 && this.$q.platform.is.mobile
-
+      //=== 1080 && this.$q.platform.is.mobile
       // let detector = new MobileDetect(window.navigator.userAgent)
       // console.log( "Mobile: " + detector.mobile());
       // console.log( "Phone: " + detector.phone());
@@ -314,8 +303,7 @@ export default {
       // console.log( "userAgent: " + detector.userAgent());
     },
     get() {
-      let tipo = "nuevo";
-      
+      let tipo = "nuevo";      
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+this.fecha_actual;
       this.$axios
@@ -352,7 +340,7 @@ export default {
           let anio=array[0];
           let fecha1 =dia+'-'+mes+'-'+anio;
           let fechaSql=anio+'-'+mes+'-'+dia;
-        //DD-MM-YYYY
+         //DD-MM-YYYY
          this.date=fecha1      
          this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
       
@@ -370,8 +358,7 @@ export default {
           let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+fechaSql;
           this.$axios
           .get(url_b + url)
-          .then((response) => {        
-            ///console.log(response);
+          .then((response) => {       
             this.itemCocina = response.data;
           })
           .catch(function (error) {

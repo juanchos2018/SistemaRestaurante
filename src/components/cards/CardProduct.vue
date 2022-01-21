@@ -58,6 +58,12 @@
         <q-item-label caption>
           {{ data.descripcion }}
         </q-item-label>
+           <q-item-label >
+          <div class="text-caption text-grey">
+          <q-icon :name="data.logo" size="xs" />        
+        </div>
+        </q-item-label>
+       
       </q-item-section>
     </q-item>
 
@@ -193,6 +199,7 @@ export default defineComponent({
           reservado: "",
           fecha_pedido: fecha_sql,
           fecha_peruana: nombreDia + "-" + fechape,
+          entrada:''
         };
         arrayva.value.push(objeto);
       }
@@ -330,6 +337,7 @@ export default defineComponent({
           reservado: "",
           fecha_pedido: fecha_sql,
           fecha_peruana: nombreDia + "-" + fechape,
+          entrada:''
         };
         arrayva.value.push(objeto);
       }
@@ -368,8 +376,10 @@ export default defineComponent({
           reservado: "",
           fecha_pedido: fecha_sql,
           fecha_peruana: nombreDia + "-" + fechape,
-          usasubcategoria:usasubcategoria
+          usasubcategoria:usasubcategoria,
+          entrada:'algo we'
         };
+        
         this.$emit("AgregarCarrito", objeto);
     }
   },

@@ -43,6 +43,7 @@
                 Cant. : {{ item.cantidad_pedido }} x    <span class="text-green text-bold"> {{item.precio_venta}}</span>
                </q-item-label
               >
+                  <q-item-label caption lines="">con : {{ item.entrada }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
