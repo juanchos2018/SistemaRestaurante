@@ -36,7 +36,7 @@ npx quasar build
 
 **Cliente**
 
-![Alt text](src/assets/Cliente.png?raw=true "Screenshot")
+![Alt text](src/assets/Cliente.PNG?raw=true "Screenshot")
 
 
 [MIT](http://opensource.org/licenses/MIT)
