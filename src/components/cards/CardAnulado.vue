@@ -1,5 +1,5 @@
 <template>
-  <q-card >  
+  <q-card class="my-card  colorborde">  
      <q-item>
       <!-- <q-item-section>
         <div class="text-subtitle2 text-white">{{ des_auxiliar }}</div>
@@ -43,6 +43,7 @@
           <q-item-label>{{ item.nombre_producto }}</q-item-label>
           <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
            <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
+            <q-item-label caption lines="">con : {{ item.entrada }}</q-item-label>
         </q-item-section>
 
         <q-item-section side top>
@@ -98,5 +99,11 @@ export default {
 <style>
 .q-stepper__step-content {
   display:none !important
+}
+
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
 }
 </style>

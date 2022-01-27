@@ -23,7 +23,6 @@
                 <q-item-label v-else caption lines="1">
                   {{ item.descripcion }}
                 </q-item-label>
-
                  <q-item-label  caption lines="1">
                   {{ item.entrada }}
                 </q-item-label>
@@ -42,8 +41,8 @@
               </q-item-section>
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
-                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock,item.fecha_pedido)" />
-                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock,item.fecha_pedido)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock,item.fecha_pedido,item.entrada)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock,item.fecha_pedido,item.entrada)" />
                   <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto,item.entrada)" />
                 </div>
               </q-item-section>
@@ -66,6 +65,8 @@
       </q-drawer>
       <q-page-container>
         <q-page style="padding-top: 55px" class="q-pa-sm">
+             <!-- <q-btn flat label="Cancelar" @click="confirm=true"/> -->
+           <!-- <p>{{modelUser}}</p> -->
           <div>    
              <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
@@ -148,6 +149,18 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+
+      <q-dialog v-model="confirm" persistent>     
+         <q-card class="bg-red text-white" style="width: 300px">
+          <q-card-section>
+            <div class="text-h6">Su sesion a Caducado</div>
+          </q-card-section>
+          <q-card-section class="q-pt-none">
+            Vuelva a iniciar sesion.
+          </q-card-section>    
+        </q-card>
+      </q-dialog>
     <modal-complementos  @CerrarModal="CerrarModalcomplemento" :ModalComplemento="ModalComplemento"  v-on:AddEntrada="AddEntrada" ref="modalcomplemento"  > </modal-complementos>
   </q-page>
 </template>
@@ -167,7 +180,8 @@ const columns = [
 
 import { provide, defineAsyncComponent, ref,reactive } from "vue";
 import { mapState } from "vuex";
-import { useQuasar } from "quasar";
+import { useQuasar,QSpinnerGears } from "quasar";
+
 import moment from 'moment'
 import "moment/locale/es";
 export default {
@@ -193,7 +207,14 @@ export default {
     let rightDrawerOpen = ref(false);
     const drawerWidth = ref(340);
     const otherValue = $q.sessionStorage.getItem("Qsesion");
-    const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
+    const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });    
+    const date2 = ref(moment(new Date()).local().format("DD/MM/YYYY"))
+    const proxyDate = ref(moment(new Date()).local().format("DD-MM-YYYY"))
+    const fecha_hora=ref(moment(new Date()).local().format("DD-MM-YYYY"));
+    let  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
+    let  fecha_actual2= ref(moment(new Date()).format("YYYY/MM/DD"));
+    let  fecha_sql= ref(moment(new Date()).format("YYYY-MM-DD"));  
+      let todaysDate = new Date();
     const  modelUser =  reactive({
         tipo:'Store',
         fecha_pedido: "",
@@ -206,42 +227,37 @@ export default {
         des_auxiliar: "",
         detallePedido: [],
         TotalPedido: 0,
-        color: "bg-positive", });    
-        //let  fecha_hora=ref(moment(new Date()).format("DD/MM/YYYY"))
-        let todaysDate = new Date();
-        const date2 = ref(moment(new Date()).local().format("DD/MM/YYYY"))
-        const proxyDate = ref(moment(new Date()).local().format("DD-MM-YYYY"))
-        const fecha_hora=ref(moment(new Date()).local().format("DD-MM-YYYY"));
-        let  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
-        let  fecha_actual2= ref(moment(new Date()).format("YYYY/MM/DD"));
-        let  fecha_sql= ref(moment(new Date()).format("YYYY-MM-DD"));
+        color: "bg-positive",
+        token:'' });   
+       
     return {
-      tab:ref(''),
-      proxyDate,
-      date2,
-      modelo,
-      nombreDiados:'',
-      nombreDia:'',
-      NombreDiaComprobar:'',
-      time: ref(''),
-      date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
-      fecha_actual,
-      fecha_actual2,
-      fecha_sql,
-      timeactual:ref(moment.utc().add(7,'hours').format('hh:mm:ss') ),     
-      datehoy : Date.now(),     
-      fecha_hora,
-      todaysDate,   
-      date1: ref('2019/02/01'),
+     
+      date: ref(moment(new Date()).local().format("DD-MM-YYYY")),      
+      timeactual:ref(moment.utc().add(7,'hours').format('hh:mm:ss') ),   
       optionsFn (fecha_actual) {
         return fecha_actual>= moment(new Date()).format('YYYY/MM/DD')
-      },
-      updateProxy () {
-        //proxyDate.value = date2.value
+      },      
+      toggleRightDrawer() {
+        rightDrawerOpen.value = !rightDrawerOpen.value;
       },
       save () {
         fecha_hora.value = proxyDate.value
-      },            
+      },       
+      showLoading () {
+        $q.loading.show()
+        // hiding in 2s
+        timer = setTimeout(() => {
+          $q.loading.hide()
+          timer = void 0
+        }, 2000)
+      },
+      fecha_actual,
+      fecha_actual2,
+      fecha_sql,
+      datehoy : Date.now(),     
+      fecha_hora,
+      todaysDate,   
+      date1: ref('2019/02/01'),        
       Token:ref(''),
       modelUser,
       index_categoria:0,
@@ -251,9 +267,6 @@ export default {
       rightDrawerOpen,
       otherValue,
       drawerWidth,
-      toggleRightDrawer() {
-        rightDrawerOpen.value = !rightDrawerOpen.value;
-      },
       itemCategoria,
       itemProducto,
       nombrecategoria: ref(""),
@@ -261,8 +274,7 @@ export default {
       drawerRight: ref(true),
       prompt: ref(false),
       address: ref(""),
-      Estado: ref(false),
-      columns,
+      Estado: ref(false),    
       page: ref(1),
       current: ref(1),
       nextPage: ref(null),
@@ -270,17 +282,21 @@ export default {
       itemRefs,
       arrayvacio,
       search,
+      columns,
+      tab:ref(''),
+      proxyDate,
+      date2,
+      modelo,
+      nombreDiados:'',
+      nombreDia:ref(''),
+      NombreDiaComprobar:'',
+      time: ref(''),
       pagination: {
         rowsPerPage: 6,
       },   
       ModalComplemento:ref(false),
-      onMainClick () {
-        // console.log('Clicked on main button')
-      },
-
-      onItemClick () {
-        // console.log('Clicked on an Item')
-      }
+      confirm: ref(false),  
+      polling: ref(null)   
     };
   },
   created() {
@@ -293,8 +309,6 @@ export default {
     this.GetCategoria();
     this.setTime();
     this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-    //this.conn= new WebSocket(this.url_socket2);
-    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
     let existe = this.$q.sessionStorage.has("Qsesion"); 
     if (existe==true) {     
         let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -302,37 +316,45 @@ export default {
         this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
         this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
         this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
-
+        this.modelUser.token = obj.token;    
         const datoscli = localStorage.getItem("Qsesion");
-        let objd = JSON.parse(datoscli);
+        let objd = JSON.parse(datoscli);    
+        // this.modelUser.piso_especialidad = objd.Piso;       
+        //console.log(obj);
+    }      
+    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2+'?token='+this.modelUser.token:this.url_socket+'?token='+this.modelUser.token );
 
-        //  if (obj.AREA=="AREA_NN" ) {
-        //   this.modelUser.area="";
-        // }else{
-        //     this.modelUser.area=obj.AREA;
-        // }
-     //   this.modelUser.piso_especialidad = objd.Piso;
-
-       
-    // console.log(obj);
-    } 
-    
-    this.conn.onopen = (e) => {
-         console.log("conectado WebSocket");
+    this.conn.onopen = (e) => {     
+          this.$q.loading.show({           
+             spinnerColor: 'red',
+          })
+          this.polling = setInterval(() => {		        
+            clearInterval(this.polling)
+            let {currentTarget}  =e;    
+            this.$q.loading.hide()
+            if (currentTarget.readyState==3) {
+              this.alertSesion();
+            }else{
+              console.log("conectado WebSocket");
+            }
+	      	}, 400)     
     };
     this.conn.onmessage = (e) => {
-        this.rcv(e.data); 
-        
+        this.rcv(e.data);         
         let json = JSON.parse(e.data);
-        console.log(json)
+        // console.log(json)
+        // if (json.error==true && json.cod_auxiliar== this.modelo.COD_AUXILIAR) {
+        //       this.alertSesion();
+        // }else{          
+        // }
         //let cod_auxiliar=recibe.cod_auxiliar;     
         // if (es=="2" && cod_auxiliar==this.modelo.COD_AUXILIAR) {  
         //     this.check();
         //  }  
         if (json.registrado == "si") {
-             //  this.Enviado();
+            // this.Enviado();
         }else{
-          /// this.Error();
+            //this.Error();
         } 
     };    
   },
@@ -397,11 +419,8 @@ export default {
     fechaSql(){
 
     }
-  },
-  methods: {
-    onItemClick(){
-
-    },
+  },  
+  methods: {  
     CerrarModalcomplemento(){
       this.ModalComplemento=false;
     },
@@ -461,11 +480,9 @@ export default {
           this.tab=  nombre;
           this.id_categoria=id_categoria;        
           let tipo="dia";
-          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
-     
-        
-        let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
-        this.$axios
+          let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;           
+          let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
+          this.$axios
             .get(url_b + url)
             .then((response) => {
               //console.log(response)
@@ -475,7 +492,7 @@ export default {
               console.log(error);
             })
             .finally(() => {});
-      }     
+       }     
     },
     GetProducto2(){
        //   this.nombrecategoria = nombre;
@@ -570,10 +587,11 @@ export default {
             this.arrayvacio[position2].stock = stock;    
 
     },
-    MoreProduct(id_producto,stock,usastock,fecha_sql) {      
+    MoreProduct(id_producto,stock,usastock,fecha_sql,entrada) {      
     //  if (usastock==1) {
-            let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
-            let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto );
+      // const indx = this.arrayvacio.findIndex((v) => v.id_producto === id_producto && v.entrada==entrada);
+            let obj = this.arrayvacio.find((x) => x.id_producto == id_producto && x.entrada==entrada);
+            let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto && x.entrada==entrada );
             let cantidad_pedido = obj.cantidad_pedido;
           //  if (cantidad_pedido==stock) {
               //  this.Mucho();
@@ -652,10 +670,10 @@ export default {
               ],
         });
     },
-    MinusProduct(id_producto,fecha_sql) {
-      let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
+    MinusProduct(id_producto,fecha_sql,entrada) {
+      let obj = this.arrayvacio.find((x) => x.id_producto == id_producto && x.entrada==entrada);
       let position = this.arrayvacio.findIndex(
-        (x) => x.id_producto == id_producto
+        (x) => x.id_producto == id_producto && x.entrada==entrada
       );
       let cantidad_pedido = obj.cantidad_pedido;
       if (cantidad_pedido == 1) {
@@ -668,7 +686,6 @@ export default {
       }
     },
     StorePedido() {
-
     this.modelUser.hora_pedido=this.timeactual;
     let valifecha =this.modelUser.fecha_pedido;
    
@@ -715,19 +732,38 @@ export default {
             entrada: element.entrada,
           });
         });
+        let token ="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NDMwMzQxMzIsImlzcyI6ImxvY2FsaG9zdCIsImV4cCI6MTY0MzAzNTAzMiwiY29kX2F1eGlsaWFyIjoiSlZFTkVHQVMifQ.9kH7O2DvAE--yLa6_6db9EVKJ0IzwVhSSs_fuYXA1wc";
+
+        this.modelUser.token=token;
+
         this.modelUser.detallePedido = lista;
         let data = this.modelUser;
-        console.log(data);       
+       // console.log(data);    
+           
         //envia al socket  php no borrar  
-       this.conn.send(JSON.stringify(data));
+        this.conn.send(JSON.stringify(data));
         this.Enviado();
         this.prompt = false;
         this.Cancelar();
       }       
     },
-    VerHora(){
-      console.log(this.horaActual)
-    },
+    MensajeToken(){
+         const dialog = $q.dialog({
+            title: 'Uploading...',
+            dark: true,
+            message: '0%',
+            progress: {
+              spinner: QSpinnerGears,
+              color: 'amber'
+            },
+            persistent: true, // we want the user to not be able to close it
+            ok: false // we want the user to not be able to close it
+          })
+
+      // we simulate some progress here...
+     
+      
+    },     
     TipoMensaje(campo){
         this.$q
           .dialog({
@@ -933,7 +969,25 @@ export default {
 					this.horaActual= moment().format('LTS')
         
 				}, 1000)
-			},
+		},
+    validateToken(token){
+    },
+    logoutNotify() {
+      this.$router.push({ path: "/" });
+      this.$q.sessionStorage.remove("Qsesion");
+      this.$q.sessionStorage.clear();
+      localStorage.removeItem("Qsesion");
+      localStorage.removeItem('token');
+    },
+    alertSesion(){
+       this.confirm=true;
+       let percentage = 0
+       this.polling = setInterval(() => {
+		        this.confirm=false;  
+            clearInterval(this.polling)
+            this.logoutNotify();
+	    	}, 2000)      
+     }    
   },
   
 };

@@ -77,7 +77,18 @@
           </div>
         </div>
       </q-tab-panel>
-    </q-tab-panels>      
+    </q-tab-panels>    
+
+        <q-dialog v-model="confirm" persistent>     
+         <q-card class="bg-red text-white" style="width: 300px">
+          <q-card-section>
+            <div class="text-h6">Su sesion a Caducado</div>
+          </q-card-section>
+          <q-card-section class="q-pt-none">
+            Vuelva a iniciar sesion.
+          </q-card-section>    
+        </q-card>
+      </q-dialog>
   </q-page>
 </template>
 
@@ -103,6 +114,20 @@ export default defineComponent({
     let itemSucess = ref([]);
     const modelo = reactive({ COD_AUXILIAR: "", DES_AUXILIAR: "" });
     const  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
+    const  modelUser =  reactive({
+        tipo:'Store',
+        fecha_pedido: "",
+        hora_pedido: "",
+        estado_pedido: 0,
+        cod_auxiliar: "",
+        especialidad: "",
+        area: "",
+        piso_especialidad: "",
+        des_auxiliar: "",
+        detallePedido: [],
+        TotalPedido: 0,
+        color: "bg-positive",
+        token:'' });  
     return {
       date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       tab: ref("mails"),
@@ -117,7 +142,9 @@ export default defineComponent({
       modelo,
       conn:null,
       events: [],
-      nombreDia:'',    
+      nombreDia:ref(''),   
+      modelUser ,
+      confirm: ref(false),     
      
     };
    },
@@ -130,20 +157,37 @@ export default defineComponent({
    },
    mounted() {
     //   let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
-      this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
+    
       let existe = this.$q.sessionStorage.has("Qsesion");     
       if (existe==true) {
           let obj = this.$q.sessionStorage.getItem("Qsesion");
           this.modelo.DES_AUXILIAR = obj.DES_AUXILIAR;
           this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
+          this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
+          this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
+          this.modelUser.token = obj.token;  
       } 
+      this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2+'?token='+this.modelUser.token:this.url_socket+'?token='+this.modelUser.token );
+      this.conn.onopen = (e) => {     
+          this.$q.loading.show({           
+             spinnerColor: 'red',
+          })
+          this.polling = setInterval(() => {		        
+            clearInterval(this.polling)
+            let {currentTarget}  =e;    
+            this.$q.loading.hide()
+            if (currentTarget.readyState==3) {
+             this.alertSesion();
+            }else{
+              console.log("conectado WebSocket");
+            }
+	      	}, 400)     
+       };
       this.get();   
       this.getSucess();
       this.getrecjected();
       this.getCalendar();
-      this.conn.onopen = (e) => {
-       console.log("WebSocket Mi : " + e);
-     };
+  
      this.conn.onmessage = (e) => {
          this.rcv(e.data);
          let recibe =   JSON.parse(e.data);     
@@ -263,8 +307,7 @@ export default defineComponent({
       }
     },
 
-    UpdateStart(obj){
- 
+    UpdateStart(obj){ 
       let me = this;
       let tipo="start"
       let url ="/Controller/PedidoController.php";   
@@ -290,6 +333,22 @@ export default defineComponent({
         .catch((error) => {
           console.log(error);
         });
+    },
+   alertSesion(){
+       this.confirm=true;
+       let percentage = 0
+       this.polling = setInterval(() => {
+		        this.confirm=false;  
+            clearInterval(this.polling)
+            this.logoutNotify();
+	    	}, 2000)      
+    },
+    logoutNotify() {
+      this.$router.push({ path: "/" });
+      this.$q.sessionStorage.remove("Qsesion");
+      this.$q.sessionStorage.clear();
+      localStorage.removeItem("Qsesion");
+      localStorage.removeItem('token');
     },
     anularPedido(id_pedido){  
       let me = this;

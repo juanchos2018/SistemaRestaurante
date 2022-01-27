@@ -36,9 +36,9 @@
               </q-item>
             </div> -->
 
-            <div class="col-3">
+            <div class="col-4">
               <q-item>                
-                <q-checkbox v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
+                <q-checkbox :size="isMobile?'xs':'sm'"  v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
               </q-item>
             </div>
               <div class="col-4">           
@@ -58,8 +58,7 @@
                   reverse-fill-mask
                   dense
                   outlined
-                  input-class="text-right"
-                 
+                  input-class="text-right"                
                 
                 />                 
                  </q-item>
@@ -68,12 +67,12 @@
               <div class="col-12">
                  <q-item>
                  <div class="q-gutter-sm">
-                <q-checkbox v-model="dia_uno" label="Lu" color="red" />
-                <q-checkbox v-model="dia_dos" label="Ma" color="red" />
-                <q-checkbox v-model="dia_tres" label="Mi" color="red" />
-                <q-checkbox v-model="dia_cuatro" label="Ju" color="red" />
-                 <q-checkbox v-model="dia_cinco" label="Vi" color="red" />
-                <q-checkbox v-model="dia_seis" label="Sa" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'"  v-model="dia_uno" label="Lu" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'"  v-model="dia_dos" label="Ma" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'"  v-model="dia_tres" label="Mi" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'"  v-model="dia_cuatro" label="Ju" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'"  v-model="dia_cinco" label="Vi" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'"  v-model="dia_seis" label="Sa" color="red" />
               </div>
                  </q-item>
              </div>
@@ -130,6 +129,7 @@ export default {
       subcategoriabool:ref(true),
       validate: false,
       estadoPrecio:false,
+      isMobile:ref(false),
       modelo: {
         id_producto: 0,
         nombre_producto: "",
@@ -168,6 +168,7 @@ export default {
   //  if (this.subcategoria==1) {
      //   this.getsubcategoria(this.id_categoria)
    // }    
+   this.isMobile=this.$q.platform.is.mobile==true?true:false;  
   },
   watch: {
     DialogoEditProducto() {
@@ -461,5 +462,9 @@ export default {
   border-width: 1px;
   border-style: solid;
   border-color: #b71408;
+}
+
+.q-gutter-x-sm > *, .q-gutter-sm > * {
+    margin-left: 3px;
 }
 </style>

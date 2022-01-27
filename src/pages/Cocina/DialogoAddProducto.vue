@@ -46,9 +46,9 @@
                   <q-checkbox v-model="subcategoriabool" label="Subcategoria" color="red" />
               </q-item>
             </div> -->
-            <div class="col-3">
+            <div class="col-4">
               <q-item>
-                <q-checkbox v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
+                <q-checkbox :size="isMobile?'xs':'sm'" v-model="Stock" :label="Stock==true ? 'Usar/Stock':'No/Stock'"  @click="toggleCheckboxes($event)"  />
               </q-item>
             </div>
             <div class="col-4">
@@ -78,12 +78,12 @@
              <div class="col-12">
                  <q-item>
                  <div class="q-gutter-sm">
-                <q-checkbox v-model="dia_uno" label="Lu" color="red" />
-                <q-checkbox v-model="dia_dos" label="Ma" color="red" />
-                <q-checkbox v-model="dia_tres" label="Mi" color="red" />
-                <q-checkbox v-model="dia_cuatro" label="Ju" color="red" />
-                <q-checkbox v-model="dia_cinco" label="Vi" color="red" />
-                <q-checkbox v-model="dia_seis" label="Sa" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'" v-model="dia_uno" label="Lu" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'" v-model="dia_dos" label="Ma" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'" v-model="dia_tres" label="Mi" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'" v-model="dia_cuatro" label="Ju" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'" v-model="dia_cinco" label="Vi" color="red" />
+                <q-checkbox :size="isMobile?'xs':'sm'" v-model="dia_seis" label="Sa" color="red" />
               </div>
                  </q-item>
              </div>
@@ -148,6 +148,7 @@ export default {
       dia_cuatro: ref(true),
       dia_cinco: ref(true),
       dia_seis: ref(true), 
+      isMobile:ref(false),
       modelo: {
         id_producto: 0,
         nombre_producto: "",
@@ -193,10 +194,11 @@ export default {
       ]     
     };
   },
-  mounted: function () {
+  mounted(){
     this.modelo.id_categoria = this.id_categoria;   
     this.getsubcategoria( this.id_categoria);
-///    console.log(this.id_categoria_store)
+    this.isMobile=this.$q.platform.is.mobile==true?true:false;  
+    ///    console.log(this.id_categoria_store)
      
   },
   watch: {

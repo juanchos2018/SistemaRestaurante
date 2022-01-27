@@ -74,8 +74,7 @@ export default defineComponent({
   },
   created() {
     //  let existe =  this.$q.sessionStorage.isEmpty()
-    let existe2 = this.$q.sessionStorage.has("Qsesion");
-    //console.log(existe2);
+    let existe2 = this.$q.sessionStorage.has("Qsesion");  
     if (!existe2) {
       this.$router.push({ path: "/" });
     }
@@ -87,7 +86,6 @@ export default defineComponent({
     },
     nameDia: function () {
       return this.itemTomorrow.map(function (item) {
-
           let array =item.fecha_pedido.split('-');
           let dia =array[2];
           let mes =array[1];
@@ -96,24 +94,13 @@ export default defineComponent({
         return moment(new Date(fecha1)).format("dddd");
       });
     },
-    formarPeru() {
-      //2022-01-18
-      //  let fechas =this.fecha_hora.split('-');
-      //   let dia =fechas[0];
-      //   let mes =fechas[1];
-      //   let anio =fechas[2];
-      //   let fecha_sql =anio+'-'+mes+'-'+dia;
-      //   this.modelUser.fecha_pedido=fecha_sql;
-      //   console.log(this.modelUser.fecha_pedido)
-        
+    formarPeru() { 
       return this.itemTomorrow.map(function (item) {
-
           let array =item.fecha_pedido.split('-');
           let dia =array[2];
           let mes =array[1];
           let anio=array[0];
           let fecha1 =anio+'/'+mes+'/'+dia;
-
         return moment(new Date(fecha1)).format("DD/MM/YYYY");
       });
     },
@@ -121,7 +108,6 @@ export default defineComponent({
   mounted() {
     this.Get();
   },
-
   methods: {
     AddCategoria() {
       this.visiblemodal = true;
@@ -155,7 +141,7 @@ export default defineComponent({
       this.$axios
         .get(url_b + url)
         .then((response) => {
-          console.log(response)
+          ///console.log(response)
           this.itemTomorrow = response.data;
         })
         .catch(function (error) {

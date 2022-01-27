@@ -1,5 +1,8 @@
 <template>
   <q-page class="q-pa-sm">
+
+    <br>
+    <br>
        <div class="row q-col-gutter-sm">     
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
@@ -51,8 +54,6 @@ export default defineComponent({
       }    
    },
    mounted() {
-     //  let  conn= new WebSocket(this.url_socket);
-        this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);
       let existe = this.$q.sessionStorage.has("Qsesion");     
       if (existe==true) {
           let obj = this.$q.sessionStorage.getItem("Qsesion");

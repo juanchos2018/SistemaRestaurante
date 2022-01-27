@@ -18,14 +18,14 @@
     <q-tab-panels v-model="tab" animated>
        <q-tab-panel name="mails">
         <!-- <p>{{itemCocina}}</p> -->
-
                <!-- <div v-if="!itemCocina.length">
               <h6>SIN PEDIDO EL DIA DE HOY </h6>
         </div> -->
+        <!-- :title="itemCocina.length>0?'Pedidos':' Sin  Pedidos el dia de hoy'" -->
         <q-table
           grid
           :card-container-class="cardContainerClass"
-          :title="itemCocina.length>0?'Pedidos ':' Sin  Pedidos el dia de hoy'"
+          title=" "
           :rows="itemCocina"
           :columns="columns"
           row-key="name"
@@ -34,15 +34,16 @@
           v-model:pagination="pagination"
           :rows-per-page-options="rowsPerPageOptions"
         >
-          <template v-slot:top-right>          
-            <div>                   
-             <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"   class="float-right"  >
+          <template v-slot:top-right  >          
+            <div class="no-padding no-margin">                   
+             <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"   class="float-right "  >
                <q-date
                   v-model="date"     
                   :events="events"
                   event-color="red"
                   mask="DD-MM-YYYY" 
                   @update:model-value="ChangeDate($event)"
+                  class="colorborde"
                 />
               </q-btn-dropdown>  
           </div>       
@@ -60,51 +61,55 @@
                 :fecha_pedido="props.row.fecha_pedido"
                 :hora_pedido="props.row.hora_pedido"
                 :estado_pedido="props.row.estado_pedido"
-                :total="props.row.totalpedido"
-              
-             
+                :total="props.row.totalpedido" 
                 v-on:update="modificar"
               ></card-pedido>
             </div>
           </template>
-        </q-table>
-        
+        </q-table>     
       </q-tab-panel>
-
       <q-tab-panel name="alarms">
-        <q-toolbar class="bg-secondary text-white q-my-md shadow-2">
-          <div class="text-h5 text-white text-bold">
-             {{ nombreDia }} - {{ fecha_actual }}
-          </div>
+        <q-toolbar class="bg-secondary text-white q-my-xs shadow-2">        
+           <q-item>
+              <q-item-label class="text-white text-bold">   {{ nombreDia }} - {{ fecha_actual }}</q-item-label>
+             </q-item>          
           <q-space />
-          <div class="text-h5 text-white text-bold">S/ {{ SumTotal }}</div>
-        </q-toolbar>
+          <q-item>
+              <q-item-label class="text-white text-bold">   S/ {{ SumTotal }}</q-item-label>
+             </q-item>         
+        </q-toolbar>   
 
-        
-        <div class="row q-col-gutter-sm">
-          <div
-            class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
-            v-for="item in itemTerminado"
-            :key="item.id_pedido"
-          >
-            <card-terminado
-              :id_pedido="item.id_pedido"
-              :des_auxiliar="item.des_auxiliar"
-              :piso_especialidad="item.piso_especialidad"
-              :area="item.area"
-              :color="item.color"
-              :totalpedido="item.totalpedido"
-              :detalle="item.detalle"
-              :estado="item.estado_pedido"
-              :fecha_pedido="item.fecha_pedido"
-              :hora_pedido="item.hora_pedido"
-           
+      <q-table
+          grid
+          :card-container-class="cardContainerClass2"
+          title=" "
+          :rows="itemTerminado"
+          :columns="columns2"
+          row-key="name"
+          :filter="filter"
+          hide-header
+          v-model:pagination="pagination2"
+          :rows-per-page-options="rowsPerPageOptions2"
+        >         
+          <template v-slot:item="props">
+            <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+              <card-terminado
+              :id_pedido="props.row.id_pedido"
+              :des_auxiliar="props.row.des_auxiliar"
+              :piso_especialidad="props.row.piso_especialidad"
+              :area="props.row.area"
+              :color="props.row.color"
+              :totalpedido="props.row.totalpedido"
+              :detalle="props.row.detalle"
+              :estado="props.row.estado_pedido"
+              :fecha_pedido="props.row.fecha_pedido"
+              :hora_pedido="props.row.hora_pedido"          
               
             ></card-terminado>
-          </div>
-        </div>
+            </div>
+          </template>
+        </q-table>   
       </q-tab-panel>
-
       <q-tab-panel name="reject">
         <div class="row q-col-gutter-sm">
           <div
@@ -130,6 +135,16 @@
       </q-tab-panel>
     </q-tab-panels>
     <br />
+     <q-dialog v-model="confirm" persistent>     
+        <q-card class="bg-red text-white" style="width: 300px">
+          <q-card-section>
+            <div class="text-h6">Su sesion a Caducado</div>
+          </q-card-section>
+          <q-card-section class="q-pt-none">
+            Vuelva a iniciar sesion.
+          </q-card-section>    
+        </q-card>
+      </q-dialog>
   </q-page>
 </template>
 
@@ -141,7 +156,7 @@ import CardAnulado from "components/cards/CardAnulado.vue";
 
 import useSound from "vue-use-sound";
 import buttonSfx from "../../assets/timbre.mp3";
-import { ref, watch, computed,Vue } from "vue";
+import { ref, watch, computed,Vue,reactive } from "vue";
 import { mapState } from "vuex";
 import moment from "moment";
 import "moment/locale/es";
@@ -176,25 +191,43 @@ export default {
       page: 1,
       rowsPerPage: getItemsPerPage(),
     });
+     const pagination2 = ref({
+      page: 1,
+      rowsPerPage: getItemsPerPage(),
+    });
     watch(
       () => $q.screen.name,
-      () => {
-        pagination.value.rowsPerPage = getItemsPerPage();
-      }
+      () => { pagination.value.rowsPerPage = getItemsPerPage(); },
+      () => { pagination2.value.rowsPerPage = getItemsPerPage(); }
     );
+     const  modelUser =  reactive({
+        fecha_pedido: "",
+        hora_pedido: "",
+        estado_pedido: 0,
+        cod_auxiliar: "",
+        especialidad: "",
+        area: "",
+        piso_especialidad: "",
+        des_auxiliar: "",  
+        color: "bg-positive",
+        token:'' }); 
     return {
       otherValue,
       nombreDia:'',    
       events: [],
       date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
       fecha_actual,
+      confirm: ref(false),  
+      modelUser,
       play,
+      moment,
       con: null,
       msg: "Test  Meesage",
       name: "jkun",
       msgA: [],
       filter,
       pagination,
+      pagination2,
       itemCocina,
       itemTerminado,
       itemRejected,
@@ -209,7 +242,15 @@ export default {
           ? "grid-masonry grid-masonry--" + ($q.screen.gt.sm ? "3" : "2")
           : null;
       }),
+      cardContainerClass2: computed(() => {
+        return $q.screen.gt.xs
+          ? "grid-masonry grid-masonry--" + ($q.screen.gt.sm ? "3" : "2")
+          : null;
+      }),
       rowsPerPageOptions: computed(() => {
+        return $q.screen.gt.xs ? ($q.screen.gt.sm ? [3, 6, 9] : [3, 6]) : [3];
+      }),
+      rowsPerPageOptions2: computed(() => {
         return $q.screen.gt.xs ? ($q.screen.gt.sm ? [3, 6, 9] : [3, 6]) : [3];
       }),
       columns: [
@@ -220,7 +261,12 @@ export default {
           field: "piso_especialidad",
         },
       ],
-      moment,
+       columns2: [
+        { name: "des_auxiliar", label: "des_auxiliar", field: "des_auxiliar" },
+        { name: "piso_especialidad", label: "Area", field: "piso_especialidad",
+        },
+      ],
+     
     
     };
   },
@@ -232,16 +278,35 @@ export default {
   },
   mounted() {
     this.Detectar();
-    this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-    //this.conn = new WebSocket(this.url_socket2);
-    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2:this.url_socket);   
-
+    this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd'); 
+    let existe = this.$q.sessionStorage.has("Qsesion"); 
+    if (existe==true) {     
+        let obj = this.$q.sessionStorage.getItem("Qsesion");
+        this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
+        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
+        this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
+        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
+        this.modelUser.token = obj.token;   
+    } 
+    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2+'?token='+this.modelUser.token:this.url_socket+'?token='+this.modelUser.token );
     this.get();
     this.getCalendar();
     this.getTerminados();
     this.getRjecteds();
-    this.conn.onopen = (e) => {
-      console.log("conectado Co : " + e);
+    this.conn.onopen = (e) => {     
+          this.$q.loading.show({           
+             spinnerColor: 'red',
+          })
+          this.polling = setInterval(() => {		        
+            clearInterval(this.polling)
+            let {currentTarget}  =e;    
+            this.$q.loading.hide()
+            if (currentTarget.readyState==3) {
+             this.alertSesion();
+            }else{
+              console.log("conectado WebSocket");
+            }
+	      	}, 400)     
     };
     this.conn.onerror = function (errorEvent) {
 				console.log("WebSocket ERROR: " + JSON.stringify(errorEvent, null, 4));
@@ -261,7 +326,7 @@ export default {
         this.get();
         this.getTerminados();
         this.getRjecteds();
-      }
+      }      
     };
   },
   computed: {
@@ -443,10 +508,40 @@ export default {
       }
       // console.log(datos);
       this.conn.send(JSON.stringify(datos));
-    },
+     },
+    logoutNotify() {
+      this.$router.push({ path: "/" });
+      this.$q.sessionStorage.remove("Qsesion");
+      this.$q.sessionStorage.clear();
+      localStorage.removeItem("Qsesion");
+      localStorage.removeItem('token');
+     },
+    alertSesion(){
+       this.confirm=true;
+       let percentage = 0
+       this.polling = setInterval(() => {
+		        this.confirm=false;  
+            clearInterval(this.polling)
+            this.logoutNotify();
+	    	}, 2000)      
+     }   
   },
 };
 </script>
+
+<style>
+.q-tab-panel {
+    padding: 8px;
+}
+.q-table__top {
+    padding: 0px 0px;
+}
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
+</style>
 
 <style lang="sass">
 

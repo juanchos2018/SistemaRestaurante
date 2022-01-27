@@ -23,7 +23,7 @@
         </div>
       </q-card-section>      
     </q-card-section>
-    <div class="q-gutter-sm">
+    <div class="q-gutter-sm" style="margin-left:5px"> 
        <q-checkbox  val="lu" color="red" label="lu" v-model="dialunes"  size="xs" disable/>         
        <q-checkbox  val="ma" color="red" label="ma" size="xs" v-model="diamartes"  disable />   
        <q-checkbox  val="mi" color="red" label="mi" size="xs" v-model="diamiercoles" disable/>         

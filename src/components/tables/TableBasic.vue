@@ -3,12 +3,12 @@
     <q-card-section class="q-pa-none">
       <!-- <p>{{data}}</p> -->
       <q-table
+       class="my-sticky-header-table colorborde"
         title="Productos"
         :rows="data"
         :columns="columns"
         row-key="name"
-        :filter="filter"
-        class="colorborde"
+        :filter="filter"       
       >
         <template v-slot:top-right>
           <q-input

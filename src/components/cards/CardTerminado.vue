@@ -14,7 +14,7 @@
         </q-item-label>
         <q-item-label caption lines="1">
           <span class="text-bold">
-            {{ diaEntrega }} - {{ fecha_pedido }} / a las:
+            {{ diaEntrega }} - {{ fecha_pedido }} / a :
             {{ hora_pedido }}</span
           >
         </q-item-label>
@@ -49,8 +49,7 @@
     </q-list>
     <q-card-section class="col-5 flex flex-left text-bold">
       <div>Total: S/ {{ totalpedido }}</div>
-    </q-card-section>
-   
+    </q-card-section>   
   </q-card>
 </template>
 <script>

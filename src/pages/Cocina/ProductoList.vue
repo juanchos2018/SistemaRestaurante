@@ -1,37 +1,30 @@
 <template>
-  <q-page class="q-pa-sm">
-    <br />
-    <br />
-    <q-splitter v-model="splitterModel" >
-      <template v-slot:before >   
-           <br><br>             
-        <q-tabs v-model="tab" vertical   >
-          <q-tab name="producto" icon="mail" label="producto"  />
-          <q-tab
-            name="alarms"
-            icon="alarm"
-            :label="item.nombre_subcategoria"
-            v-for="item in itemSubCategorias"
-            :key="item.id_subcategoria"
-            @click="onChanges(item.id_subcategoria,item.nombre_subcategoria)"
-          />
-        </q-tabs>        
-      </template>    
-
-      <template v-slot:after>     
-        <q-tab-panels
+  <q-page class="q-pa-sm">   
+        <q-tabs
           v-model="tab"
-          animated
-          swipeable
-          vertical
-          transition-prev="jump-up"
-          transition-next="jump-up"
+          dense
+          class="text-grey"
+          active-color="red-1"
+          indicator-color="red-1"
+          align="left"
+          narrow-indicator
         >
-          <q-tab-panel name="producto">
-            <q-btn-group push>
-              <q-btn push icon="fas fa-id-card" @click="TipoVista = true" />
-              <q-btn push icon="fas fa-table" @click="TipoVista = false" />
-            </q-btn-group>
+          <q-tab name="producto" icon="room_service" :label="modelo.nombre_categoria"  />
+          <q-tab
+              name="alarms"
+              icon="fas fa-cookie"
+              :label="item.nombre_subcategoria"
+              v-for="item in itemSubCategorias"
+              :key="item.id_subcategoria"
+              @click="onChanges(item.id_subcategoria,item.nombre_subcategoria)"
+            />        
+        </q-tabs>
+
+        <q-separator />
+
+         <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="producto">          
+            <q-btn push :icon="TipoVistatres==true? 'fas fa-table':'fas fa-id-card'" label=""  @click="changeVista" />           
             <q-btn
               position="right"
               class="float-right"
@@ -40,9 +33,9 @@
               @click="AddProducto"
             />
             <br />
-            <br />
+            <br />  
 
-            <div v-if="TipoVista">
+            <div v-if="TipoVistatres">
               <div class="row q-col-gutter-sm">
                 <div
                   class="col-md-4 col-lg-4 col-sm-12 col-xs-12"
@@ -78,21 +71,19 @@
               ></tables-basic>
             </div>
           </q-tab-panel>
-          <q-tab-panel name="alarms">
+
+           <q-tab-panel name="alarms">
              <q-btn
               position="right"
               class="float-right"
               color="primary"
               :label="nombre_boton"
               @click="Addcomplemento"
-            />
-            <!-- TipoVistados -->
-            <!-- <div class="text-h5 q-mb-md">{{nombre_tipo}}</div> -->
-             <q-btn-group push>
-              <q-btn push icon="fas fa-id-card" @click="TipoVistados = true" />
-              <q-btn push icon="fas fa-table" @click="TipoVistados = false" />
-            </q-btn-group>
-<br />
+            />    
+
+             <q-btn push :icon="TipoVistados==true? 'fas fa-table':'fas fa-id-card'" label=""  @click="changeVista2" />
+            
+            <br />
             <br />
 
             <div v-if="TipoVistados==true">
@@ -123,14 +114,11 @@
                 :data="itemComplemento"
                 v-on:updateComplemento="updateComplemento"
               ></table-basic-complemento>
-            </div>
-
-            
-         
-          </q-tab-panel>
+            </div>      
+          </q-tab-panel>        
         </q-tab-panels>
-      </template>
-    </q-splitter>
+
+
 <!-- v-bind:subcategoria="modelo.subcategoria" -->
     <dialogo-add-producto   @CerrarModal="CerrarModal" :DialogoAddProducto="DialogoAddProducto"    v-bind:id_categoria="modelo.id_categoria"  v-bind:subcategoria="modelo.subcategoria"  v-on:GetProductos="Get" v-on:subcategoria="subcategoria"   ref="dialogaddproducto"></dialogo-add-producto>
     <dialogo-update-producto @CerrarModal="CerrarModal" :DialogoEditProducto="DialogoEditProducto" v-bind:id_categoria="modelo.id_categoria"    v-on:GetProductos="Get" ref="dialogoupdaute"></dialogo-update-producto>
@@ -204,6 +192,7 @@ export default defineComponent({
       itemComplemento: [],
       TipoVista: true,
       TipoVistados:true,
+      TipoVistatres:true,
       id_producto: 0,
       modelo: {
         id_categoria: 0,
@@ -212,7 +201,7 @@ export default defineComponent({
         subcategoria: 0,
       },
       tab: ref("producto"),
-      splitterModel: ref(9),
+      splitterModel: ref(12),
       subcategorias: [],
       datos:{
           id_subcategoria:0,
@@ -300,8 +289,7 @@ export default defineComponent({
       let url =     "/Controller/ComplementoController.php?tipo=" +tipo+"&id_subcategoria="+id_subcategoria;
       this.$axios
         .get(url_b + url)
-        .then((response) => {
-          //console.log(response);
+        .then((response) => {       
           this.itemComplemento = response.data;
         })
         .catch(function (error) {
@@ -309,17 +297,15 @@ export default defineComponent({
         })
         .finally(() => {});
     },
-    getproduct() {
-      //console.log("desde ihjo")
+    getproduct() {      
       let url_b =
-        this.$q.platform.is.mobile == true ? this.url_base : this.url_base2;
+       this.$q.platform.is.mobile == true ? this.url_base : this.url_base2;
       let url =
         "/Controller/ProductoControllerCo.php?id_categoria=" +
         this.modelo.id_categoria;
       this.$axios
         .get(url_b + url)
-        .then((response) => {
-          //console.log(response);
+        .then((response) => {         
           this.itemProducto = response.data;
         })
         .catch(function (error) {
@@ -327,11 +313,8 @@ export default defineComponent({
         })
         .finally(() => {});
     },
-    getsubcategoria(id) {
-      console.log("regtorna");
-      console.log(id);
+    getsubcategoria(id) {   
       this.$refs.dialogaddproducto.getsubcategoria(id);
-
       // let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       // let tipo="lista";
       // let url =  "/Controller/SubCategoriaController.php?tipo="+tipo+"&id_categoria=" + this.modelo.id_categoria;
@@ -388,6 +371,12 @@ export default defineComponent({
       this.DialogoEditComplemento=false;
 
     },
+    changeVista(){
+      this.TipoVistatres=!this.TipoVistatres;
+    },
+    changeVista2(){
+      this.TipoVistados=!this.TipoVistados;
+    },
     UpdateProduct(id) {
       this.$refs.dialogoupdaute.View(id);
       //console.log(id);
@@ -400,8 +389,7 @@ export default defineComponent({
     CerrarModalsub() {
       this.DialogoSubcategoria = false;
     },
-    CerrarModalcomplemento(){
-       
+    CerrarModalcomplemento(){       
         this.DialogoComplemento = false;
     } 
   },

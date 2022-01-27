@@ -53,8 +53,8 @@
 
       <q-item-section top side>
         <div class="text-grey-8 q-gutter-xs">
-          <q-btn
-            class="gt-xs"
+          <!--  class="gt-xs" -->
+          <q-btn           
             size="12px"
             flat
             dense
@@ -138,6 +138,7 @@ export default {
       console.log(this.estado_pedido);
       let estado = this.estado_pedido;
       if (estado == 0) {
+        
       } else if (estado == 1) {
       }
     },

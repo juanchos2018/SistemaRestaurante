@@ -215,8 +215,7 @@ export default defineComponent({
       //   alert(response);
         let result =response.data;
          // console.log(response);
-        if (result.existe=="si") {  
-          
+        if (result.existe=="si") {            
           if (result.error=='si') {
               me.$q.dialog({
               dark: true,
@@ -239,9 +238,12 @@ export default defineComponent({
                         DES_AUXILIAR:result.DES_AUXILIAR,
                         LOGUEO:'Qsesion',
                         AREA:area,
-                        Piso:1}
+                        Piso:1,
+                        token:result.token}
            //  me.$q.localStorage.set("Qsesion", objeto)
              me.$store.dispatch("guardarDatos",objeto);  
+             //   const parsed = JSON.stringify(obj);
+             localStorage.setItem("token", result.token);
               //const value = $q.localStorage.getItem(key)
              me.$q.sessionStorage.set("Qsesion", objeto)
             // console.log(objeto)
