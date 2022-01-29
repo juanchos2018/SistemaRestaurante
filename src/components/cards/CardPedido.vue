@@ -19,7 +19,6 @@
           >
             <q-spinner-gears size="1.5em" />
           </q-btn>
-
           <q-btn
             v-else-if="estado_pedido == 2"
             color="secondary"
@@ -30,19 +29,17 @@
           /></q-btn>
         </q-item-label>
         <br />
-        <q-item-label lines="1">
-          <span class="text-weight-medium"
-            >{{ area }}- Piso {{ piso_especialidad }}</span
-          >
-          <!-- <span class="text-grey-8"> - GitHub repository</span> -->
-        </q-item-label>
-
-        <q-item-label
+         <q-item-label
           lines="1"
           class="text-weight-bold text-primary text-uppercase"
         >
           <span class="cursor-pointer">{{ des_auxiliar }}</span>
         </q-item-label>
+        <q-item-label lines="1">
+          <span class="text-weight-medium"
+            >{{ area }}- Piso {{ piso_especialidad }}</span
+          >    
+        </q-item-label>      
         <q-item-label caption lines="1">
           <span class="text-bold">
             {{ diaEntrega }} - {{ fecha_pedido }} / a las:
@@ -50,9 +47,8 @@
           >
         </q-item-label>
       </q-item-section>
-
       <q-item-section top side>
-        <div class="text-grey-8 q-gutter-xs">
+        <div class=" q-gutter-xs">
           <!--  class="gt-xs" -->
           <q-btn           
             size="12px"
@@ -68,23 +64,51 @@
     <q-separator></q-separator>
     <q-list>
       <q-item clickable v-for="item in detalle" :key="item.id_pedido_detalle">
-        <q-item-section avatar>
-          <q-icon color="primary" :name="item.logo" />
+        <q-item-section avatar class="no-margin">
+          <q-icon color="primary" :name="item.logo"  size="xs"/>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ item.nombre_producto }}</q-item-label>
+          <q-item-label :style="item.estado_detalle==0?'text-decoration: line-through red':''">{{ item.nombre_producto }}</q-item-label>
           <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
           <q-item-label caption lines="1">          Cant.: {{ item.cantidad_pedido }} x S/
             <span class="text-bold">
               {{ item.precio_venta }}</span></q-item-label>
          <q-item-label caption lines="">con : {{ item.entrada }}</q-item-label>
-
+        </q-item-section>
+         <q-item-section top side>
+          <div class="q-gutter-xs">
+            <!--  class="gt-xs"    v-if="detalle.length>1"   <i class="fas fa-ban"></i> -->
+            <!-- <q-btn       
+             v-if="detalle.length>1"
+              @click="EditState(item.id_pedido_detalle,item.id_pedido,item.precio_venta,item.estado_detalle)"
+              size="12px"
+              flat
+              dense
+              round
+              icon="fas fa-ban"    
+            />   -->
+            <!-- <q-icon color="primary" name="fas fa-ban"  size="xs" @click="EditState"/>  -->
+          </div>
         </q-item-section>
       </q-item>
     </q-list>
-    <q-card-section class="col-5 flex flex-left text-bold">
-      <div>Total: S/ {{ total }}</div>
-    </q-card-section>
+    <!-- <q-card-section class="flex flex-left text-bold">
+      <div>Total: S/ {{ total }}</div>      
+    </q-card-section> -->
+    <q-item>
+       <q-item-section  >
+           <q-item-label  lines="1" class="flex flex-left text-bold">Total : S/{{ total }}</q-item-label>
+              <!-- <q-item-label  lines="1" >{{ currentHora }}</q-item-label>   v-if="visible"-->
+              <!-- <q-item-label  lines="1" >{{ currentHora }}</q-item-label> -->
+        </q-item-section>
+       <q-item-section top side >
+          <div class="q-gutter-xs" >
+            <q-chip square :color="colorCurrent" text-color="white" >
+              {{hours}}- {{minutes}}-min
+            </q-chip>
+          </div>
+        </q-item-section>
+    </q-item>   
   </q-card>
 </template>
 <script>
@@ -103,7 +127,7 @@ export default {
     "hora_pedido",
     "cod_auxiliar",
     "estado_pedido",
-    
+    "visible"    
   ],
   data() {
     return {
@@ -114,7 +138,18 @@ export default {
       tipoEnvio: "",
       fecha_actual: moment(new Date()).format("YYYY-MM-DD"),
       fecha_actual2: moment(new Date()).format("DD-MM-YYYY"),
+      currentHora:'',
+      currentHora2:'',
+      colorCurrent:'secondary',
+      minutes:0,
+      hours:0,
+      horava:0
+     
     };
+  },
+  mounted(){
+      this.setCurrentTime();
+      
   },
   computed: {
     diaEntrega: function () {
@@ -133,14 +168,52 @@ export default {
       return moment(fecha_sql).format("dddd");
     },
   },
-  methods: {
-    Editar2(step) {
-      console.log(this.estado_pedido);
-      let estado = this.estado_pedido;
-      if (estado == 0) {
-        
-      } else if (estado == 1) {
-      }
+  methods: {   
+    setCurrentTime(){
+
+     //  if (this.fecha_pedido == this.fecha_actual2) {
+            setInterval(() => { 
+                this.currentHora    = moment();  
+                this.currentHora2    = moment().format('LTS');  
+                let arrayhora2= this.currentHora2.split(":");
+                let hora2=arrayhora2[0];
+                let minute2 =arrayhora2[1]
+               /// console.log("ora: "+hora2);
+              if (this.fecha_pedido == this.fecha_actual2) {              
+                let arrayhoira =this.hora_pedido.split(":");
+                let hora = arrayhoira[0];            
+                let minute =arrayhoira[1];
+                //console.log(hora2);
+                if (hora<=hora2 && minute<=minute2) {                 
+                  let unionDateTime   = moment(this.fecha_actual+'T'+this.hora_pedido); 
+                  const diff =  this.currentHora.diff(unionDateTime);
+                  const diffDuration = moment.duration(diff);  
+                  this.minutes=diffDuration.minutes();
+                  this.hours=diffDuration.hours();
+
+                  if (diffDuration.minutes()>5 &&  diffDuration.minutes() <10 ) {
+                      this.colorCurrent="amber";
+                  }  
+                  if (diffDuration.minutes()>=10) {
+                      this.colorCurrent="red";
+                  }
+                }
+              }
+          }, 1000);
+     // }    
+    },
+    EditState(id_pedido_detalle,id_pedido,precio,estado_detalle){   
+      if (estado_detalle==1) {
+           let dataState={
+            tipo:'Updatestate',
+            id_pedido_detalle:id_pedido_detalle,
+            id_pedido:id_pedido,
+            precio:precio,
+            cod_auxiliar:this.cod_auxiliar,
+            estado_detalle:0
+          }
+          this.$emit("updateState", dataState);
+      }     
     },
     Editar(step) {
       if (this.fecha_pedido == this.fecha_actual2) {
@@ -151,28 +224,21 @@ export default {
               title: "Ups",
               message: "No Puedes Efectuar esta Accion",
             })
-            .onOk(() => {
-              // console.log('OK')
+            .onOk(() => {              
             })
-            .onCancel(() => {
-              // console.log('Cancel')
+            .onCancel(() => {             
             })
-            .onDismiss(() => {
-              // console.log('I am triggered on both OK and Cancel')
+            .onDismiss(() => {            
             });
-        } else {
-          // console.log(this.cod_auxiliar);
-          if (step == 4) {
-            //poner aqui ocpcion de pregunta ?
+        } else {        
+          if (step == 4) {         
                     this.$q.dialog({
                       title: 'Confirmar',
                       message: 'Desea anular este pedido?',
                       cancel: true,
                       persistent: true
-                    }).onOk(() => {
-                      // console.log('>>>> OK')
-                    }).onOk(() => {
-                      // console.log('>>>> second OK catcher')
+                    }).onOk(() => {                      
+                    }).onOk(() => {                     
                          const datas = {
                             estado_pedido: step,
                             id_pedido: this.id_pedido,
@@ -187,12 +253,9 @@ export default {
                             position: "top",
                           });
 
-                    }).onCancel(() => {
-                      // console.log('>>>> Cancel')
-                    }).onDismiss(() => {
-                      // console.log('I am triggered on both OK and Cancel')
+                    }).onCancel(() => {                     
+                    }).onDismiss(() => {                      
                     })
-
 
           } else {
             const datas = {
@@ -236,6 +299,10 @@ export default {
   border-width: 1px;
   border-style: solid;
   border-color: #b71408;
+}
+.q-item__section--avatar {
+    color: inherit;
+    min-width: 8px;
 }
 </style>
 

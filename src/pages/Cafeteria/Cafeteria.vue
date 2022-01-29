@@ -18,13 +18,13 @@
                   <span class="text-weight-medium">{{ item.producto }}</span>
                 </q-item-label>
                  <q-item-label v-if="item.descripcion==''" caption lines="1">
-                   Click Aqui para tu detalle
+                 <q-icon name="fas fa-edit" size="12px" /> Click Aqui para tu detalle                     
                 </q-item-label>
                 <q-item-label v-else caption lines="1">
                   {{ item.descripcion }}
                 </q-item-label>
                  <q-item-label  caption lines="1">
-                  {{ item.entrada }}
+                 con {{ item.entrada }}
                 </q-item-label>
                  <!-- <q-item-label  caption lines="1">
                     {{ item.fecha_peruana }}
@@ -41,8 +41,8 @@
               </q-item-section>
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
-                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock,item.fecha_pedido,item.entrada)" />
-                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock,item.fecha_pedido,item.entrada)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-minus" @click="MinusProduct(item.id_producto,item.stock,item.fecha_pedido,item.entrada,item.usasubcategoria)" />
+                  <q-btn size="12px" flat dense round icon="fas fa-plus" @click="MoreProduct(item.id_producto,item.stock,item.usastock,item.fecha_pedido,item.entrada,item.usasubcategoria)" />
                   <q-btn size="12px" flat dense round icon="delete" @click="DeleteItem(item.id_producto,item.entrada)" />
                 </div>
               </q-item-section>
@@ -67,6 +67,48 @@
         <q-page style="padding-top: 55px" class="q-pa-sm">
              <!-- <q-btn flat label="Cancelar" @click="confirm=true"/> -->
            <!-- <p>{{modelUser}}</p> -->
+            <!-- <q-banner  v-if="visibleAnunio"  inline-actions rounded class="bg-orange text-white" v-model="visibleAnunio">
+                Parrillada 
+            <q-spinner-grid color="red"   size="2em"/>
+                <template v-slot:action> 
+                  <q-btn flat label="Dismiss" @click="ocultar"/>
+                </template>
+              </q-banner> -->
+
+
+               <q-btn-dropdown
+      class="glossy"
+      color="purple"
+      label="Account Settings"
+    >
+      <div class="row no-wrap q-pa-md">
+        <div class="column">
+          <div class="text-h6 q-mb-md">Settings</div>
+          <q-toggle v-model="mobileData" label="Use Mobile Data" />
+          <q-toggle v-model="bluetooth" label="Bluetooth" />
+        </div>
+
+        <q-separator vertical inset class="q-mx-lg" />
+
+        <div class="column items-center">
+          <q-avatar size="72px">
+            <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+          </q-avatar>
+
+          <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
+
+          <q-btn
+            color="primary"
+            label="Logout"
+            push
+            size="sm"
+            v-close-popup
+          />
+        </div>
+      </div>
+    </q-btn-dropdown>
+
+
           <div>    
              <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
@@ -80,10 +122,18 @@
           <br>
           <br>
           <br>        
-          <div class="row q-col-gutter-sm">
+          <div class="row q-col-gutter-sm">    
+             
             <div v-if="!itemProducto.length">
               <h5>SIN PRODUCTOS</h5>
             </div>
+              <!-- <q-banner class="bg-primary text-white">
+                Unfortunately, the credit card did not go through, please try again.
+                <template v-slot:action>
+                  <q-btn flat color="white" label="Dismiss" />
+                  <q-btn flat color="white" label="Update Credit Card" />
+                </template>
+              </q-banner> -->
             <div class="col-md-3 col-lg-3 col-sm-6 col-xs-6" v-for="item in itemProducto" :key="item.id_producto">
               <card-product :data="item"  v-on:AgregarCarrito="AgregarCarrito" ></card-product>
             </div>
@@ -129,8 +179,9 @@
             </q-item>          
           </div>   
           <div class="col-6">
+            <!-- mask="HH*mm"  -->
             <q-item>        
-               <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm**ss" hint="Hora de recepcion" />   
+               <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm"    format24h hint="Hora de recepcion" />   
             </q-item>          
           </div>   
           <div class="col-6">
@@ -149,8 +200,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
-
       <q-dialog v-model="confirm" persistent>     
          <q-card class="bg-red text-white" style="width: 300px">
           <q-card-section>
@@ -180,7 +229,7 @@ const columns = [
 
 import { provide, defineAsyncComponent, ref,reactive } from "vue";
 import { mapState } from "vuex";
-import { useQuasar,QSpinnerGears } from "quasar";
+import { useQuasar,QSpinnerGears,QSpinnerGrid } from "quasar";
 
 import moment from 'moment'
 import "moment/locale/es";
@@ -231,9 +280,12 @@ export default {
         token:'' });   
        
     return {
-     
+     //moment("02:15:00 PM", "h:mm:ss A").format("HH:mm:ss")
+
       date: ref(moment(new Date()).local().format("DD-MM-YYYY")),      
-      timeactual:ref(moment.utc().add(7,'hours').format('hh:mm:ss') ),   
+      timeactual:ref(moment().format('HH:mm')),  
+     // timeactual:ref(moment("14:15:00 PM", "HH:mm A")),  
+      timeWithSeconds: ref('14:56:00'),
       optionsFn (fecha_actual) {
         return fecha_actual>= moment(new Date()).format('YYYY/MM/DD')
       },      
@@ -296,7 +348,10 @@ export default {
       },   
       ModalComplemento:ref(false),
       confirm: ref(false),  
-      polling: ref(null)   
+      polling: ref(null),
+      visibleAnunio:ref(true),
+      mobileData: ref(false),
+      bluetooth: ref(false)   
     };
   },
   created() {
@@ -323,7 +378,6 @@ export default {
         //console.log(obj);
     }      
     this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2+'?token='+this.modelUser.token:this.url_socket+'?token='+this.modelUser.token );
-
     this.conn.onopen = (e) => {     
           this.$q.loading.show({           
              spinnerColor: 'red',
@@ -391,14 +445,12 @@ export default {
       }, 0);
       return result;
     },
-
     fechaPeruana(){
       // date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
         let fechas =this.date.split('-');
         let anio =fechas[2];
         let mes =fechas[1];       
-        let dia =fechas[0];       
-
+        let dia =fechas[0];      
         let fecha_sql =anio+'-'+mes+'-'+dia;
         this.modelUser.fecha_pedido=fecha_sql;
         let fechape=dia+'-'+mes+'-'+anio;
@@ -587,21 +639,43 @@ export default {
             this.arrayvacio[position2].stock = stock;    
 
     },
-    MoreProduct(id_producto,stock,usastock,fecha_sql,entrada) {      
+    MoreProduct(id_producto,stock,usastock,fecha_sql,entrada,subcategoria) {      
+     
     //  if (usastock==1) {
       // const indx = this.arrayvacio.findIndex((v) => v.id_producto === id_producto && v.entrada==entrada);
-            let obj = this.arrayvacio.find((x) => x.id_producto == id_producto && x.entrada==entrada);
-            let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto && x.entrada==entrada );
-            let cantidad_pedido = obj.cantidad_pedido;
-          //  if (cantidad_pedido==stock) {
-              //  this.Mucho();
-          //  }else{
+          if (subcategoria==1) {
+             let obj = this.arrayvacio.find((x) => x.id_producto == id_producto && x.entrada==entrada);
+             let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto && x.entrada==entrada );
+             let cantidad_pedido = obj.cantidad_pedido;         
               let precio = obj.precio;
               let producto =obj.producto;
               this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
               this.arrayvacio[position].total =
               precio * this.arrayvacio[position].cantidad_pedido;
               this.AgregaoItem(producto);
+          }else{
+               let obj = this.arrayvacio.find((x) => x.id_producto == id_producto );
+             let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto );
+             let cantidad_pedido = obj.cantidad_pedido;         
+              let precio = obj.precio;
+              let producto =obj.producto;
+              this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+              this.arrayvacio[position].total =
+              precio * this.arrayvacio[position].cantidad_pedido;
+              this.AgregaoItem(producto);
+          }
+
+            // let obj = this.arrayvacio.find((x) => x.id_producto == id_producto && x.entrada==entrada);
+            // let position = this.arrayvacio.findIndex((x) => x.id_producto == id_producto && x.entrada==entrada );
+            // let cantidad_pedido = obj.cantidad_pedido;        
+            // let precio = obj.precio;
+            // let producto =obj.producto;
+            // this.arrayvacio[position].cantidad_pedido = cantidad_pedido + 1;
+            // this.arrayvacio[position].total =
+            // precio * this.arrayvacio[position].cantidad_pedido;
+            // this.AgregaoItem(producto);
+
+
          //   }
       // }else{  
       //     let obj = this.arrayvacio.find((x) => x.id_producto == id_producto);
@@ -654,6 +728,38 @@ export default {
               this.AgregaoItem(producto);            
       }     
      
+    },   
+    MinusProduct(id_producto,stock,fecha_sql,entrada,subcategoria) {
+      console.log(subcategoria)
+         if (subcategoria==1) {
+              let obj = this.arrayvacio.find((x) => x.id_producto == id_producto && x.entrada==entrada);
+              let position = this.arrayvacio.findIndex(
+                (x) => x.id_producto == id_producto  && x.entrada==entrada
+              );
+              let cantidad_pedido = obj.cantidad_pedido;
+              if (cantidad_pedido == 1) {
+              } else {
+                cantidad_pedido = cantidad_pedido - 1;
+                this.arrayvacio[position].cantidad_pedido = cantidad_pedido;
+                let precio = obj.precio;
+                this.arrayvacio[position].total =
+                  precio * this.arrayvacio[position].cantidad_pedido;
+              }
+           }else{
+               let obj = this.arrayvacio.find((x) => x.id_producto == id_producto );
+              let position = this.arrayvacio.findIndex(
+                (x) => x.id_producto == id_producto 
+              );
+              let cantidad_pedido = obj.cantidad_pedido;
+              if (cantidad_pedido == 1) {
+              } else {
+                cantidad_pedido = cantidad_pedido - 1;
+                this.arrayvacio[position].cantidad_pedido = cantidad_pedido;
+                let precio = obj.precio;
+                this.arrayvacio[position].total =
+                  precio * this.arrayvacio[position].cantidad_pedido;
+              }
+           }
     },
     AgregaoItem(title){
        this.$q.notify({
@@ -670,39 +776,23 @@ export default {
               ],
         });
     },
-    MinusProduct(id_producto,fecha_sql,entrada) {
-      let obj = this.arrayvacio.find((x) => x.id_producto == id_producto && x.entrada==entrada);
-      let position = this.arrayvacio.findIndex(
-        (x) => x.id_producto == id_producto && x.entrada==entrada
-      );
-      let cantidad_pedido = obj.cantidad_pedido;
-      if (cantidad_pedido == 1) {
-      } else {
-        cantidad_pedido = cantidad_pedido - 1;
-        this.arrayvacio[position].cantidad_pedido = cantidad_pedido;
-        let precio = obj.precio;
-        this.arrayvacio[position].total =
-          precio * this.arrayvacio[position].cantidad_pedido;
-      }
-    },
     StorePedido() {
     this.modelUser.hora_pedido=this.timeactual;
-    let valifecha =this.modelUser.fecha_pedido;
-   
+    let valifecha =this.modelUser.fecha_pedido;   
      if ( this.modelUser.hora_pedido=="") {
         this.TipoMensaje('hora');
      }
      else if(this.modelUser.fecha_pedido==""){
-       this.TipoMensaje('fecha');
+        this.TipoMensaje('fecha');
      }  
      else if(this.modelUser.fecha_pedido=="undefined-undefined-"){
-         this.TipoMensaje('fecha');
+        this.TipoMensaje('fecha');
      }   
      else if(this.modelUser.area==""){
-       this.TipoMensaje('area');
+        this.TipoMensaje('area');
      }  
      else if(this.modelUser.piso_especialidad==""){
-       this.TipoMensaje('piso');
+        this.TipoMensaje('piso');
      }  
      else{
         /// console.log(array)
@@ -720,7 +810,7 @@ export default {
         objd.Piso = this.modelUser.piso_especialidad;
         const updateo = JSON.stringify(objd);
         localStorage.setItem("Qsesion", updateo);
-      ///  console.log(obj);
+  
         this.arrayvacio.forEach((element) => {
           lista.push({
             id_categoria: element.id_categoria,
@@ -731,15 +821,10 @@ export default {
             fecha_pedido: element.fecha_pedido,
             entrada: element.entrada,
           });
-        });
-        let token ="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NDMwMzQxMzIsImlzcyI6ImxvY2FsaG9zdCIsImV4cCI6MTY0MzAzNTAzMiwiY29kX2F1eGlsaWFyIjoiSlZFTkVHQVMifQ.9kH7O2DvAE--yLa6_6db9EVKJ0IzwVhSSs_fuYXA1wc";
-
-        this.modelUser.token=token;
-
+        });   
         this.modelUser.detallePedido = lista;
         let data = this.modelUser;
-       // console.log(data);    
-           
+        //console.log(data);               
         //envia al socket  php no borrar  
         this.conn.send(JSON.stringify(data));
         this.Enviado();
@@ -798,6 +883,7 @@ export default {
     },
     MensajeEnviar() {
       this.fecha_pedido=this.fecha_hora;
+      this.timeactual=ref(moment().format('HH:mm'));
       if (this.arrayvacio.length > 0) {
         this.LastOrder();
         this.prompt = true;
@@ -808,14 +894,11 @@ export default {
             title: "Ups",
             message: "No tienes nada de Pedido",
           })
-          .onOk(() => {
-            // console.log('OK')
+          .onOk(() => {            
           })
-          .onCancel(() => {
-            // console.log('Cancel')
+          .onCancel(() => {           
           })
-          .onDismiss(() => {
-            // console.log('I am triggered on both OK and Cancel')
+          .onDismiss(() => {           
           });
       }
     },
@@ -897,14 +980,11 @@ export default {
           title: "Mensaje",
           message: "Se ha Enviado tu Pedido",
         })
-        .onOk(() => {
-          // console.log('OK')
+        .onOk(() => {          
         })
-        .onCancel(() => {
-          // console.log('Cancel')
+        .onCancel(() => {         
         })
-        .onDismiss(() => {
-          // console.log('I am triggered on both OK and Cancel')
+        .onDismiss(() => {        
         });
     },
     Error(){
@@ -987,16 +1067,23 @@ export default {
             clearInterval(this.polling)
             this.logoutNotify();
 	    	}, 2000)      
-     }    
-  },
-  
+     },
+    setTime () {
+				setInterval(() => {      
+					this.horaActual2= moment().format('LTS')
+				}, 1000)
+		 },   
+     ocultar(){
+      
+        this.visibleAnunio=false
+        console.log( this.visibleAnunio)
+     } 
+  },  
 };
 </script>
-
 <style scoped>
 .footer2 {
   position: fixed;
-
   bottom: 0;
   width: 100%;
 }

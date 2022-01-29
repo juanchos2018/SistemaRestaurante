@@ -10,7 +10,8 @@
         data.stock,
         data.usastock,
         data.fecha_sql,
-        data.usasubcategoria
+        data.usasubcategoria,
+        data.subcategoria
       )
     "
   >
@@ -154,7 +155,8 @@ export default defineComponent({
       id_categoria,
       stock,
       usastock,
-      fecha_sql
+      fecha_sql,
+      subcategoria
     ) => {
       //  if (usastock==1) {
       //   if (stock==0) {
@@ -199,7 +201,8 @@ export default defineComponent({
           reservado: "",
           fecha_pedido: fecha_sql,
           fecha_peruana: nombreDia + "-" + fechape,
-          entrada:''
+          entrada:'',
+         
         };
         arrayva.value.push(objeto);
       }
@@ -377,7 +380,7 @@ export default defineComponent({
           fecha_pedido: fecha_sql,
           fecha_peruana: nombreDia + "-" + fechape,
           usasubcategoria:usasubcategoria,
-          entrada:'algo we'
+          entrada:''
         };
         
         this.$emit("AgregarCarrito", objeto);

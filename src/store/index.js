@@ -15,6 +15,7 @@ export default function () {
       url_socket:'ws://192.168.3.219:8090',
       url_socket2:'ws://161.132.198.54:8090',
       id_categoria_store:'',
+      tipoListaCocina:'',
       DatosUsuario:{},
       carrito:[] ,
       tipoMensaje:'',
@@ -111,6 +112,9 @@ export default function () {
       } 
        
       },
+      setTipoListaCcoina(state,data){
+         state.tipoListaCocina=data
+      },
     },
     getters: {
       TipoUsuario(state){
@@ -119,7 +123,6 @@ export default function () {
       GetIcategoria(state){
         return state.id_categoria_store
       },
-      
     },
     actions: {    
         guardarDatos({commit},obj){
@@ -131,6 +134,9 @@ export default function () {
         },
         guardarIdcategoria({commit},id_categoria){
           commit("setIdcategoria",id_categoria)  
+        },  
+        guardarTipoListaCocina({commit},tipoListaCocina){
+          commit("setTipoListaCcoina",tipoListaCocina)  
         },  
       
     },

@@ -145,7 +145,7 @@ export default defineComponent({
         $q.loading.hide()
       }
     })     
-    const modelo = reactive({ COD_USUARIO: '',DES_PASSWORD:'',TIPO_USUARIO:'' })
+    const modelo = reactive({ COD_USUARIO: 'EROJAS',DES_PASSWORD:'',TIPO_USUARIO:'' })
     const me=()=>{
         $q.dialog({
         title: ' Aún no ¿No estás registrado?',

@@ -52,6 +52,7 @@
                     :stock="item.stock"
                     :usastock="item.usastock"
                     :photo="item.imagen"
+                    :estado="item.estado"
                     :lunes="item.dia_uno"
                     :martes="item.dia_dos"
                     :miercoles="item.dia_tres"
@@ -369,7 +370,6 @@ export default defineComponent({
       this.DialogoAddProducto = false;
       this.DialogoEditProducto = false;
       this.DialogoEditComplemento=false;
-
     },
     changeVista(){
       this.TipoVistatres=!this.TipoVistatres;
@@ -378,8 +378,7 @@ export default defineComponent({
       this.TipoVistados=!this.TipoVistados;
     },
     UpdateProduct(id) {
-      this.$refs.dialogoupdaute.View(id);
-      //console.log(id);
+      this.$refs.dialogoupdaute.View(id);  
       this.DialogoEditProducto = true;
     },
     updateComplemento(id_complemento){
@@ -390,7 +389,7 @@ export default defineComponent({
       this.DialogoSubcategoria = false;
     },
     CerrarModalcomplemento(){       
-        this.DialogoComplemento = false;
+      this.DialogoComplemento = false;
     } 
   },
 });

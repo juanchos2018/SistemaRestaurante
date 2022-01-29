@@ -43,6 +43,9 @@
         </q-tooltip>
       </q-btn>
      <q-space />
+      <div class="text-subtitle1 text-bold">
+        <span class="cursor-pointer text-green-9">{{ estado==1?'Activo':'Inactivo' }}</span>
+        </div>
         <!-- <q-file
           :model-value="files"
           @update:model-value="updateFiles"
@@ -143,6 +146,10 @@ export default {
     photo: {
       type: String,
       default: "",
+    },
+    estado: {
+      type: Number,
+      default:0,
     },
     lunes: {
       type: Number,

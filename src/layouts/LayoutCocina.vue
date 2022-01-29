@@ -113,7 +113,7 @@
               </q-item>
 
 
-                <!-- <q-item
+                <q-item
                 active-class="tab-active"
                 to="/Cocina/step"
                 exact
@@ -126,7 +126,7 @@
                 </q-item-section>
 
                 <q-item-section> prueba </q-item-section>
-              </q-item> -->
+              </q-item>
             </q-list>
           </q-scroll-area>
         </div>
@@ -147,8 +147,8 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive } from "vue";
-import { useQuasar } from "quasar";
+
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -160,13 +160,8 @@ export default {
     let existe = this.$q.sessionStorage.has("Qsesion");
     if (existe == false) {
       this.$router.push({ path: "/" }).catch((err) => {
-        if (
-          err.name !== "NavigationDuplicated" &&
-          !err.message.includes(
-            "Evitó la navegación redundante a la ubicación actual"
-          )
-        ) {
-          console(err);
+        if (err.name !== "Duplicated" && !err.message.includes("Evitó la navegación redundante")) {
+           console(err);
         }
       });
     }
@@ -179,6 +174,9 @@ export default {
       this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
     }
   },
+   computed: {
+    ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2","tipoListaCocina"]),   
+  },
   methods: {
     logoutNotify() {
       this.$router.push({ path: "/" });
@@ -186,6 +184,7 @@ export default {
       this.$q.sessionStorage.clear();
       localStorage.removeItem("Qsesion");
     },
+    
   },
 };
 </script>

@@ -25,7 +25,7 @@
         <q-table
           grid
           :card-container-class="cardContainerClass"
-          title=" "
+          :title="currentHora"
           :rows="itemCocina"
           :columns="columns"
           row-key="name"
@@ -62,7 +62,12 @@
                 :hora_pedido="props.row.hora_pedido"
                 :estado_pedido="props.row.estado_pedido"
                 :total="props.row.totalpedido" 
-                v-on:update="modificar"
+                :visible="visible"
+                 v-on:update="modificar"
+                 v-on:updateState="setUpdateState"
+             
+            
+
               ></card-pedido>
             </div>
           </template>
@@ -78,7 +83,6 @@
               <q-item-label class="text-white text-bold">   S/ {{ SumTotal }}</q-item-label>
              </q-item>         
         </q-toolbar>   
-
       <q-table
           grid
           :card-container-class="cardContainerClass2"
@@ -103,8 +107,7 @@
               :detalle="props.row.detalle"
               :estado="props.row.estado_pedido"
               :fecha_pedido="props.row.fecha_pedido"
-              :hora_pedido="props.row.hora_pedido"          
-              
+              :hora_pedido="props.row.hora_pedido"  
             ></card-terminado>
             </div>
           </template>
@@ -127,8 +130,7 @@
               :detalle="item.detalle"
               :estado="item.estado_pedido"
               :fecha_pedido="item.fecha_pedido"
-              :hora_pedido="item.hora_pedido"
-            
+              :hora_pedido="item.hora_pedido"            
             ></card-anulado>
           </div>
         </div>
@@ -153,14 +155,12 @@ import { useQuasar } from "quasar";
 import CardPedido from "components/cards/CardPedido.vue";
 import CardTerminado from "components/cards/CardTerminado.vue";
 import CardAnulado from "components/cards/CardAnulado.vue";
-
 import useSound from "vue-use-sound";
 import buttonSfx from "../../assets/timbre.mp3";
-import { ref, watch, computed,Vue,reactive } from "vue";
+import { ref, watch, computed,reactive } from "vue";
 import { mapState } from "vuex";
 import moment from "moment";
 import "moment/locale/es";
-
 
 export default {
   name: "Cocina",
@@ -216,9 +216,14 @@ export default {
       nombreDia:'',    
       events: [],
       date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
+    
+      fecha_actual2: moment(new Date()).format("DD-MM-YYYY"),
+      componentKey: 0,
+      currentHora:ref(''),
       fecha_actual,
       confirm: ref(false),  
       modelUser,
+      visible:ref(true),
       play,
       moment,
       con: null,
@@ -261,13 +266,11 @@ export default {
           field: "piso_especialidad",
         },
       ],
-       columns2: [
+      columns2: [
         { name: "des_auxiliar", label: "des_auxiliar", field: "des_auxiliar" },
         { name: "piso_especialidad", label: "Area", field: "piso_especialidad",
         },
-      ],
-     
-    
+      ],   
     };
   },
   created() {
@@ -277,7 +280,7 @@ export default {
     }
   },
   mounted() {
-    this.Detectar();
+    this.setCurrentTime();  
     this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd'); 
     let existe = this.$q.sessionStorage.has("Qsesion"); 
     if (existe==true) {     
@@ -313,8 +316,7 @@ export default {
 		};
     this.conn.onmessage = (e) => {
       // console.log(e.data)
-      let jsonre = JSON.parse(e.data);
-      //console.log(aa.tipo);
+      let jsonre = JSON.parse(e.data);  
       if (jsonre.tipo == "Store") {
         if (this.esCocinero) {
              this.Sonido();
@@ -326,7 +328,11 @@ export default {
         this.get();
         this.getTerminados();
         this.getRjecteds();
-      }      
+       // console.log(jsonre);
+      }    
+       else if (jsonre.tipo == "Updatestate") {
+        this.get();        
+      }     
     };
   },
   computed: {
@@ -375,6 +381,8 @@ export default {
         .get(url_b + url)
         .then((response) => {      
           this.itemCocina = response.data;
+         // this.$refs.cardpedidos.setCurrentTime()
+         // console.log(response.data);
         })
         .catch(function (error) {
           console.log(error);
@@ -396,9 +404,11 @@ export default {
         .finally(() => {});
     },
     ChangeDate(e){
-       let tipo = "nuevo";   
+         let tipo = "nuevo";   
+         //this.componentKey += 1;
       if (e==null) {  
         // YYYY/MM/DD
+          this.visible=true;
           let array =this.fecha_actual.split('/');
           let dia =array[2];
           let mes =array[1];
@@ -407,10 +417,11 @@ export default {
           let fechaSql=anio+'-'+mes+'-'+dia;
          //DD-MM-YYYY
          this.date=fecha1      
-         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');
-      
-      this.get();
-      }else{           
+         this.nombreDia=moment(new Date(this.fecha_actual)).format('dddd');      
+         this.get();
+        
+      }else{          
+          //  const  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));        
           let array =e.split('-');
           let dia =array[0];
           let mes =array[1];
@@ -418,21 +429,27 @@ export default {
           let fecha1 =anio+'/'+mes+'/'+dia;
           let fechaSql=anio+'-'+mes+'-'+dia;
 
+          if (this.fecha_actual==fecha1) {
+                this.visible=true;
+          }
+          else{
+              this.visible=false;
+          }
           this.nombreDia =moment(new Date(fecha1)).format('dddd');   
           let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
           let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+fechaSql;
           this.$axios
           .get(url_b + url)
           .then((response) => {       
-            this.itemCocina = response.data;
+              this.itemCocina = response.data;
           })
           .catch(function (error) {
             console.log(error);
           })
           .finally(() => {});  
+          // this.$refs.cardpedidos.setCurrentTime();
       }
     },
-
     getTerminados() {
       let tipo = "terminado";
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
@@ -448,9 +465,14 @@ export default {
         })
         .finally(() => {});
     },
+    setUpdateState(model){    
+      this.conn.send(JSON.stringify(model));
+      this.get();
+      console.log(model);
+    },    
     getRjecteds() {
       let tipo = "rejectedcock";
-        let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
       let url = "/Controller/PedidoController.php?tipo=" + tipo;
       this.$axios
         .get(url_b + url)
@@ -505,8 +527,7 @@ export default {
             usastock: element.usastock,
           });
         });
-      }
-      // console.log(datos);
+      }    
       this.conn.send(JSON.stringify(datos));
      },
     logoutNotify() {
@@ -515,7 +536,7 @@ export default {
       this.$q.sessionStorage.clear();
       localStorage.removeItem("Qsesion");
       localStorage.removeItem('token');
-     },
+    },
     alertSesion(){
        this.confirm=true;
        let percentage = 0
@@ -524,6 +545,11 @@ export default {
             clearInterval(this.polling)
             this.logoutNotify();
 	    	}, 2000)      
+     },
+     setCurrentTime(){
+       setInterval(() => {  
+            this.currentHora = moment().format("HH:mm:ss");            
+          }, 1000);
      }   
   },
 };
