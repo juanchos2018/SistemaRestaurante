@@ -12,6 +12,7 @@ const routes = [
           {path: 'Cafeteria', name: "Sistema/Cafeteria", component: () =>  import('pages/Cafeteria/Cafeteria.vue') },
           {path: 'MiPedido', name: "Sistema/MiPedido", component: () => import('pages/Cafeteria/MiPedido.vue') },
           {path: 'MisPedidos', name: "Sistema/MisPedidos", component: () => import('pages/Cafeteria/MisPedidos.vue') },
+          {path: 'PagoIzipay', name: "Sistema/PagoIzipay", component: () => import('pages/PagarIziPay.vue') }
      
       ]
   },

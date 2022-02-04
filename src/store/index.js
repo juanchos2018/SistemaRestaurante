@@ -12,10 +12,12 @@ export default function () {
       url_base2: 'http://192.168.3.219/ApiCafeteria',
       url_base:  'http://161.132.198.54/ApiCafeteria',    
       url_izipay:'http://192.168.3.219/pasarela',
+      url_izipay2:'http://161.132.198.54/pasarela',
       url_socket:'ws://192.168.3.219:8090',
       url_socket2:'ws://161.132.198.54:8090',
       id_categoria_store:'',
       tipoListaCocina:'',
+      tokenIzipay:'',
       DatosUsuario:{},
       carrito:[] ,
       tipoMensaje:'',
@@ -115,6 +117,9 @@ export default function () {
       setTipoListaCcoina(state,data){
          state.tipoListaCocina=data
       },
+      setTokenIzipay(state,data){
+        state.tokenIzipay=data
+     },
     },
     getters: {
       TipoUsuario(state){
@@ -137,6 +142,9 @@ export default function () {
         },  
         guardarTipoListaCocina({commit},tipoListaCocina){
           commit("setTipoListaCcoina",tipoListaCocina)  
+        },  
+        guardarTokenIzipay({commit},token){
+          commit("setTokenIzipay",token)  
         },  
       
     },

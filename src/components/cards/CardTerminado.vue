@@ -2,26 +2,37 @@
   <q-card  class="my-card colorborde">  
      <q-item>
       <q-item-section>
-        <q-item-label lines="1">
-          <span class="text-weight-medium"
-            >{{ area }}- Piso {{ piso_especialidad }}</span>       
-        </q-item-label>
-        <q-item-label
+         <q-item-label
           lines="1"
           class="text-weight-bold text-primary text-uppercase"
         >
           <span class="cursor-pointer">{{ des_auxiliar }}</span>
         </q-item-label>
+        <q-item-label lines="1">
+          <span class="text-weight-medium"
+            >{{ area }}- Piso {{ piso_especialidad }}</span>       
+        </q-item-label>
+       
         <q-item-label caption lines="1">
           <span class="text-bold">
             {{ diaEntrega }} - {{ fecha_pedido }} / a :
             {{ hora_pedido }}</span
           >
         </q-item-label>
+         <q-item-label >
+       T.Pago :  {{ tipopago }}
+        </q-item-label>
       </q-item-section>
-        <q-item-section side top class=" text-green-9 text-bold">
+        <!-- <q-item-section side top class="text-green-9 text-bold">
          ENTREGADO
-        </q-item-section>    
+        </q-item-section>     -->
+        <q-item-section side top class="text-green-9 text-bold">            
+           <span class="text-weight-medium" v-if="estado==0"> NUEVO</span>
+           <span class="text-weight-medium" v-else-if="estado==1"> PROCESO</span>
+           <span class="text-weight-medium" v-else-if="estado==2"> LISTO</span>
+           <span class="text-weight-medium" v-else-if="estado==3"> ENTREGADO</span>
+           <span class="text-weight-medium" v-else-if="estado==4"> ANULADO</span>
+        </q-item-section>
     </q-item>
     <q-separator></q-separator>
      <q-list bordered padding>
@@ -35,7 +46,6 @@
           <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }}</q-item-label>
           <q-item-label caption lines="">con : {{ item.entrada }}</q-item-label>
         </q-item-section>
-
         <q-item-section side top>       
           <q-rating
             size="18px"
@@ -47,8 +57,23 @@
         </q-item-section>
       </q-item>
     </q-list>
-    <q-card-section class="col-5 flex flex-left text-bold">
-      <div>Total: S/ {{ totalpedido }}</div>
+    <q-card-section class="no-padding">
+      <q-item>
+       <q-item-section class=" text-green text-bold">
+                 <q-item-label>Total: S/ {{ totalpedido }}</q-item-label>    
+              </q-item-section>
+       <q-item-section side top>              
+                <q-btn v-if="estadopago==0 && tipopago=='efectivo'"      
+                size="12px"              
+                dense              
+                label=" Pagar  "
+                color="primary"
+                @click="mensajePagar(totalpedido,id_pedido)"      
+               />
+              <q-icon v-else-if="estadopago==0 && tipopago=='iziPay'" color="red" name="far fa-credit-card" size="sm" />        
+              <q-icon v-else-if="estadopago==1" color="red" name="fas fa-check-circle" size="sm" />
+      </q-item-section> 
+    </q-item> 
     </q-card-section>   
   </q-card>
 </template>
@@ -56,7 +81,8 @@
 import moment from "moment";
 import "moment/locale/es";
 export default {
-  props: ["id_pedido","des_auxiliar", "piso_especialidad","area", "detalle","color","estado","totalpedido", "hora_pedido",  "fecha_pedido"],
+  props: ["id_pedido","des_auxiliar", "piso_especialidad","area", "detalle","color","estado","totalpedido", "hora_pedido", "fecha_pedido","tipopago",
+    "estadopago"],
   data(){
     return{   
       step: 0,
@@ -69,7 +95,7 @@ export default {
   methods: {
   
   },
-    computed: {
+ computed: {
       diaEntrega: function () {
         let fechas = this.fecha_pedido.split("-");
         let dia = fechas[0];
@@ -86,6 +112,15 @@ export default {
         return moment(fecha_sql).format("dddd");
       },
   },
+  methods:{
+       mensajePagar(totalpago,id_pedido){          
+        let datos={
+          id_pedido:id_pedido,
+          totalpago:totalpago        
+        }
+        this.$emit("modalPagosCocina",datos);      
+      },
+  }
 };
 </script>
 

@@ -62,12 +62,12 @@
                 :hora_pedido="props.row.hora_pedido"
                 :estado_pedido="props.row.estado_pedido"
                 :total="props.row.totalpedido" 
+                :tipopago="props.row.tipopago"
+                :estadopago="props.row.estadopago"
                 :visible="visible"
                  v-on:update="modificar"
                  v-on:updateState="setUpdateState"
-             
-            
-
+                 v-on:modalPagosCocina="modalPagosCocina"
               ></card-pedido>
             </div>
           </template>
@@ -108,6 +108,9 @@
               :estado="props.row.estado_pedido"
               :fecha_pedido="props.row.fecha_pedido"
               :hora_pedido="props.row.hora_pedido"  
+              :tipopago="props.row.tipopago"
+              :estadopago="props.row.estadopago"
+              v-on:modalPagosCocina="modalPagosCocina"
             ></card-terminado>
             </div>
           </template>
@@ -215,8 +218,7 @@ export default {
       otherValue,
       nombreDia:'',    
       events: [],
-      date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
-    
+      date: ref(moment(new Date()).local().format("DD-MM-YYYY")),     
       fecha_actual2: moment(new Date()).format("DD-MM-YYYY"),
       componentKey: 0,
       currentHora:ref(''),
@@ -328,7 +330,7 @@ export default {
         this.get();
         this.getTerminados();
         this.getRjecteds();
-       // console.log(jsonre);
+    
       }    
        else if (jsonre.tipo == "Updatestate") {
         this.get();        
@@ -457,8 +459,7 @@ export default {
       this.$axios
         .get(url_b + url)
         .then((response) => {
-          this.itemTerminado = response.data;
-          //  console.log(response.data);
+          this.itemTerminado = response.data;    
         })
         .catch(function (error) {
           console.log(error);
@@ -477,8 +478,7 @@ export default {
       this.$axios
         .get(url_b + url)
         .then((response) => {
-          this.itemRejected = response.data;
-          //  console.log(response.data);
+          this.itemRejected = response.data;       
         })
         .catch(function (error) {
           console.log(error);
@@ -529,6 +529,9 @@ export default {
         });
       }    
       this.conn.send(JSON.stringify(datos));
+      // this.get();
+      // this.getTerminados();
+      // this.getRjecteds();
      },
     logoutNotify() {
       this.$router.push({ path: "/" });
@@ -536,6 +539,45 @@ export default {
       this.$q.sessionStorage.clear();
       localStorage.removeItem("Qsesion");
       localStorage.removeItem('token');
+    },
+    modalPagosCocina(objeto){  
+       this.$q.dialog({
+        title: 'Confirmar',
+        message: 'Realizar pago de Pedido?',
+        cancel: true,
+        persistent: true,
+        class:"colorborde"
+      }).onOk(() => {        
+        this.UpdateEstadoPago(objeto.id_pedido);
+      }).onOk(() => {     
+      }).onCancel(() => {       
+      }).onDismiss(() => {        
+     })
+    },
+    UpdateEstadoPago(id_pedido){  
+      let me = this;
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;    
+      let url ="/Controller/PedidoController.php";   
+      let data ={
+        tipo:'updatestatepago',
+        id_pedido:id_pedido
+      }
+      me.$axios({
+        method: "PUT",
+        url: url_b+url,
+        data: data,
+      })
+        .then(function (response) {        
+          let result = response.data;   
+          if (result.afect>0) {
+               me.getTerminados();                 
+          } else {
+          
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        }); 
     },
     alertSesion(){
        this.confirm=true;

@@ -1,39 +1,92 @@
 <template>
   <q-page class="q-pa-sm">
     <q-toolbar class="bg-red-1 q-my-md shadow-2">
-      <div class="text-h5 text-bold">-</div>
+      <div class="text-h6 text-bold">{{nombreDia}}</div>
       <q-space />
-      <div class="text-h5 text-bold">S/ {{ SumTotal }}</div>
+      <div class="text-h6 text-bold">S/ {{ SumTotal }}</div>
     </q-toolbar>
       <!-- <q-radio name="shape" v-model="shape" val="Todos" label="Todos"  />
       <q-radio name="shape" v-model="shape" val="Nuevo" label="Nuevo" />
       <q-radio name="shape" v-model="shape" val="Entregado" label="Entregado" />
       <q-radio name="shape" v-model="shape" val="Rechazado" label="Rechazado" /> -->
+       <q-card class="no-border no-shadow ">
+          <q-item>
+              <q-item-section>
+                <q-item-label
+                  lines="1"
+                  class=" text-uppercase"
+                >
+                  <q-input v-model="search"  dense  outlined type="search" label="Buscar" >   
+                     <template v-slot:append>
+                          <q-icon v-if="search === ''" name="search" />
+                          <q-icon
+                            v-else
+                            name="clear"
+                            class="cursor-pointer"
+                            @click="search = ''"
+                          />
+                      </template>
+            </q-input>
+                </q-item-label>
+              </q-item-section>     
+                <q-item-section side top >            
+                  <q-btn-dropdown
+                 
+                    color="red"
+                    :label="date"
+                    dropdown-icon="change_history"
+                    class="float-right"
+                  >
+                    <q-date
+                      v-model="date"
+                      mask="DD-MM-YYYY"
+                      event-color="red"
+                      @update:model-value="ChangeDate($event)"
+                    />
 
-    <q-btn-dropdown
-      color="red"
-      :label="nombreDia + ' - ' + date"
-      dropdown-icon="change_history"
-      class="float-right"
-    >
-      <q-date
-        v-model="date"
-        mask="DD-MM-YYYY"
-        event-color="red"
-        @update:model-value="ChangeDate($event)"
-      />
-    </q-btn-dropdown>
+                
+                  </q-btn-dropdown>
+                
+                </q-item-section>
+            </q-item>
 
-    <br />
-    <br />
-    <br />
+
+              <!-- <q-card-section class="q-pa-sm">
+                <q-input
+                  rounded
+                  v-model="search"
+                  outlined
+                  placeholder="Buscar "
+                >
+                  <template v-slot:append>
+                    <q-icon v-if="search === ''" name="search" />
+                    <q-icon
+                      v-else
+                      name="clear"
+                      class="cursor-pointer"
+                      @click="search = ''"
+                    />
+                  </template>
+                </q-input>
+              </q-card-section> -->
+            </q-card>
+
+  
+            <!-- <q-input v-model="search" filled type="search" hint="Search">
+               <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input> -->
+   
+    <br /> 
+    
     <div v-if="!itemallorder.length">
       <h5>SIN REGISTROS</h5>
     </div>
     <div class="row q-col-gutter-sm">
       <div
         class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
-        v-for="item in itemallorder"
+        v-for="item in filterList"
         :key="item.id_pedido"
       >
         <card-all-order
@@ -47,6 +100,8 @@
           :detalle="item.detalle"
           :estado_pedido="item.estado_pedido"
           :total="item.totalpedido"
+          :tipopago="item.tipopago"
+          :estadopago="item.estadopago"
         ></card-all-order>
       </div>
     </div>
@@ -70,6 +125,7 @@ export default defineComponent({
     const fecha_actual = ref(moment(new Date()).format("YYYY/MM/DD"));
     const fecha_sql = ref(moment(new Date()).format("YYYY-MM-DD"));
     let nombreDia = ref("");
+    const search = ref("");
     return {
       shape: ref('Todos'),
       itemallorder,
@@ -80,16 +136,16 @@ export default defineComponent({
       fecha_actual,
       fecha_sql,
       moment,
+      search,
     };
   },
   created() {
     let existe = this.$q.sessionStorage.has("Qsesion");
     if (existe == false) {
-      this.$router.push({ path: "/" });
+       this.$router.push({ path: "/" });
     }
   },
   mounted() {
-
     this.nombreDia = moment(new Date(this.fecha_actual)).format("dddd");
     let existe = this.$q.sessionStorage.has("Qsesion");
     if (existe == true) {
@@ -107,6 +163,11 @@ export default defineComponent({
       }, 0);
       return result.toFixed(2);
     },
+    filterList() {
+      return this.itemallorder.filter((item) => {
+        return item.des_auxiliar  .toUpperCase().includes(this.search .toUpperCase());
+      });
+    },
   },
   methods: {
     get() {
@@ -118,8 +179,7 @@ export default defineComponent({
       let url =  "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + this.fecha_sql;
       this.$axios
         .get(url_b + url)
-        .then((response) => {
-            //console.log(response)
+        .then((response) => {         
             this.itemallorder = response.data;
         })
         .catch(function (error) {
@@ -143,6 +203,7 @@ export default defineComponent({
     //     })
     //     .finally(() => {});
     // },
+     
     ChangeDate(e) {
       if (e == null) {
         this.nombreDia = moment(new Date(this.fecha_actual)).format("dddd");
@@ -166,7 +227,7 @@ export default defineComponent({
         let fechaSql = anio + "-" + mes + "-" + dia;
         this.nombreDia = moment(new Date(fecha1)).format("dddd");
         let tipo = "fecha";
-            let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
+        let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
         let url =  "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + fechaSql;
         this.$axios
             .get(url_b + url)

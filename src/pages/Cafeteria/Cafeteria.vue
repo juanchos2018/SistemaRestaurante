@@ -73,57 +73,39 @@
                 <template v-slot:action> 
                   <q-btn flat label="Dismiss" @click="ocultar"/>
                 </template>
-              </q-banner> -->
-
-
-               <q-btn-dropdown
-      class="glossy"
-      color="purple"
-      label="Account Settings"
-    >
-      <div class="row no-wrap q-pa-md">
-        <div class="column">
-          <div class="text-h6 q-mb-md">Settings</div>
-          <q-toggle v-model="mobileData" label="Use Mobile Data" />
-          <q-toggle v-model="bluetooth" label="Bluetooth" />
-        </div>
-
-        <q-separator vertical inset class="q-mx-lg" />
-
-        <div class="column items-center">
-          <q-avatar size="72px">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-          </q-avatar>
-
-          <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
-
-          <q-btn
-            color="primary"
-            label="Logout"
-            push
-            size="sm"
-            v-close-popup
-          />
-        </div>
-      </div>
-    </q-btn-dropdown>
-
-
+              </q-banner> -->        
           <div>    
-             <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
+      <q-item style="
+    min-height: 48px;
+    padding: 1px 1px;
+    color: inherit;
+    transition: color 0.3s, background-color 0.3s;"
+>
+      <q-item-section>
+        <q-item-label
+          lines="1"
+          class="q-mt-xs text-body2 text-weight-bold text-primary text-uppercase"
+        >
+          <span class="cursor-pointer">Hasta: {{hora_limite}}</span>
+        </q-item-label>
+             </q-item-section>
+              <q-item-section top side>
+        <div class=" q-gutter-xs">
+          <!--  class="gt-xs" -->
+           <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
                   v-model="date"     
                   mask="DD-MM-YYYY" 
                   :options="optionsFn"
                   @update:model-value="ChangeDate($event)"
+                  class="colorborde"
                 />
               </q-btn-dropdown>  
-          </div>
-          <br>
-          <br>
-          <br>        
-          <div class="row q-col-gutter-sm">    
-             
+        </div>
+      </q-item-section>
+    </q-item>            
+          </div>         
+          <div class="row q-col-gutter-sm">                 
             <div v-if="!itemProducto.length">
               <h5>SIN PRODUCTOS</h5>
             </div>
@@ -149,7 +131,7 @@
                   v-model="tab"
                 >
                <q-tab v-for="item in itemCategoria" :key="item.id_categoria"  :label="item.nombre_categoria"  :name="item.nombre_categoria" :icon="item.logo"   @click="
-                      GetProduct(item.id_categoria, item.nombre_categoria)" />
+                      GetProduct(item.id_categoria, item.nombre_categoria,item.horalimite)" />
                 </q-tabs>                 
               <q-space />
               <div class="q-gutter-sm row items-center no-wrap">
@@ -157,6 +139,36 @@
               </div>
             </q-toolbar>
           </q-page-sticky>
+                <br>
+                <br>
+             <!-- Comentado para despues -->
+              <!-- <q-btn
+                v-morph:btn:mygroup:300.resize="morphGroupModel"
+                class="absolute-bottom-left q-ma-md"
+                fab
+                color="red"
+                size="lg"
+                @click="nextMorph"
+              >
+                <q-spinner-pie color="yellow" size="1em" />
+              </q-btn>
+
+              <q-card
+                v-morph:card1:mygroup:500.resize="morphGroupModel"
+                class="absolute-bottom-left q-ma-md  text-white"
+                style=" background: radial-gradient(circle, #35a2ff 0%, #014a88 100%) ;position: absolute;width: 300px; border-bottom-left-radius: 2em"
+              >
+                <q-card-section class="text-h6"> Nueva  Actividad </q-card-section>
+
+                <q-card-section class="text-subtitle1">
+                  Se realizara una parrilada el dia 12 de enero a las 14:30.                   
+                </q-card-section>
+               <q-card-actions align="around">
+                  <q-btn  label="Ir a Ver" color="red"/>
+                    <q-btn flat label="Cerrar" @click="nextMorph" />
+                </q-card-actions>             
+              </q-card>      -->
+            
         </q-page>
       </q-page-container>
     </q-layout>
@@ -164,13 +176,12 @@
     <q-dialog v-model="prompt" persistent>
       <q-card >
         <q-card-section>
-          <div class="text-h6">{{modelo.DES_AUXILIAR}}</div>
-          <!-- <div class="text-subtitle2">Area</div> -->
+          <div class="text-h6">{{modelo.DES_AUXILIAR}}</div>      
         </q-card-section>
         <div class="row">
           <div class="col-6">
             <q-item>
-              <q-input dense outlined class="full-width" type="number" max='9' label="Piso " maxlength="1" v-model="modelUser.piso_especialidad" />
+              <q-input dense outlined class="full-width" type="number" max='9' label="Piso " maxlength="1" v-model="modelUser.piso_especialidad"  :rules="[ val => val < 10 || 'piso no existe']"/>
             </q-item>
           </div>
           <div class="col-6">
@@ -178,8 +189,7 @@
               <q-input dense outlined class="full-width" label="Area" v-model="modelUser.area" />
             </q-item>          
           </div>   
-          <div class="col-6">
-            <!-- mask="HH*mm"  -->
+          <div class="col-6">           
             <q-item>        
                <q-input dense outlined class="full-width" v-model="timeactual"  type="time" mask="HH*mm"    format24h hint="Hora de recepcion" />   
             </q-item>          
@@ -192,7 +202,22 @@
                   </template>
               </q-input>       
             </q-item>          
-          </div>            
+          </div>   
+
+         <div class="col-12">           
+            <q-item>     
+               <q-item-section>
+              <q-item-label>Se pagara con: </q-item-label>
+                <q-item-label>  <q-radio name="shape" v-model="modelUser.tipopago" val="efectivo" label="Efectivo" />
+                <q-radio name="shape"   v-model="modelUser.tipopago" val="iziPay" label="IziPay" /></q-item-label>                
+              </q-item-section>                    
+           </q-item>          
+          </div>           
+          <!-- <div class="col-6">     
+            <q-item v-if="modelUser.tipopago=='iziPay'">   
+                <q-input dense outlined class="full-width" label="Correo" v-model="modelUser.correo" />               
+           </q-item>          
+          </div>    -->
         </div>  
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancelar" v-close-popup />
@@ -200,16 +225,16 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-      <q-dialog v-model="confirm" persistent>     
-         <q-card class="bg-red text-white" style="width: 300px">
-          <q-card-section>
-            <div class="text-h6">Su sesion a Caducado</div>
-          </q-card-section>
-          <q-card-section class="q-pt-none">
-            Vuelva a iniciar sesion.
-          </q-card-section>    
-        </q-card>
-      </q-dialog>
+    <q-dialog v-model="confirm" persistent>     
+        <q-card class="bg-red text-white" style="width: 300px">
+        <q-card-section>
+          <div class="text-h6">Su sesion a Caducado</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          Vuelva a iniciar sesion.
+        </q-card-section>    
+      </q-card>
+    </q-dialog>
     <modal-complementos  @CerrarModal="CerrarModalcomplemento" :ModalComplemento="ModalComplemento"  v-on:AddEntrada="AddEntrada" ref="modalcomplemento"  > </modal-complementos>
   </q-page>
 </template>
@@ -226,6 +251,10 @@ const columns = [
   { name: "Cantidad", field: "Cantidad", label: "Cantidad" },
   { name: "icon", label: "icon", field: "icon" },
 ];
+const nextMorphStep = {
+  btn: "card1",
+  card1: "btn"  
+};
 
 import { provide, defineAsyncComponent, ref,reactive } from "vue";
 import { mapState } from "vuex";
@@ -263,7 +292,8 @@ export default {
     let  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
     let  fecha_actual2= ref(moment(new Date()).format("YYYY/MM/DD"));
     let  fecha_sql= ref(moment(new Date()).format("YYYY-MM-DD"));  
-      let todaysDate = new Date();
+    let todaysDate = new Date();
+    const morphGroupModel = ref('btn')
     const  modelUser =  reactive({
         tipo:'Store',
         fecha_pedido: "",
@@ -277,14 +307,14 @@ export default {
         detallePedido: [],
         TotalPedido: 0,
         color: "bg-positive",
-        token:'' });   
+        token:'',
+        correo:'',
+        tipopago:'efectivo',
+        estadopago:0 });   
        
     return {
-     //moment("02:15:00 PM", "h:mm:ss A").format("HH:mm:ss")
-
       date: ref(moment(new Date()).local().format("DD-MM-YYYY")),      
-      timeactual:ref(moment().format('HH:mm')),  
-     // timeactual:ref(moment("14:15:00 PM", "HH:mm A")),  
+      timeactual:ref(moment().format('HH:mm')),     
       timeWithSeconds: ref('14:56:00'),
       optionsFn (fecha_actual) {
         return fecha_actual>= moment(new Date()).format('YYYY/MM/DD')
@@ -292,12 +322,14 @@ export default {
       toggleRightDrawer() {
         rightDrawerOpen.value = !rightDrawerOpen.value;
       },
+      nextMorph () {
+        morphGroupModel.value = nextMorphStep[ morphGroupModel.value ]
+      },
       save () {
         fecha_hora.value = proxyDate.value
       },       
       showLoading () {
-        $q.loading.show()
-        // hiding in 2s
+        $q.loading.show();     
         timer = setTimeout(() => {
           $q.loading.hide()
           timer = void 0
@@ -307,6 +339,7 @@ export default {
       fecha_actual2,
       fecha_sql,
       datehoy : Date.now(),     
+      morphGroupModel, 
       fecha_hora,
       todaysDate,   
       date1: ref('2019/02/01'),        
@@ -351,7 +384,10 @@ export default {
       polling: ref(null),
       visibleAnunio:ref(true),
       mobileData: ref(false),
-      bluetooth: ref(false)   
+      bluetooth: ref(false) ,
+      hora_limite:ref('10:00'),
+      shape: ref('efectivo'),
+
     };
   },
   created() {
@@ -394,26 +430,18 @@ export default {
 	      	}, 400)     
     };
     this.conn.onmessage = (e) => {
-        this.rcv(e.data);         
-        let json = JSON.parse(e.data);
-        // console.log(json)
-        // if (json.error==true && json.cod_auxiliar== this.modelo.COD_AUXILIAR) {
-        //       this.alertSesion();
-        // }else{          
-        // }
-        //let cod_auxiliar=recibe.cod_auxiliar;     
-        // if (es=="2" && cod_auxiliar==this.modelo.COD_AUXILIAR) {  
-        //     this.check();
-        //  }  
-        if (json.registrado == "si") {
-            // this.Enviado();
+        this.rcv(e.data);   
+       /// console.log(e.data);      
+        let json = JSON.parse(e.data);   
+        if (json.tipo == "updateProducto") {       
+              this.GetProduct(json.id_categoria, json.nombre_categoria,json.horalimite);
         }else{
             //this.Error();
         } 
     };    
   },
   computed: {
-     ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
+    ...mapState(["url_base","url_base2", "url_izipay", "url_socket","url_socket2"]),
     getData3() {
       return this.getData().slice(
         (this.page - 1) * this.cantfilas.length,
@@ -445,17 +473,14 @@ export default {
       }, 0);
       return result;
     },
-    fechaPeruana(){
-      // date: ref(moment(new Date()).local().format("DD-MM-YYYY")), 
+    fechaPeruana(){   
         let fechas =this.date.split('-');
         let anio =fechas[2];
         let mes =fechas[1];       
         let dia =fechas[0];      
         let fecha_sql =anio+'-'+mes+'-'+dia;
         this.modelUser.fecha_pedido=fecha_sql;
-        let fechape=dia+'-'+mes+'-'+anio;
-    //    this.modelUser.fecha_pedido=fecha_sql; 
-     ///   console.log(this.modelUser.fecha_pedido)
+        let fechape=dia+'-'+mes+'-'+anio;    
         return  fechape;
     },
     diaEntrega: function () {     
@@ -464,13 +489,9 @@ export default {
         let mes =fechas[1];
         let anio =fechas[2];
         let fecha_sql =anio+'-'+mes+'-'+dia;
-        this.modelUser.fecha_pedido=fecha_sql; 
-     ///   console.log(this.modelUser.fecha_pedido)
+        this.modelUser.fecha_pedido=fecha_sql;    
         return  moment(fecha_sql).format('dddd');
-    },
-    fechaSql(){
-
-    }
+    }   
   },  
   methods: {  
     CerrarModalcomplemento(){
@@ -498,8 +519,7 @@ export default {
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       this.$axios
         .get(url_b + url)
-        .then((response) => {
-           // this.itemCategoria = response.data;
+        .then((response) => {       
             let array=response.data;
             array.forEach((element) => {
               if (element.estado==1) {
@@ -508,27 +528,28 @@ export default {
                 nombre_categoria: element.nombre_categoria,
                 estado: element.estado,
                 logo: element.logo,
+                horalimite:element.horalimite
               });
               }              
            });
-
-          this.GetProduct(this.itemCategoria[0].id_categoria);    
+          this.GetProduct(this.itemCategoria[0].id_categoria,this.itemCategoria[0].nombre_categoria,this.itemCategoria[0].horalimite);    
           this.tab=  this.itemCategoria[0].nombre_categoria;
           this.nombrecategoria = this.itemCategoria[0].nombre_categoria;
           this.id_categoria=this.itemCategoria[0].id_categoria;
+          this.hora_limite=this.itemCategoria[0].horalimite;
         })
         .catch(function (error) {
           console.log(error);
         })
         .finally(() => {});
     },
-    GetProduct(id_categoria, nombre) {
+    GetProduct(id_categoria, nombre,horalimite) {
       if (this.NombreDiaComprobar=='domingo') {
           this.itemProducto = [];
-
       }else{
          // this.fecha_sql= moment(new Date()).format("YYYY-MM-DD");
           this.nombrecategoria = nombre;
+          this.hora_limite=horalimite;
           this.tab=  nombre;
           this.id_categoria=id_categoria;        
           let tipo="dia";
@@ -536,8 +557,7 @@ export default {
           let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
           this.$axios
             .get(url_b + url)
-            .then((response) => {
-              //console.log(response)
+            .then((response) => {          
               this.itemProducto = response.data;
             })
             .catch(function (error) {
@@ -588,16 +608,14 @@ export default {
           let fechaSql=anio+'-'+mes+'-'+dia;
           this.fecha_sql=fechaSql;
           this.nombreDia =moment(new Date(fecha1)).format('dddd'); 
-
-         let tipo="dia";      
+          let tipo="dia";      
                  
         if (this.nombreDia=='domingo') {
            //console.log('no entra a la peticion ');
            this.NombreDiaComprobar='domingo'
            this.itemProducto = [];
         }else{
-          if (this.nombreDia=="" || this.nombreDia ==null ) {
-             /// this.id_categoria=9999999;
+          if (this.nombreDia=="" || this.nombreDia ==null ) {        
              // console.log("datos nulos");
         }else{      
           this.NombreDiaComprobar='libre';
@@ -793,9 +811,8 @@ export default {
      }  
      else if(this.modelUser.piso_especialidad==""){
         this.TipoMensaje('piso');
-     }  
-     else{
-        /// console.log(array)
+     }     
+     else{   
         let fechas =this.fecha_hora.split('/');
         let dia =fechas[0];
         let mes =fechas[1];
@@ -804,7 +821,7 @@ export default {
         let lista = [];
         this.modelUser.TotalPedido = this.SumTotal;
        // let obj = this.$q.sessionStorage.getItem("Qsesion");
-      //  obj.Piso=this.modelUser.piso_especialidad;
+       //  obj.Piso=this.modelUser.piso_especialidad;
         const datoscli = localStorage.getItem("Qsesion");
         const objd = JSON.parse(datoscli);
         objd.Piso = this.modelUser.piso_especialidad;
@@ -855,14 +872,13 @@ export default {
             dark: true,
             title: "Ups",
             message: "Falta llenar el campo "+campo,
+            class:"colorborde"
           })
-          .onOk(() => {
-            // console.log('OK')
+          .onOk(() => {       
           })
-          .onCancel(() => {
-            // console.log('Cancel')
+          .onCancel(() => {           
           })
-          .onDismiss(() => {  });
+          .onDismiss(() => { });
           
     },
     LastOrder(){
@@ -871,10 +887,14 @@ export default {
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
      this.$axios
         .get(url_b + url)
-        .then((response) => {
-            //console.log(response);
-           //this.itemProducto = response.data;
-           this.modelUser.piso_especialidad=response.data.piso_especialidad
+        .then((response) => {           
+           let existe= response.data.EXISTE         
+           if (existe=="Si" ) {
+              let piso=response.data.piso_especialidad;
+              this.modelUser.piso_especialidad=piso;             
+           }else{
+              this.modelUser.piso_especialidad="1";
+           }           
         })
         .catch(function (error) {
           console.log(error);
@@ -893,6 +913,7 @@ export default {
             dark: true,
             title: "Ups",
             message: "No tienes nada de Pedido",
+            class:"colorborde"
           })
           .onOk(() => {            
           })
@@ -903,7 +924,23 @@ export default {
       }
     },
     AgregarCarrito(modelo){   
-      if (modelo.usasubcategoria==1) {
+    //  console.log(modelo);
+      if (modelo.estado==0) {
+           this.$q
+          .dialog({
+            dark: true,
+            title: "Ups",
+            message: "Producto no Disponible",
+            class:"colorborde"
+          })
+          .onOk(() => {            
+          })
+          .onCancel(() => {           
+          })
+          .onDismiss(() => {           
+          });
+      }else{
+        if (modelo.usasubcategoria==1) {
           this.$refs.modalcomplemento.GetComplementos(modelo.id_categoria,this.nombreDia);   
           this.ModalComplemento=true;      
           this.$refs.modalcomplemento.RecibeModelo(modelo);
@@ -920,7 +957,9 @@ export default {
             this.arrayvacio.push(modelo);           
          }
          this.AgregaoItem(modelo.producto);
-      }     
+      }  
+      }
+         
     },
     AddEntrada(modelo){
          let obj = this.arrayvacio.find((x) => x.id_producto == modelo.id_producto);
@@ -962,8 +1001,7 @@ export default {
         data: data,
       })
         .then(function (response) {
-          let result = response.data.resultado;
-        //  console.log(response);
+          let result = response.data.resultado;       
           if (result == "Registrado") {
              alert("Registrado");
             this.Cancelar();
@@ -979,6 +1017,7 @@ export default {
         .dialog({
           title: "Mensaje",
           message: "Se ha Enviado tu Pedido",
+          class:"colorborde"
         })
         .onOk(() => {          
         })
@@ -994,14 +1033,11 @@ export default {
           title: "Perdon ",
           message: "tu  pedido no se registro algun error con el servidor llama a (Central de datos)",
         })
-        .onOk(() => {
-          // console.log('OK')
+        .onOk(() => {         
         })
-        .onCancel(() => {
-          // console.log('Cancel')
+        .onCancel(() => {        
         })
-        .onDismiss(() => {
-          // console.log('I am triggered on both OK and Cancel')
+        .onDismiss(() => {          
         });
     },
     Mucho(){
@@ -1068,15 +1104,16 @@ export default {
             this.logoutNotify();
 	    	}, 2000)      
      },
-    setTime () {
+    setTime() {
 				setInterval(() => {      
 					this.horaActual2= moment().format('LTS')
 				}, 1000)
 		 },   
-     ocultar(){
-      
+     ocultar(){      
         this.visibleAnunio=false
         console.log( this.visibleAnunio)
+     },
+     consultaEstado(){
      } 
   },  
 };
@@ -1087,5 +1124,9 @@ export default {
   bottom: 0;
   width: 100%;
 }
-
+.colorborde{
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b71408;
+}
 </style>

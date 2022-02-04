@@ -60,7 +60,7 @@
                     :viernes="item.dia_cinco"
                     :sabado="item.dia_seis"
                     v-on:updateProduct="UpdateProduct"
-                    @getproduct="getproduct"
+               
                   ></card-producto>
                 </div>
               </div>
@@ -129,7 +129,7 @@
   -->
     <dialogo-add-complemento   @CerrarModal="CerrarModalcomplemento" :DialogoAddComplemento="DialogoComplemento"  v-on:getComplemnentos="GetComplemento" ref="dialogcomplemento" ></dialogo-add-complemento>
 
-    <dialogo-update-complemento @CerrarModal="CerrarModal" :DialogoEditComplemento="DialogoEditComplemento"     ref="dialogoupdatecomplemento"></dialogo-update-complemento>
+    <dialogo-update-complemento @CerrarModal="CerrarModal" :DialogoEditComplemento="DialogoEditComplemento"   v-on:getComplemnentos="GetComplemento"  ref="dialogoupdatecomplemento"></dialogo-update-complemento>
 
   </q-page>
 </template>
@@ -200,6 +200,7 @@ export default defineComponent({
         nombre_categoria: "",
         estado: 1,
         subcategoria: 0,
+        horalimite:''
       },
       tab: ref("producto"),
       splitterModel: ref(12),
@@ -207,7 +208,19 @@ export default defineComponent({
       datos:{
           id_subcategoria:0,
           nombre_subcategoria:''
-      }    
+      },
+      modelUser : {
+        fecha_pedido: "",
+        hora_pedido: "",
+        estado_pedido: 0,
+        cod_auxiliar: "",
+        especialidad: "",
+        area: "",
+        piso_especialidad: "",
+        des_auxiliar: "",  
+        color: "bg-positive",
+        token:'' },
+      con: null,    
     };
   },
   computed: {
@@ -220,15 +233,67 @@ export default defineComponent({
     ]),
   },
   mounted() {
-    //console.log("iid es :" + this.id_categoria);
+
+    let existe = this.$q.sessionStorage.has("Qsesion"); 
+    if (existe==true) {     
+        let obj = this.$q.sessionStorage.getItem("Qsesion");
+        this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
+        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
+        this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
+        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
+        this.modelUser.token = obj.token;   
+    } 
+
+    this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2+'?token='+this.modelUser.token:this.url_socket+'?token='+this.modelUser.token );
+
     this.modelo.id_categoria = parseInt(this.id_categoria);
-    this.Get(this.modelo.id_categoria);
     this.InfoCategoria();
+    this.Get(this.modelo.id_categoria);
+  
     this.GetSubcategorias();
+    this.conn.onopen = (e) => {     
+          this.$q.loading.show({           
+             spinnerColor: 'red',
+          })
+          this.polling = setInterval(() => {		        
+            clearInterval(this.polling)
+            let {currentTarget}  =e;    
+            this.$q.loading.hide()
+            if (currentTarget.readyState==3) {
+             this.alertSesion();
+            }else{
+              console.log("conectado WebSocket");
+            }
+	      	}, 400)     
+    };
+    this.conn.onerror = function (errorEvent) {
+				console.log("WebSocket ERROR: " + JSON.stringify(errorEvent, null, 4));
+		};
+    this.conn.onmessage = (e) => {
+      // console.log(e.data)
+       // this.get();              
+    };
+
   },
   methods: {
     subcategoria() {
       this.DialogoSubcategoria = true;
+    },
+    alertSesion(){
+       this.confirm=true;
+       let percentage = 0
+       this.polling = setInterval(() => {
+		        this.confirm=false;  
+            clearInterval(this.polling)
+            this.logoutNotify();
+	    	}, 2000)      
+     },
+     logoutNotify() {
+      this.$router.push({ path: "/" });
+      this.$q.sessionStorage.remove("Qsesion");
+      this.$q.sessionStorage.clear();
+      localStorage.removeItem("Qsesion");
+      localStorage.removeItem('token');
     },
     AddProducto() {
       this.DialogoAddProducto = true;
@@ -239,13 +304,12 @@ export default defineComponent({
       this.DialogoComplemento=true;
     },
     onChanges(value,label){
-      console.log(value);
+     // console.log(value);
       this.datos.id_subcategoria=value;
       this.datos.nombre_subcategoria=label;
       this.nombre_boton="NUEVO "+label;
       this.GetComplemento(value);
       this.nombre_tipo=label;
-
     },
     GetSubcategorias() {
       //console.log("SubCategoriaCocinaController")
@@ -260,7 +324,7 @@ export default defineComponent({
       this.$axios
         .get(url_b + url)
         .then((response) => {
-          console.log(response);
+         // console.log(response);
           this.itemSubCategorias = response.data;
         })
         .catch(function (error) {
@@ -278,6 +342,13 @@ export default defineComponent({
         .then((response) => {
           // console.log(response);
           this.itemProducto = response.data;
+          let model ={
+            tipo:"updateProducto",
+            id_categoria:idcategoria,
+            nombre_categoria:this.modelo.nombre_categoria,
+            horalimite:this.modelo.horalimite
+          };
+          this.conn.send(JSON.stringify(model));
         })
         .catch(function (error) {
           console.log(error);
@@ -300,10 +371,10 @@ export default defineComponent({
     },
     getproduct() {      
       let url_b =
-       this.$q.platform.is.mobile == true ? this.url_base : this.url_base2;
+      this.$q.platform.is.mobile == true ? this.url_base : this.url_base2;
       let url =
         "/Controller/ProductoControllerCo.php?id_categoria=" +
-        this.modelo.id_categoria;
+      this.modelo.id_categoria;
       this.$axios
         .get(url_b + url)
         .then((response) => {         

@@ -130,8 +130,7 @@ export default {
     Update(){     
       let me = this;
       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;  
-      let url ="/Controller/ComplementoController.php?tipo=editcompmento";   
-    
+      let url ="/Controller/ComplementoController.php?tipo=editcompmento";       
        me.modelo.dia_uno=me.dia_uno==true?1:0;
        me.modelo.dia_dos=me.dia_dos==true?1:0; 
        me.modelo.dia_tres=me.dia_tres==true?1:0; 
@@ -150,6 +149,7 @@ export default {
           // console.log(response);
           let result = response.data;
           if (result.afect>0) {
+            me.Get(me.modelo.id_subcategoria);
            // me.ListarProductos(me.modelo.id_categoria);
             me.CerrarModal();
             me.$q.notify({
@@ -173,6 +173,9 @@ export default {
     },
     Limpiar() {    
       this.modelo.descripcion = "";
+    },
+    Get(id_subcategoria){
+      this.$emit("getComplemnentos",id_subcategoria)
     },
     Validate() {  
        this.errors.descripcion = this.modelo.descripcion == "" ? true : false;

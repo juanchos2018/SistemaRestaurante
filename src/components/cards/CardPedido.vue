@@ -46,10 +46,13 @@
             {{ hora_pedido }}</span
           >
         </q-item-label>
+         <q-item-label  lines="1">
+        T.Pago:  {{ tipopago }}   
+        </q-item-label>
+        
       </q-item-section>
       <q-item-section top side>
-        <div class=" q-gutter-xs">
-          <!--  class="gt-xs" -->
+        <div class=" q-gutter-xs">      
           <q-btn           
             size="12px"
             flat
@@ -57,9 +60,14 @@
             round
             icon="delete"
             @click="Editar(4)"
-          />
+          /> 
+             
         </div>
+        <q-chip square :color="colorCurrent" text-color="white" style="float:bottom; bottom:0; position:absolute;" >
+            {{hours}}   : {{minutes}} - min
+            </q-chip>
       </q-item-section>
+      
     </q-item>
     <q-separator></q-separator>
     <q-list>
@@ -96,18 +104,20 @@
       <div>Total: S/ {{ total }}</div>      
     </q-card-section> -->
     <q-item>
-       <q-item-section  >
-           <q-item-label  lines="1" class="flex flex-left text-bold">Total : S/{{ total }}</q-item-label>
-              <!-- <q-item-label  lines="1" >{{ currentHora }}</q-item-label>   v-if="visible"-->
-              <!-- <q-item-label  lines="1" >{{ currentHora }}</q-item-label> -->
-        </q-item-section>
-       <q-item-section top side >
-          <div class="q-gutter-xs" >
-            <q-chip square :color="colorCurrent" text-color="white" >
-              {{hours}}- {{minutes}}-min
-            </q-chip>
-          </div>
-        </q-item-section>
+       <q-item-section class=" text-green text-bold">
+                 <q-item-label>Total: S/ {{ total }}</q-item-label>    
+              </q-item-section>
+       <q-item-section side top>              
+                <q-btn v-if="estadopago==0 && tipopago=='efectivo' "      
+                size="12px"              
+                dense              
+                label=" Pagar  "
+                color="primary"
+                @click="mensajePagar(total,id_pedido)"      
+               />
+              <q-icon v-else-if="estadopago==0 && tipopago=='iziPay'" color="red" name="far fa-credit-card" size="sm" />        
+              <q-icon v-else-if="estadopago==1" color="red" name="fas fa-check-circle" size="sm" />
+      </q-item-section> 
     </q-item>   
   </q-card>
 </template>
@@ -127,7 +137,9 @@ export default {
     "hora_pedido",
     "cod_auxiliar",
     "estado_pedido",
-    "visible"    
+    "visible" ,
+    "tipopago",
+    "estadopago"
   ],
   data() {
     return {
@@ -184,7 +196,8 @@ export default {
                 let hora = arrayhoira[0];            
                 let minute =arrayhoira[1];
                 //console.log(hora2);
-                if (hora<=hora2 && minute<=minute2) {                 
+                //  if (hora<=hora2   ) { 
+                if (hora<=hora2   && minute<=minute2) {                 
                   let unionDateTime   = moment(this.fecha_actual+'T'+this.hora_pedido); 
                   const diff =  this.currentHora.diff(unionDateTime);
                   const diffDuration = moment.duration(diff);  
@@ -214,6 +227,13 @@ export default {
           }
           this.$emit("updateState", dataState);
       }     
+    },
+    mensajePagar(totalpago,id_pedido){          
+      let datos={
+        id_pedido:id_pedido,
+        totalpago:totalpago        
+      }
+      this.$emit("modalPagosCocina",datos);      
     },
     Editar(step) {
       if (this.fecha_pedido == this.fecha_actual2) {

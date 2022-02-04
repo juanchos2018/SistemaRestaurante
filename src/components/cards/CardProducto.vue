@@ -197,7 +197,7 @@ export default {
 
     function updateUploadSucces () {     
        uploading.value=false    
-       console.log(uploading.value)
+     ///  console.log(uploading.value)
       }
       const   showNotif = () =>{
         $q.notify({
@@ -257,7 +257,6 @@ export default {
           color: 'orange-2'
         }
       },
-
       updateFiles (newFiles) {
         files.value = newFiles
         uploadProgress.value = (newFiles || []).map(file => ({

@@ -23,6 +23,7 @@
               :name="props.row.nombre_categoria"
               :logo="props.row.logo"
               :estado="props.row.estado"
+              :horalimite="props.row.horalimite"
               v-on:Editar="Editar"
             ></card-categoria>
           </div>
@@ -55,6 +56,11 @@
             <q-item>                            
                 <q-icon :name="modelo.logo"  size="md"  :key="componentKey" ref="icono" />                  
             </q-item>
+           </div>
+            <div class="col-10">
+              <q-item>
+              <q-input dense outlined class="full-width" v-model="modelo.horalimite"   label="Hora Limite *" type="time" mask="HH*mm"    format24h hint="Formato 24 horas" />   
+              </q-item>
             </div>
             <div class="col-4">
               <q-item>
@@ -153,7 +159,7 @@ export default defineComponent({
       rowsPerPage: getItemsPerPage(),
     });
     let visiblemodal = ref(false);
-    const modelo = ref({id_categoria: 0, nombre_categoria: "",logo:'',estado:0,subcategoria:0,lista:[]});
+    const modelo = ref({id_categoria: 0, nombre_categoria: "",logo:'',estado:0,subcategoria:0,lista:[],horalimite:''});
     const figura=ref('')
     let datoscateroia=ref({})
     return {   
@@ -198,6 +204,7 @@ export default defineComponent({
   methods: {
     Editar(data) {
       this.modelo = data;
+      console.log(data);
       this.itemsubcategorias=[];
       this.Estado=this.modelo.estado==1?true:false;
       this.Entrada=false;

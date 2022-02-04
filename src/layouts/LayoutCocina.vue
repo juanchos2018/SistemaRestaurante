@@ -77,7 +77,7 @@
                 v-ripple
               >
                 <q-item-section avatar>
-                  <q-icon name="dashboard"  />
+                  <q-icon name="eco"  />
                 </q-item-section>
 
                 <q-item-section> Productos </q-item-section>
@@ -92,7 +92,7 @@
                 v-ripple
               >
                 <q-item-section avatar>
-                  <q-icon name="dashboard" />
+                  <q-icon name="local_grocery_store" />
                 </q-item-section>
 
                 <q-item-section> Reserva </q-item-section>
@@ -106,14 +106,14 @@
                 v-ripple
               >
                 <q-item-section avatar>
-                  <q-icon name="dashboard" />
+                  <q-icon name="folder" />
                 </q-item-section>
 
                 <q-item-section> Historial </q-item-section>
               </q-item>
 
 
-                <q-item
+                <!-- <q-item
                 active-class="tab-active"
                 to="/Cocina/step"
                 exact
@@ -125,8 +125,8 @@
                   <q-icon name="dashboard" />
                 </q-item-section>
 
-                <q-item-section> prueba </q-item-section>
-              </q-item>
+                <q-item-section> No entrar </q-item-section>
+              </q-item> -->
             </q-list>
           </q-scroll-area>
         </div>

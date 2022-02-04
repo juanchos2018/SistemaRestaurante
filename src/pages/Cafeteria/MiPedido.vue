@@ -18,8 +18,8 @@
               </q-btn-dropdown>  
           <br><br><br>
        <div class="row q-col-gutter-sm">     
-          <div v-if="!itemCocina.length">
-              <h5>SIN PEDIDO PARA EL DIA DE HOY </h5>
+            <div v-if="!itemCocina.length">              
+              <label for="">SIN PEDIDO PARA EL DIA DE HOY</label>
             </div>
           <div
             class="col-md-3 col-lg-4 col-sm-12 col-xs-12"
@@ -37,8 +37,10 @@
               :fecha_pedido="item.fecha_pedido"
               :hora_pedido="item.hora_pedido"
               :total="item.totalpedido"
+              :tipopago="item.tipopago"
+              :estadopago="item.estadopago"
               v-on:anularPedido="anularPedido"
-            
+              v-on:modalPagos="showModel"    
             ></card-mi-pedido>
           </div>
         </div>
@@ -56,7 +58,11 @@
             :fecha_pedido="item.fecha_pedido"
             :hora_pedido="item.hora_pedido"
             :total="item.totalpedido"
-            v-on:updateStart="UpdateStart"       >
+            :tipopago="item.tipopago"
+            :estadopago="item.estadopago"
+            v-on:updateStart="UpdateStart"
+            v-on:modalPagos="showModel"
+              >
             </card-success>
           </div>
         </div>
@@ -79,16 +85,31 @@
       </q-tab-panel>
     </q-tab-panels>    
 
-        <q-dialog v-model="confirm" persistent>     
-         <q-card class="bg-red text-white" style="width: 300px">
-          <q-card-section>
-            <div class="text-h6">Su sesion a Caducado</div>
-          </q-card-section>
-          <q-card-section class="q-pt-none">
-            Vuelva a iniciar sesion.
-          </q-card-section>    
-        </q-card>
-      </q-dialog>
+    <q-dialog v-model="confirm" persistent>     
+      <q-card class="bg-red text-white" style="width: 300px">
+      <q-card-section>
+        <div class="text-h6">Su sesion a Caducado</div>
+      </q-card-section>
+      <q-card-section class="q-pt-none">
+        Vuelva a iniciar sesion.
+      </q-card-section>    
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="modalpago"   persistent >
+      <q-card style="width: 400px;height: 80%  " class="no-padding text-center" >           
+          <iframe id="inlineFrameExample"
+             title="Inline Frame Example"        
+             width="100%"  
+             height="90%"
+            :src="linkIframe"
+            @load="load">             
+       </iframe>             
+        <q-card-actions align="right" class="text-primary no-margin">        
+          <q-btn flat label="Cerrar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -102,6 +123,7 @@ import { mapState } from "vuex";
 import moment from "moment";
 import "moment/locale/es";
 
+import { QSpinnerGears } from 'quasar'
 export default defineComponent({
   name: "MiPedido",
   components: {CardMiPedido,CardRejected,CardSuccess},
@@ -144,7 +166,10 @@ export default defineComponent({
       events: [],
       nombreDia:ref(''),   
       modelUser ,
-      confirm: ref(false),     
+      confirm: ref(false),
+      modalpago:ref(false),
+      linkIframe:ref(''),
+      visiblecarga:ref(false)     
      
     };
    },
@@ -156,8 +181,7 @@ export default defineComponent({
       }
    },
    mounted() {
-    //   let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
-    
+    //   let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;    
       let existe = this.$q.sessionStorage.has("Qsesion");     
       if (existe==true) {
           let obj = this.$q.sessionStorage.getItem("Qsesion");
@@ -218,8 +242,7 @@ export default defineComponent({
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
       this.$axios
         .get(url_b+url)
-        .then((response) => {
-       //   console.log(response)
+        .then((response) => {      
           this.itemCocina = response.data;         
         })
         .catch(function (error) {
@@ -233,8 +256,7 @@ export default defineComponent({
       let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
         .get(url_b+url)
-        .then((response) => {
-          //console.log(response);
+        .then((response) => {         
           this.itemRejected = response.data;         
         })
         .catch(function (error) {
@@ -306,7 +328,6 @@ export default defineComponent({
           .finally(() => {});  
       }
     },
-
     UpdateStart(obj){ 
       let me = this;
       let tipo="start"
@@ -327,8 +348,7 @@ export default defineComponent({
               message: "Calificado ",
               color: "accent",
               position: "top",
-        });
-        
+        });        
         })
         .catch((error) => {
           console.log(error);
@@ -350,6 +370,24 @@ export default defineComponent({
       localStorage.removeItem("Qsesion");
       localStorage.removeItem('token');
     },
+    showModel(modelo){     
+      this.$q.loading.show({
+          spinner: QSpinnerGears,
+          spinnerColor: 'red',
+          message: 'Cargando Metodo de Pago...'
+        })
+      let mobile=this.$q.platform.is.mobile;
+      if (mobile==true) {
+          this.linkIframe="http://161.132.198.54/ApiCafeteria/pasarela/popin2.php?id_pedido="+modelo.id_pedido+"&total="+modelo.totalpago
+          this.modalpago=true;
+      }else{
+          this.linkIframe="http://192.168.3.219/ApiCafeteria/pasarela/popin.php?id_pedido="+modelo.id_pedido+"&total="+modelo.totalpago
+          this.modalpago=true;
+      }    
+    },
+    load(){    
+      this.$q.loading.hide()
+    },
     anularPedido(id_pedido){  
       let me = this;
       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
@@ -363,7 +401,11 @@ export default defineComponent({
           lista:lista
       }
       this.conn.send(JSON.stringify(data));
-
+      this.get();   
+      this.getSucess();
+      this.getrecjected();
+      this.getCalendar();
+      
       // this.$axios({
       //   method: "PUT",
       //   url: me.url_base+url,

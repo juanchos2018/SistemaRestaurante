@@ -11,10 +11,12 @@
         data.usastock,
         data.fecha_sql,
         data.usasubcategoria,
-        data.subcategoria
+        data.subcategoria,
+        data.estado
       )
     "
   >
+  <!--  Agregar3(id_producto,title,preci,id_categoria,stock,usastock,fecha_sql,usasubcategoria,estado){    -->
     <!-- <q-img :src="url_base + data.imagen" :ratio="4 / 3">
       <div
         class="absolute-top text-h5 text-right text-bold text-green"
@@ -44,16 +46,16 @@
         />
       </div>
     </q-card-section> -->
-    <q-item>
+    <q-item >
       <q-item-section>
-        <q-item-label
+        <q-item-label        
           lines="1"
           class="
             q-mt-xs
-            text-body2 text-weight-bold text-primary text-uppercase
+            text-body3 text-weight-bold text-primary text-uppercase
           "
         >
-          <span class="cursor-pointer">{{ data.nombre_producto }}</span>
+          <span class="cursor-pointer " >{{ data.nombre_producto }}</span>
         </q-item-label>
 
         <q-item-label caption>
@@ -71,19 +73,26 @@
     <q-item>
       <q-item-section>
         <q-item-label class="text-h6 text-bold text-green">
-          S/ {{ data.precio_ventas }}
+          <!-- S/ {{ data.precio_ventas }} -->
+           <span >{{ data.precio_ventas }}</span>
         </q-item-label>
+         <!-- <q-item-label class="text-h6 text-bold text-green">
+          E: {{ data.estado }}
+        </q-item-label> -->
       </q-item-section>
+
+
       <q-item-section side top>
         <q-item-label v-if="data.usastock == 1">
-          stock : <q-icon name="fas fa-infinity" size="24px"></q-icon>
+          stock : <q-icon name="fas fa-infinity" size="20px"></q-icon>
         </q-item-label>
         <q-item-label v-else>
           <span class="text-green text-bold">
-            <q-icon name="fas fa-infinity" size="24px"></q-icon
+            <q-icon name="fas fa-infinity" size="20px"></q-icon
           ></span>
         </q-item-label>
-        <q-item-label v-if="data.usastock == 1">
+
+        <!-- <q-item-label v-if="data.usastock == 1">
           <q-badge
             fab
             color="primary"
@@ -92,10 +101,20 @@
         </q-item-label>
         <q-item-label v-else>
           <q-badge fab color="primary" label="Libre" />
+         </q-item-label> -->
+
+        <q-item-label v-if="data.estado == 1">
+          <q-badge
+            fab
+            color="primary"
+            label="Disponible"
+          />
+        </q-item-label>
+        <q-item-label v-else>
+          <q-badge fab color="red" label="No Disponible" />
         </q-item-label>
       </q-item-section>
     </q-item>
-
     <q-separator />
     <q-item v-ripple>
       <q-item-section>
@@ -357,7 +376,8 @@ export default defineComponent({
     calcula() {
       this.$emit("calcula", canPrec);
     },
-    Agregar3(id_producto,title,preci,id_categoria,stock,usastock,fecha_sql,usasubcategoria){   
+    Agregar3(id_producto,title,preci,id_categoria,stock,usastock,fecha_sql,usasubcategoria,es="",estado){   
+     
         let fechas = fecha_sql.split("-");
         let anio = fechas[0];
         let mes = fechas[1];
@@ -365,7 +385,6 @@ export default defineComponent({
         let fechape = dia + "-" + mes + "-" + anio;
         let fecha1 = anio + "/" + mes + "/" + dia;
         let nombreDia = moment(new Date(fecha1)).format("dddd");
-
        let objeto = {
           id_producto: id_producto,
           producto: title,
@@ -380,10 +399,13 @@ export default defineComponent({
           fecha_pedido: fecha_sql,
           fecha_peruana: nombreDia + "-" + fechape,
           usasubcategoria:usasubcategoria,
-          entrada:''
-        };
-        
+          entrada:'',
+          estado
+        };        
+         //console.log(objeto);
         this.$emit("AgregarCarrito", objeto);
+    
+        
     }
   },
 });
@@ -394,5 +416,11 @@ export default defineComponent({
   border-width: 1px;
   border-style: solid;
   border-color: #b71408;
+}
+.q-item {
+    min-height: 48px;
+    padding: 7px 7px;
+    color: inherit;
+    transition: color 0.3s, background-color 0.3s;
 }
 </style>

@@ -6,6 +6,9 @@
         <q-item-label caption>
           {{ hora_pedido }}
         </q-item-label>
+          <q-item-label >
+       Pagar/c. :  {{ tipopago }}
+        </q-item-label>
       </q-item-section>
        <q-item-section side top>
             ENTREGADO
@@ -14,7 +17,7 @@
     <q-list bordered padding>
       <q-item v-for="item in detalle" :key="item.id_pedido_detalle">
         <q-item-section avatar>
-          <q-icon color="primary" :name="item.logo" />
+          <q-icon color="primary" :name="item.logo" size="xs" />
         </q-item-section>
         <q-item-section>
           <q-item-label>{{ item.nombre_producto }}   </q-item-label>
@@ -39,8 +42,23 @@
         </q-item-section>
       </q-item>
     </q-list>
-    <q-card-section class="col-5 flex flex-left text-green  text-bold	">
-      <div>Total: S/ {{ total }}</div>
+    <q-card-section  class="no-padding">
+      <q-item>
+          <q-item-section class=" text-green text-bold">
+              <q-item-label>Total: S/ {{ total }}</q-item-label>    
+          </q-item-section>
+          <q-item-section side top>             
+         <q-btn v-if="estadopago==0 && tipopago=='iziPay' "        
+            size="12px"              
+            dense              
+            label="Pagar"
+            color="primary"
+            @click="MensajePagar(total,id_pedido)"       
+          />
+           <q-icon v-else-if="estadopago==0 && tipopago=='efectivo'" color="red" name="fas fa-money-bill-wave-alt" size="sm" />        
+           <q-icon v-else-if="estadopago==1" color="red" name="fas fa-check-circle" size="sm" />
+          </q-item-section> 
+        </q-item> 
     </q-card-section>
   </q-card>
 </template>
@@ -50,7 +68,7 @@ import "moment/locale/es";
 export default {
   name:'card-mi-medidos',
   props: [
-     "id_pedido",
+    "id_pedido",
     "des_auxiliar",
     "piso_especialidad",
     "area",
@@ -60,6 +78,8 @@ export default {
     "total",
     "fecha_pedido",
     "hora_pedido",
+    "tipopago",
+    "estadopago"
   ],
   setup() {
     return {
@@ -89,6 +109,14 @@ export default {
     },
   },
   methods: {
+     MensajePagar(totalpago,id_pedido){
+    //  console.log("clcikl")
+      let datos={
+        id_pedido:id_pedido,
+        totalpago:totalpago        
+      }
+       this.$emit("modalPagos",datos)
+    },
      estrellas(start, id_detalle, id_producto) {
       let model = {
         id_pedido_detalle: id_detalle,

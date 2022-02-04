@@ -20,6 +20,8 @@
               :detalle="item.detalle"
               :estado_pedido="item.estado_pedido"
               :total="item.totalpedido"   
+              :tipopago="item.tipopago"
+              :estadopago="item.estadopago"
               v-on:updateStart="UpdateStart"         
             ></card-history>
           </div>

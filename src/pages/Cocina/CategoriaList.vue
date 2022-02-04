@@ -21,8 +21,7 @@
         <q-form @submit.prevent="Validate">
           <q-card-section>
             <!-- <p>{{modelo}}</p>
-            <p>{{itemsubcategorias}}</p> -->
-           
+            <p>{{itemsubcategorias}}</p> -->           
             <div class="text-h6">Nueva Categoria</div>
           </q-card-section>
           <q-separator />
@@ -44,6 +43,12 @@
                 <q-icon :name="modelo.logo" size="md" ref="icono" />
               </q-item>
             </div>
+            
+            <div class="col-10">
+              <q-item>
+              <q-input dense outlined class="full-width" v-model="modelo.horalimite"   label="Hora Limite *" type="time" mask="HH*mm"    format24h hint="Formato 24 horas" />   
+              </q-item>
+            </div>
              <div class="col-4">
               <q-item>
                 <q-checkbox v-model="Estado" :label="Estado==true ? 'Activo':'Inactivo'" />
@@ -57,7 +62,6 @@
              <div class="col-12"  v-if="Subcategoria==true" >
               <q-item>
                   <q-checkbox v-model="Entrada" label="Entrada"  @update:model-value="AgregarSubcategoira($event,'Entrada')" />
-                  <!-- <q-checkbox v-model="Postre"  label="Postre" @update:model-value="AgregarPostre($event,'Postre')"/> -->
               </q-item>
             </div>
             <div class="col-12">
@@ -91,6 +95,8 @@
 <script>
 import { defineComponent, defineAsyncComponent, ref, reactive } from "vue";
 import { mapState } from "vuex";
+import moment from 'moment'
+import "moment/locale/es";
 
 const logos = [
   "fas fa-cocktail",
@@ -120,12 +126,13 @@ export default defineComponent({
       estado: 0,
       logo: "fas fa-cocktail",
       subcategoria:0,
-      lista:[]
+      lista:[],
+      horalimite:ref(moment().format('HH:mm'))
     });
 
     let visiblemodal = ref(false);
     return {
-      visiblemodal,
+      visiblemodal,      
       itemCategoria: ref([]),
       Estado: ref(true),
       Subcategoria: ref(false),
@@ -134,6 +141,7 @@ export default defineComponent({
       itemsubcategorias:ref([]),
       Entrada:ref(false),
       Postre:ref(false),
+      timeactual:ref(moment().format('HH:mm')),  
       itemsubcategoriasdos0:ref([{id:1,nombre_subcategoria:'Entrada',estado:0},{id:2,nombre_subcategoria:'Postre',estado:0}]),
       itemsubcategoriasdos:ref([{id:1,nombre_subcategoria:'Entrada',estado:0}])
     };
@@ -150,9 +158,9 @@ export default defineComponent({
   mounted() {
     this.Get();
   },
-
   methods: {
     AddCategoria() {
+      this.modelo.horalimite=ref(moment().format('HH:mm'));
       this.visiblemodal = true;
     },
     CerrarModal() {
@@ -259,7 +267,7 @@ export default defineComponent({
         .get(url_b + url)
         .then((response) => {
           this.itemCategoria = response.data;
-          // console.log(response.data)
+           console.log(response.data)
         })
         .catch(function (error) {
           console.log(error);

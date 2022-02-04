@@ -19,7 +19,7 @@
     </q-card-section>   
       <q-card-actions align="around">
         <q-btn flat  color="primary" @click="Detalle">Productos</q-btn>
-        <q-btn flat color="secondary" @click="Editar(id_categoria,name,logo,estado)">Editar</q-btn>
+        <q-btn flat color="secondary" @click="Editar(id_categoria,name,logo,estado,horalimite)">Editar</q-btn>
       </q-card-actions>
   </q-card>
 </template>
@@ -45,6 +45,10 @@ export default {
             estado:{
                 type: Number,              
                 default:0, 
+            },
+            horalimite:{
+                type: String,              
+                default:'', 
             }},
   components: {    
 
@@ -67,12 +71,13 @@ export default {
       this.$store.dispatch("guardarIdcategoria",id_categoria);  
       this.$router.push({name:"/ProductoList",params:{ id_categoria} });    
      },
-     Editar(id,nombre_categoria,logo,estado){ 
+     Editar(id,nombre_categoria,logo,estado,horalimite){ 
        let datos ={
          id_categoria:id,
          nombre_categoria:nombre_categoria,
          logo:logo,
-         estado:estado
+         estado:estado,
+         horalimite:horalimite
        }
        this.$emit("editar",datos)
      }    

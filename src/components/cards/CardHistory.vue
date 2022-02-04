@@ -5,6 +5,9 @@
         <q-item-label>{{ nombreDia }} - {{ fecha_pedido }}</q-item-label>
         <q-item-label caption>
           {{ hora_pedido }}
+        </q-item-label>
+          <q-item-label >
+       Pagar/c. :  {{ tipopago }}
         </q-item-label>         
       </q-item-section>
     </q-item>
@@ -32,8 +35,22 @@
         </q-item-section>
       </q-item>
     </q-list>
-    <q-card-section class="col-5 flex flex-left text-green text-bold">
-      <div>Total: S/ {{ total }}</div>
+    <q-card-section class=" no-padding">
+       <q-item>
+          <q-item-section class=" text-green text-bold">
+              <q-item-label>Total: S/ {{ total }}</q-item-label>    
+          </q-item-section>
+          <q-item-section side top>            
+           <q-btn v-if="estadopago==0 && tipopago=='iziPay'"   
+            size="12px"              
+            dense              
+            label="Pagar"
+            color="primary"                 
+            />
+           <q-icon v-else-if="estadopago==0 && tipopago=='efectivo'" color="red" name="fas fa-money-bill-wave-alt" size="sm" />        
+           <q-icon v-else-if="estadopago==1" color="red" name="fas fa-check-circle" size="sm" />
+          </q-item-section> 
+        </q-item> 
     </q-card-section>
   </q-card>
 </template>
@@ -53,6 +70,8 @@ export default {
     "total",
     "fecha_pedido",
     "hora_pedido",
+    "tipopago",
+    "estadopago"
   ],
   data() {
     return {

@@ -3,11 +3,14 @@
      <q-item>
       <q-item-section>
         <q-item-label>{{tipoEnvio}} {{ diaEntrega }} - {{ fecha_pedido }}</q-item-label>
-        <q-item-label caption>
+        <q-item-label >
          {{ hora_pedido }}
         </q-item-label>
+         <q-item-label >
+       Pagar/c. :  {{ tipopago }}
+        </q-item-label>
       </q-item-section>
-        <q-item-section side top>           
+       <q-item-section side top>           
             <q-item-label v-if="estado_pedido==0">
               RECIBIDO
            </q-item-label>
@@ -17,8 +20,7 @@
            <q-item-label v-else-if="estado_pedido==2" class="text-green text-bold">
               LISTO
            </q-item-label>
-            <q-btn
-            
+            <q-btn            
             size="12px"
             flat
             dense
@@ -32,7 +34,7 @@
     <div class="row">
       <div class="col-7">
         <q-list class="rounded-borders q-pt-xs">       
-          <q-item v-for="item in detalle" :key="item.id_pedido_detalle" class="no-margin ">
+          <q-item v-for="item in detalle" :key="item.id_pedido_detalle" class="no-margin " >
             <q-item-section avatar  class="no-margin">
               <q-icon color="primary" :name="item.logo" size="xs" />
             </q-item-section>
@@ -43,15 +45,32 @@
                 Cant. : {{ item.cantidad_pedido }} x    <span class="text-green text-bold"> {{item.precio_venta}}</span>
                </q-item-label
               >
-                  <q-item-label caption lines="">con : {{ item.entrada }}</q-item-label>
+              <q-item-label caption lines="">con : {{ item.entrada }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
          <q-separator />
-        <q-card-section class="col-5 flex flex-left text-green text-bold">
-          <div>Total: S/ {{ total }}</div>
-        </q-card-section>
+        <q-card-section class=" no-padding"  >         
+           <q-item>
+              <q-item-section class=" text-green text-bold">
+                 <q-item-label>Total: S/ {{ total }}</q-item-label>    
+              </q-item-section>
+
+              <q-item-section side top>              
+                <q-btn v-if="estadopago==0 && tipopago=='iziPay' "      
+                size="12px"              
+                dense              
+                label="Pagar"
+                color="primary"
+                @click="MensajePagar(total,id_pedido)"         
+               />
+              <q-icon v-else-if="estadopago==0 && tipopago=='efectivo'" color="red" name="fas fa-money-bill-wave-alt" size="sm" />        
+              <q-icon v-else-if="estadopago==1" color="red" name="fas fa-check-circle" size="sm" />
+              </q-item-section> 
+            </q-item>         
+          </q-card-section>
       </div>
+
       <div class="col-5">
         <q-stepper
           v-model.number="estado_pedido"
@@ -109,6 +128,8 @@ export default {
     "total",
     "fecha_pedido",
     "hora_pedido",
+    "tipopago",
+    "estadopago"
   ],
   setup() {
      const  fecha_actual= ref(moment(new Date()).format("YYYY/MM/DD"));
@@ -143,6 +164,14 @@ export default {
     },
   },
   methods: {
+    MensajePagar(totalpago,id_pedido){
+      console.log("clcikl")
+      let datos={
+        id_pedido:id_pedido,
+        totalpago:totalpago        
+      }
+       this.$emit("modalPagos",datos)
+    },
     Mensaje(){  
       if (this.estado_pedido==0) {
            this.$q.dialog({
@@ -188,7 +217,10 @@ export default {
 .q-stepper__tab--done {
   color: #b71408;
 }
-
+.q-item__section--avatar {
+    color: inherit;
+    min-width: 8px;
+}
 .colorborde{
   border-width: 1px;
   border-style: solid;

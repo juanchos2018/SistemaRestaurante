@@ -1,10 +1,10 @@
 <template>
  <div class="q-mt-md q-gutter-sm" > 
-  <q-dialog v-model="Show" @hide="CerrarModal"  persistent >
+  <q-dialog v-model="Show" @hide="CerrarModal"  persistent class="colorborde">
       <q-card style="width: 300px;padding:10px">
         <q-card-section>
           <div class="text-h6">Entradas</div>
-           <q-item-label>{{ modelo.producto }} </q-item-label>
+           <q-item-label>para {{ modelo.producto }} </q-item-label>
         </q-card-section>
           <q-list bordered separator class="q-mt-md">
             <q-item clickable v-ripple v-for="item in  itemComplementos" :key="item.id_complemento"  @click="AddComplemento(item.descripcion)" >
