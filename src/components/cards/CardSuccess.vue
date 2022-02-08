@@ -10,9 +10,14 @@
        Pagar/c. :  {{ tipopago }}
         </q-item-label>
       </q-item-section>
-       <q-item-section side top>
-            ENTREGADO
-        </q-item-section>
+       <q-item-section side top>            
+          <q-item-label class="text-green text-bold">
+              ENTREGADO
+           </q-item-label>
+              <q-item-label  class="text-green text-bold">
+            Nº {{id_pedido}}
+          </q-item-label>
+        </q-item-section>        
     </q-item>
     <q-list bordered padding>
       <q-item v-for="item in detalle" :key="item.id_pedido_detalle">

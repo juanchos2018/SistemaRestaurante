@@ -26,12 +26,19 @@
         <!-- <q-item-section side top class="text-green-9 text-bold">
          ENTREGADO
         </q-item-section>     -->
-        <q-item-section side top class="text-green-9 text-bold">            
+        <q-item-section side top class="text-green-9 text-bold">    
+            <!-- <q-item-label >
+              RECIBIDO
+           </q-item-label>         -->
            <span class="text-weight-medium" v-if="estado==0"> NUEVO</span>
            <span class="text-weight-medium" v-else-if="estado==1"> PROCESO</span>
            <span class="text-weight-medium" v-else-if="estado==2"> LISTO</span>
            <span class="text-weight-medium" v-else-if="estado==3"> ENTREGADO</span>
            <span class="text-weight-medium" v-else-if="estado==4"> ANULADO</span>
+
+          <q-item-label  class="text-green text-bold">
+              Nº {{id_pedido}}
+           </q-item-label>
         </q-item-section>
     </q-item>
     <q-separator></q-separator>

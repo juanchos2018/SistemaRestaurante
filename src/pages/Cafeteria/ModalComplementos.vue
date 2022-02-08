@@ -1,6 +1,7 @@
 <template>
  <div class="q-mt-md q-gutter-sm" > 
-  <q-dialog v-model="Show" @hide="CerrarModal"  persistent class="colorborde">
+  <q-dialog v-model="Show" @hide="CerrarModal"  persistent class="colorborde" style=" border-width: 1px;
+  border-style: solid;border-color: #b71408;">
       <q-card style="width: 300px;padding:10px">
         <q-card-section>
           <div class="text-h6">Entradas</div>

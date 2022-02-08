@@ -1,10 +1,11 @@
-<template>
-  <q-page class="q-pa-sm">
-     <q-tabs v-model="tab" dense align="justify" class="bg-primary text-white shadow-2" :breakpoint="0">
+<template> 
+  <q-page class="q-pa-sm">  
+    <q-tabs v-model="tab"  inline-label  shrink  stretch  align="left" class="bg-dark text-white"  active-color="red-1" :breakpoint="0">
       <q-tab name="mails" icon="alarm" label="Proceso" />
       <q-tab name="success" icon="fas fa-check" label="Recibido" />    
       <q-tab name="alarms" icon="fas fa-exclamation-triangle" label="Rechazado" />
     </q-tabs>
+
      <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="mails">
          <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"   class="float-right"  >
@@ -96,7 +97,7 @@
     </q-card>
   </q-dialog>
 
-  <q-dialog v-model="modalpago"   persistent >
+  <q-dialog v-model="modalpago" persistent >
       <q-card style="width: 400px;height: 80%  " class="no-padding text-center" >           
           <iframe id="inlineFrameExample"
              title="Inline Frame Example"        
@@ -106,7 +107,7 @@
             @load="load">             
        </iframe>             
         <q-card-actions align="right" class="text-primary no-margin">        
-          <q-btn flat label="Cerrar" v-close-popup />
+          <q-btn flat label="Cerrar" v-close-popup  @click="cerrar" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -169,8 +170,7 @@ export default defineComponent({
       confirm: ref(false),
       modalpago:ref(false),
       linkIframe:ref(''),
-      visiblecarga:ref(false)     
-     
+      visiblecarga:ref(false)          
     };
    },
    created(){ 
@@ -257,7 +257,7 @@ export default defineComponent({
       this.$axios
         .get(url_b+url)
         .then((response) => {         
-          this.itemRejected = response.data;         
+            this.itemRejected = response.data;         
         })
         .catch(function (error) {
           console.log(error);
@@ -270,9 +270,8 @@ export default defineComponent({
       let url="/Controller/PedidoController.php?tipo="+tipo+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;
       this.$axios
         .get(url_b+url)
-        .then((response) => {     
-         // console.log(response)  
-          this.itemSucess = response.data;         
+        .then((response) => {       
+            this.itemSucess = response.data;         
         })
         .catch(function (error) {
           console.log(error);
@@ -312,15 +311,13 @@ export default defineComponent({
           let anio=array[2];
           let fecha1 =anio+'/'+mes+'/'+dia;
           let fechaSql=anio+'-'+mes+'-'+dia;
-          this.nombreDia =moment(new Date(fecha1)).format('dddd');   
-        //    console.log(fechaSql)
+          this.nombreDia =moment(new Date(fecha1)).format('dddd');         
           let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
           let url = "/Controller/PedidoController.php?tipo=" + tipo+"&fecha="+fechaSql+"&cod_auxiliar="+this.modelo.COD_AUXILIAR;;
           this.$axios
           .get(url_b + url)
-          .then((response) => {        
-           
-            this.itemCocina = response.data;
+          .then((response) => {    
+              this.itemCocina = response.data;
           })
           .catch(function (error) {
             console.log(error);
@@ -332,9 +329,8 @@ export default defineComponent({
       let me = this;
       let tipo="start"
       let url ="/Controller/PedidoController.php";   
-       let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;      
-      let data = obj;
-      console.log(obj);
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;      
+      let data = obj;     
       this.$axios({
         method: "PUT",
         url: url_b+url,
@@ -384,6 +380,10 @@ export default defineComponent({
           this.linkIframe="http://192.168.3.219/ApiCafeteria/pasarela/popin.php?id_pedido="+modelo.id_pedido+"&total="+modelo.totalpago
           this.modalpago=true;
       }    
+    },
+    cerrar(){
+      this.get();   
+      this.getSucess();
     },
     load(){    
       this.$q.loading.hide()
@@ -444,6 +444,9 @@ export default defineComponent({
 </script>
 
 <style >
+.q-pa-sm {
+    padding: 2px 2px;
+}
 .q-stepper__step-content {
   display: none !important;
 }

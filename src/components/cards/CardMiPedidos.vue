@@ -7,7 +7,7 @@
          {{ hora_pedido }}
         </q-item-label>
          <q-item-label >
-       Pagar/c. :  {{ tipopago }}
+       T.Pago :  {{ tipopago }}
         </q-item-label>
       </q-item-section>
        <q-item-section side top>           
@@ -28,6 +28,9 @@
             icon="delete"
             @click="Mensaje"         
           />
+           <q-item-label  class="text-green text-bold">
+              Nº {{id_pedido}}
+           </q-item-label>
         </q-item-section>      
     </q-item>
     <q-separator />

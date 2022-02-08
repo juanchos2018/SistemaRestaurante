@@ -34,6 +34,7 @@
     </q-header>
     <q-drawer
       class="left-navigation text-white bg-images q-drawer2"
+      
       show-if-above
       v-model="left"
       side="left"
@@ -149,6 +150,7 @@
 <script>
 
 import { mapState } from "vuex";
+import { defineComponent, ref, reactive } from "vue";
 export default {
   data() {
     return {
@@ -183,13 +185,12 @@ export default {
       this.$q.sessionStorage.remove("Qsesion");
       this.$q.sessionStorage.clear();
       localStorage.removeItem("Qsesion");
-    },
-    
+    },    
   },
 };
 </script>
 
-<style lang="css" >
+<style  lang="css"  >
 .q-drawer2 {
   /*background-image: url(https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg) !important;*/
   background-image: url("~assets/clinicaluzdos.jpg") !important;

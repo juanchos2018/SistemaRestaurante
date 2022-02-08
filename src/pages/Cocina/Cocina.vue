@@ -2,9 +2,7 @@
   <q-page class="q-pa-xs">
     <q-tabs
       v-model="tab"
-      dense
-      align="justify"
-      class="bg-red-1 text-white shadow-2"
+      inline-label  shrink  stretch  align="left" class="bg-dark text-white"  active-color="red-1"
       :breakpoint="0"
     >
       <q-tab name="mails" icon="alarm" label="Nuevo" />
@@ -289,10 +287,13 @@ export default {
         let obj = this.$q.sessionStorage.getItem("Qsesion");
         this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
         this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;
-        this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
-        this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
+        this.modelUser.area = obj.AREA;
+    //    console.log(this.modelUser);
+
+       
         this.modelUser.token = obj.token;   
-    } 
+      } 
+      
     this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2+'?token='+this.modelUser.token:this.url_socket+'?token='+this.modelUser.token );
     this.get();
     this.getCalendar();
@@ -320,10 +321,12 @@ export default {
       // console.log(e.data)
       let jsonre = JSON.parse(e.data);  
       if (jsonre.tipo == "Store") {
-        if (this.esCocinero) {
+        if (this.modelUser.area=="COCINA") {
+        //   console.log(e.data)
+         //  console.log("sonido y notificacion")
              this.Sonido();
              this.noti2();
-             this.Sonido();
+           //  this.Sonido();
         }       
         this.rcv(e.data);
       } else if (jsonre.tipo == "Update") {
@@ -358,6 +361,7 @@ export default {
        let existe = this.$q.sessionStorage.has("Qsesion");
         if (existe==true) {
             let datos = JSON.parse(localStorage.getItem('Qsesion'));
+            console.log("sessionStorage "+ datos.AREA);
             return    datos.AREA=='COCINA';
         }      
     },
@@ -448,8 +452,7 @@ export default {
           .catch(function (error) {
             console.log(error);
           })
-          .finally(() => {});  
-          // this.$refs.cardpedidos.setCurrentTime();
+          .finally(() => {});         
       }
     },
     getTerminados() {
@@ -598,6 +601,10 @@ export default {
 </script>
 
 <style>
+
+.q-pa-sm {
+    padding: 2px 2px;
+}
 .q-tab-panel {
     padding: 8px;
 }

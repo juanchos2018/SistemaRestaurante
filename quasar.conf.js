@@ -102,7 +102,7 @@ module.exports = configure(function( /* ctx */ ) {
                 'Loading',
                 'LocalStorage',
                 'SessionStorage'
-            ]
+                ]
         },
 
         // animations: 'all', // --- includes all animations

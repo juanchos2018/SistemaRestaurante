@@ -1,6 +1,8 @@
 <template>
   <q-page class="q-pa-sm">
-    <q-layout view="lhh LpR lfr" container style="height: 88vh" class="shadow-2 rounded-borders">
+
+    <q-layout view="lhh LpR lfr" container style="height: 91vh" class="shadow-2 rounded-borders">
+     
       <q-drawer side="right" show-if-above v-model="rightDrawerOpen" bordered :breakpoint="500" :width="drawerWidth" class="no-margin no-padding">
         <div class="q-pa-sm no-margin no-padding">    
           <q-bar style="min-width: 250px;" class="bg-teal text-white rounded-borders">
@@ -64,16 +66,7 @@
         </div>
       </q-drawer>
       <q-page-container>
-        <q-page style="padding-top: 55px" class="q-pa-sm">
-             <!-- <q-btn flat label="Cancelar" @click="confirm=true"/> -->
-           <!-- <p>{{modelUser}}</p> -->
-            <!-- <q-banner  v-if="visibleAnunio"  inline-actions rounded class="bg-orange text-white" v-model="visibleAnunio">
-                Parrillada 
-            <q-spinner-grid color="red"   size="2em"/>
-                <template v-slot:action> 
-                  <q-btn flat label="Dismiss" @click="ocultar"/>
-                </template>
-              </q-banner> -->        
+        <q-page style="padding-top: 55px" class="q-pa-sm">                
           <div>    
       <q-item style="
     min-height: 48px;
@@ -90,8 +83,7 @@
         </q-item-label>
              </q-item-section>
               <q-item-section top side>
-        <div class=" q-gutter-xs">
-          <!--  class="gt-xs" -->
+        <div class=" q-gutter-xs">   
            <q-btn-dropdown color="red" :label="nombreDia+' - '+date" dropdown-icon="change_history"     class="float-right"  >
                <q-date
                   v-model="date"     
@@ -108,20 +100,12 @@
           <div class="row q-col-gutter-sm">                 
             <div v-if="!itemProducto.length">
               <h5>SIN PRODUCTOS</h5>
-            </div>
-              <!-- <q-banner class="bg-primary text-white">
-                Unfortunately, the credit card did not go through, please try again.
-                <template v-slot:action>
-                  <q-btn flat color="white" label="Dismiss" />
-                  <q-btn flat color="white" label="Update Credit Card" />
-                </template>
-              </q-banner> -->
+            </div>           
             <div class="col-md-3 col-lg-3 col-sm-6 col-xs-6" v-for="item in itemProducto" :key="item.id_producto">
               <card-product :data="item"  v-on:AgregarCarrito="AgregarCarrito" ></card-product>
             </div>
           </div>
-          <q-page-sticky position="top" expand class="bg-dark text-white">
-            <!-- <p>{{itemCategoria}}</p> -->
+          <q-page-sticky position="top" expand class="bg-dark text-white">         
             <q-toolbar>            
                <q-tabs                   
                   inline-label
@@ -152,14 +136,12 @@
               >
                 <q-spinner-pie color="yellow" size="1em" />
               </q-btn>
-
               <q-card
                 v-morph:card1:mygroup:500.resize="morphGroupModel"
                 class="absolute-bottom-left q-ma-md  text-white"
                 style=" background: radial-gradient(circle, #35a2ff 0%, #014a88 100%) ;position: absolute;width: 300px; border-bottom-left-radius: 2em"
               >
                 <q-card-section class="text-h6"> Nueva  Actividad </q-card-section>
-
                 <q-card-section class="text-subtitle1">
                   Se realizara una parrilada el dia 12 de enero a las 14:30.                   
                 </q-card-section>
@@ -167,8 +149,7 @@
                   <q-btn  label="Ir a Ver" color="red"/>
                     <q-btn flat label="Cerrar" @click="nextMorph" />
                 </q-card-actions>             
-              </q-card>      -->
-            
+              </q-card> -->            
         </q-page>
       </q-page-container>
     </q-layout>
@@ -203,7 +184,6 @@
               </q-input>       
             </q-item>          
           </div>   
-
          <div class="col-12">           
             <q-item>     
                <q-item-section>
@@ -225,6 +205,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
     <q-dialog v-model="confirm" persistent>     
         <q-card class="bg-red text-white" style="width: 300px">
         <q-card-section>
@@ -407,11 +388,12 @@ export default {
         this.modelo.COD_AUXILIAR = obj.COD_AUXILIAR;
         this.modelUser.des_auxiliar = obj.DES_AUXILIAR;
         this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
-        this.modelUser.token = obj.token;    
+        this.modelUser.token = obj.token;   
+
+        this.modelUser.area = obj.AREA;     
         const datoscli = localStorage.getItem("Qsesion");
         let objd = JSON.parse(datoscli);    
-        // this.modelUser.piso_especialidad = objd.Piso;       
-        //console.log(obj);
+     
     }      
     this.conn= new WebSocket(this.$q.platform.is.mobile==true?this.url_socket2+'?token='+this.modelUser.token:this.url_socket+'?token='+this.modelUser.token );
     this.conn.onopen = (e) => {     
@@ -498,8 +480,7 @@ export default {
       this.ModalComplemento=false;
     },
     ListarCarroState(){
-        console.log("de state");
-        //console.log(this.carrito);
+        console.log("de state");        
     },
     GetCategoria() {
       let tipo="lista";
@@ -566,10 +547,7 @@ export default {
             .finally(() => {});
        }     
     },
-    GetProducto2(){
-       //   this.nombrecategoria = nombre;
-    //  let tipo="categoria";
-    //  let url = "/Controller/ProductoController.php?tipo="+tipo+"&id_categoria=" + this.id_categoria;
+    GetProducto2(){   
       let tipo="dia";
       let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+this.fecha_sql;
       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;
@@ -610,13 +588,11 @@ export default {
           this.nombreDia =moment(new Date(fecha1)).format('dddd'); 
           let tipo="dia";      
                  
-        if (this.nombreDia=='domingo') {
-           //console.log('no entra a la peticion ');
+        if (this.nombreDia=='domingo') {       
            this.NombreDiaComprobar='domingo'
            this.itemProducto = [];
         }else{
-          if (this.nombreDia=="" || this.nombreDia ==null ) {        
-             // console.log("datos nulos");
+          if (this.nombreDia=="" || this.nombreDia ==null ) {    
         }else{      
           this.NombreDiaComprobar='libre';
           let url = "/Controller/ProductoController.php?tipo="+tipo+"&dia=" +this.nombreDia+"&id_categoria="+this.id_categoria+"&fecha_sql="+ this.fecha_sql;
@@ -624,8 +600,7 @@ export default {
           this.$axios
           .get(url_b + url)
           .then((response) => {
-            this.itemProducto = response.data;
-          //  console.log(response)
+            this.itemProducto = response.data;        
           })
           .catch(function (error) {
             console.log(error);
@@ -819,9 +794,7 @@ export default {
         let anio =fechas[2];
         let fechaenviar =anio+'/'+mes+'/'+dia;
         let lista = [];
-        this.modelUser.TotalPedido = this.SumTotal;
-       // let obj = this.$q.sessionStorage.getItem("Qsesion");
-       //  obj.Piso=this.modelUser.piso_especialidad;
+        this.modelUser.TotalPedido = this.SumTotal;     
         const datoscli = localStorage.getItem("Qsesion");
         const objd = JSON.parse(datoscli);
         objd.Piso = this.modelUser.piso_especialidad;
@@ -840,8 +813,7 @@ export default {
           });
         });   
         this.modelUser.detallePedido = lista;
-        let data = this.modelUser;
-        //console.log(data);               
+        let data = this.modelUser;              
         //envia al socket  php no borrar  
         this.conn.send(JSON.stringify(data));
         this.Enviado();
@@ -861,10 +833,6 @@ export default {
             persistent: true, // we want the user to not be able to close it
             ok: false // we want the user to not be able to close it
           })
-
-      // we simulate some progress here...
-     
-      
     },     
     TipoMensaje(campo){
         this.$q
@@ -923,8 +891,7 @@ export default {
           });
       }
     },
-    AgregarCarrito(modelo){   
-    //  console.log(modelo);
+    AgregarCarrito(modelo){      
       if (modelo.estado==0) {
            this.$q
           .dialog({
@@ -955,9 +922,9 @@ export default {
             this.arrayvacio[position].stock = modelo.stock;         
          } else{
             this.arrayvacio.push(modelo);           
-         }
-         this.AgregaoItem(modelo.producto);
-      }  
+          }
+          this.AgregaoItem(modelo.producto);
+        }  
       }
          
     },
@@ -1047,14 +1014,11 @@ export default {
           title: "Ups",
           message: "No tenemos Tanto Stock :(",
         })
-        .onOk(() => {
-          // console.log('OK')
+        .onOk(() => {         
         })
-        .onCancel(() => {
-          // console.log('Cancel')
+        .onCancel(() => {        
         })
-        .onDismiss(() => {
-          // console.log('I am triggered on both OK and Cancel')
+        .onDismiss(() => {          
         });
     },
     GenerarPago(){
@@ -1118,7 +1082,11 @@ export default {
   },  
 };
 </script>
-<style scoped>
+<style >
+
+.q-pa-sm {
+    padding: 2px 2px;
+}
 .footer2 {
   position: fixed;
   bottom: 0;

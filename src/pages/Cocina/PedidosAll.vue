@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
-    <q-toolbar class="bg-red-1 q-my-md shadow-2">
+    <q-toolbar class="bg-red-1 shadow-2">
       <div class="text-h6 text-bold">{{nombreDia}}</div>
       <q-space />
       <div class="text-h6 text-bold">S/ {{ SumTotal }}</div>
@@ -30,8 +30,7 @@
                 </q-item-label>
               </q-item-section>     
                 <q-item-section side top >            
-                  <q-btn-dropdown
-                 
+                  <q-btn-dropdown                 
                     color="red"
                     :label="date"
                     dropdown-icon="change_history"
@@ -42,44 +41,13 @@
                       mask="DD-MM-YYYY"
                       event-color="red"
                       @update:model-value="ChangeDate($event)"
-                    />
-
-                
-                  </q-btn-dropdown>
-                
+                      class="colorborde"
+                    />                
+                  </q-btn-dropdown>                
                 </q-item-section>
             </q-item>
-
-
-              <!-- <q-card-section class="q-pa-sm">
-                <q-input
-                  rounded
-                  v-model="search"
-                  outlined
-                  placeholder="Buscar "
-                >
-                  <template v-slot:append>
-                    <q-icon v-if="search === ''" name="search" />
-                    <q-icon
-                      v-else
-                      name="clear"
-                      class="cursor-pointer"
-                      @click="search = ''"
-                    />
-                  </template>
-                </q-input>
-              </q-card-section> -->
-            </q-card>
-
-  
-            <!-- <q-input v-model="search" filled type="search" hint="Search">
-               <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input> -->
-   
-    <br /> 
-    
+            </q-card>    
+    <br />     
     <div v-if="!itemallorder.length">
       <h5>SIN REGISTROS</h5>
     </div>
@@ -102,6 +70,7 @@
           :total="item.totalpedido"
           :tipopago="item.tipopago"
           :estadopago="item.estadopago"
+              v-on:modalPagosCocina="modalPagosCocina"
         ></card-all-order>
       </div>
     </div>
@@ -111,7 +80,6 @@
 <script>
 import { defineComponent, ref, reactive } from "vue";
 import CardAllOrder from "components/cards/CardAllOrder.vue";
-
 import { mapState } from "vuex";
 import moment from "moment";
 import "moment/locale/es";
@@ -175,7 +143,7 @@ export default defineComponent({
       let tipo = "fecha";
       //this.fecha_actual
       //let url = "/Controller/PedidoController.php?tipo=" + tipo;
-       let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
+      let url_b=this.$q.platform.is.mobile==true?this.url_base:this.url_base2;  
       let url =  "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + this.fecha_sql;
       this.$axios
         .get(url_b + url)
@@ -203,7 +171,45 @@ export default defineComponent({
     //     })
     //     .finally(() => {});
     // },
-     
+     modalPagosCocina(objeto){  
+       this.$q.dialog({
+        title: 'Confirmar',
+        message: 'Realizar pago de Pedido?',
+        cancel: true,
+        persistent: true,
+        class:"colorborde"
+      }).onOk(() => {        
+        this.UpdateEstadoPago(objeto.id_pedido);
+      }).onOk(() => {     
+      }).onCancel(() => {       
+      }).onDismiss(() => {        
+     })
+    },
+    UpdateEstadoPago(id_pedido){  
+      let me = this;
+      let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;    
+      let url ="/Controller/PedidoController.php";   
+      let data ={
+        tipo:'updatestatepago',
+        id_pedido:id_pedido
+      }
+      me.$axios({
+        method: "PUT",
+        url: url_b+url,
+        data: data,
+      })
+        .then(function (response) {        
+          let result = response.data;   
+          if (result.afect>0) {
+               me.getTerminados();                 
+          } else {
+          
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        }); 
+    },
     ChangeDate(e) {
       if (e == null) {
         this.nombreDia = moment(new Date(this.fecha_actual)).format("dddd");
@@ -231,8 +237,7 @@ export default defineComponent({
         let url =  "/Controller/PedidoController.php?tipo=" + tipo + "&fecha=" + fechaSql;
         this.$axios
             .get(url_b + url)
-            .then((response) => {
-              //console.log(response);
+            .then((response) => {              
               this.itemallorder = response.data;
             })
             .catch(function (error) {
@@ -246,6 +251,7 @@ export default defineComponent({
 </script>
 
 <style >
+
 .q-stepper__step-content {
   display: none !important;
 }

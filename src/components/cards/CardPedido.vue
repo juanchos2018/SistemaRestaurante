@@ -61,7 +61,9 @@
             icon="delete"
             @click="Editar(4)"
           /> 
-             
+              <q-item-label  class="text-green text-bold">
+              Nº {{id_pedido}}
+           </q-item-label>
         </div>
         <q-chip square :color="colorCurrent" text-color="white" style="float:bottom; bottom:0; position:absolute;" >
             {{hours}}   : {{minutes}} - min

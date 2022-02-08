@@ -260,47 +260,7 @@ export default defineComponent({
           console.log(error); 
         
         });    
-    },
-    ConsultarDdni(){
-      let url="https://quertium.com/api/v1/reniec/dni/45713875?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTM3Mw.x-jUgUBcJukD5qZgqvBGbQVMxJFUAIDroZEm4Y9uTyg"
-    //  let url = "/Controller/PedidoController.php?tipo=" + tipo;
-  let token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTM3Mw.x-jUgUBcJukD5qZgqvBGbQVMxJFUAIDroZEm4Y9uTyg";
-let headers={
-   Authorization: 'Bearer ' + token //the token is a variable which holds the token
- }
-
-    // let config = {
-    //       headers: {
-    //         header1: value,
-    //       }
-    //     }
-
-    //     let data = {
-    //       'HTTP_CONTENT_LANGUAGE': self.language
-    //     }
-
-
-    var config = {
-    headers: { 
-      'x-rapidapi-host': 'https://quertium.com',
-      'x-rapidapi-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTM3Mw.x-jUgUBcJukD5qZgqvBGbQVMxJFUAIDroZEm4Y9uTyg' 
-      }
-   };
-      this.$axios
-        .get( url, {
- headers: {
-   Authorization: 'Bearer ' + token 
- }
-})
-        .then((response) => {
-           console.log(response);
-         
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(() => {});
-    },
+    },    
     Menasaje()
     {//QSpinnerCube
         let me =this;

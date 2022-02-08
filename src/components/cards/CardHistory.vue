@@ -7,9 +7,34 @@
           {{ hora_pedido }}
         </q-item-label>
           <q-item-label >
-       Pagar/c. :  {{ tipopago }}
+           Pagar/c. :  {{ tipopago }}
         </q-item-label>         
       </q-item-section>
+        <q-item-section side top>           
+            <q-item-label v-if="estado_pedido==0">
+              RECIBIDO
+           </q-item-label>
+            <q-item-label v-else-if="estado_pedido==1">
+              PROCESO
+           </q-item-label>
+           <q-item-label v-else-if="estado_pedido==2" class="text-green text-bold">
+              LISTO
+           </q-item-label>
+          <q-item-label v-else-if="estado_pedido==3" class="text-green text-bold">
+              ENTREGADO
+           </q-item-label>
+            <!-- <q-btn            
+            size="12px"
+            flat
+            dense
+            round
+            icon="delete"
+            @click="Mensaje"         
+          /> -->
+            <q-item-label  class="text-green text-bold">
+              Nº {{id_pedido}}
+           </q-item-label>
+        </q-item-section>   
     </q-item>
     <q-list bordered padding>
       <q-item v-for="item in detalle" :key="item.id_pedido_detalle">
@@ -21,7 +46,6 @@
           <q-item-label caption lines="2">{{ item.descripcion }}</q-item-label>
            <q-item-label caption lines="1"> Cant.: {{ item.cantidad_pedido }} x <span class="text-green text-bold"> {{item.precio_venta}}</span></q-item-label>
         </q-item-section>
-
         <q-item-section side top>      
           <q-rating
             size="18px"
@@ -29,7 +53,7 @@
             :max="5"
             color="yellow"
             @update:model-value="
-              estrellas($event, item.id_pedido_detalle, item.id_producto)
+              estrellas($event, item.id_pedido_detalle, item.id_producto,fecha_pedido)
             "
           />
         </q-item-section>
@@ -45,7 +69,8 @@
             size="12px"              
             dense              
             label="Pagar"
-            color="primary"                 
+            color="primary"       
+            @click="mensajePagar(total,id_pedido)"           
             />
            <q-icon v-else-if="estadopago==0 && tipopago=='efectivo'" color="red" name="fas fa-money-bill-wave-alt" size="sm" />        
            <q-icon v-else-if="estadopago==1" color="red" name="fas fa-check-circle" size="sm" />
@@ -86,22 +111,28 @@ export default {
         let dia = array[0];
         let mes = array[1];
         let anio = array[2];
-
         let fecha1 = anio + "/" + mes + "/" + dia;
         let fechaSql = anio + "-" + mes + "-" + dia;
-      return moment(new Date(fecha1)).format("dddd");
- 
+      return moment(new Date(fecha1)).format("dddd"); 
     },
   },
   methods: {
-    estrellas(start, id_detalle, id_producto) {
+    estrellas(start, id_detalle, id_producto,fecha) {
       let model = {
         id_pedido_detalle: id_detalle,
         id_producto: id_producto,
         estrellas: start,
         tipo: "start",
+        fecha_pedido:fecha
       };
       this.$emit("updateStart", model);
+    },
+    mensajePagar(totalpago,id_pedido){          
+      let datos={
+        id_pedido:id_pedido,
+        totalpago:totalpago        
+      }
+      this.$emit("modalPagos",datos);      
     },
   },
 };

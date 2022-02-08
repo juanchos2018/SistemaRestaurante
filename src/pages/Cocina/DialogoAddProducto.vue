@@ -109,7 +109,7 @@
 import moment from "moment";
 import { ref } from 'vue'
 
-import { mapState } from "vuex";
+import { createLogger, mapState } from "vuex";
 
 export default {
   name: "dialogo-add-producto",
@@ -370,7 +370,7 @@ export default {
         .finally(() => {});
       }
    
-    },
+    },  
     Validate() {   
       this.errors.nombre_producto = this.modelo.nombre_producto == "" ? true : false;
       this.errors.descripcion = this.modelo.descripcion == "" ? true : false;
@@ -462,6 +462,7 @@ export default {
             this.Store();
           }).onOk(() => {
             // console.log('>>>> second OK catcher')
+          
           }).onCancel(() => {
             // console.log('>>>> Cancel')
           }).onDismiss(() => {

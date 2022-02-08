@@ -28,6 +28,9 @@
            <span class="text-weight-medium" v-else-if="estado_pedido==2"> LISTO</span>
            <span class="text-weight-medium" v-else-if="estado_pedido==3"> ENTREGADO</span>
            <span class="text-weight-medium" v-else-if="estado_pedido==4"> ANULADO</span>
+            <q-item-label  class="text-green text-bold">
+              Nº {{id_pedido}}
+           </q-item-label>
         </q-item-section>
     </q-item>
     <q-separator></q-separator>
@@ -64,7 +67,7 @@
                 dense              
                 label=" Pagar  "
                 color="primary"
-                  
+                @click="mensajePagar(total,id_pedido)" 
                />
               <q-icon v-else-if="estadopago==0 && tipopago=='iziPay'" color="red" name="far fa-credit-card" size="sm" />        
               <q-icon v-else-if="estadopago==1" color="red" name="fas fa-check-circle" size="sm" />
@@ -142,7 +145,13 @@ export default {
     },
   },
   methods: {
-    
+    mensajePagar(totalpago,id_pedido){          
+      let datos={
+        id_pedido:id_pedido,
+        totalpago:totalpago        
+      }
+      this.$emit("modalPagosCocina",datos);      
+    },
   },
 };
 </script>

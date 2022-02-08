@@ -7,7 +7,7 @@ const routes = [
   {
       path: '/Sistema',
       component: () =>
-      import('layouts/MainLayout.vue'),
+      import('layouts/LayoutCafeteria.vue'),
       children: [
           {path: 'Cafeteria', name: "Sistema/Cafeteria", component: () =>  import('pages/Cafeteria/Cafeteria.vue') },
           {path: 'MiPedido', name: "Sistema/MiPedido", component: () => import('pages/Cafeteria/MiPedido.vue') },
