@@ -198,21 +198,23 @@ export default {
                 let hora = arrayhoira[0];            
                 let minute =arrayhoira[1];
                 //console.log(hora2);
-                //  if (hora<=hora2   ) { 
-                if (hora<=hora2   && minute<=minute2) {                 
-                  let unionDateTime   = moment(this.fecha_actual+'T'+this.hora_pedido); 
-                  const diff =  this.currentHora.diff(unionDateTime);
-                  const diffDuration = moment.duration(diff);  
-                  this.minutes=diffDuration.minutes();
-                  this.hours=diffDuration.hours();
+                if (hora<=hora2   ) { 
+                    if (hora<=hora2   && minute<=minute2) {                 
+                      let unionDateTime   = moment(this.fecha_actual+'T'+this.hora_pedido); 
+                      const diff =  this.currentHora.diff(unionDateTime);
+                      const diffDuration = moment.duration(diff);  
+                      this.minutes=diffDuration.minutes();
+                      this.hours=diffDuration.hours();
 
-                  if (diffDuration.minutes()>5 &&  diffDuration.minutes() <10 ) {
-                      this.colorCurrent="amber";
-                  }  
-                  if (diffDuration.minutes()>=10) {
-                      this.colorCurrent="red";
+                      if (diffDuration.minutes()>5 &&  diffDuration.minutes() <10 ) {
+                          this.colorCurrent="amber";
+                      }  
+                      if (diffDuration.minutes()>=10) {
+                          this.colorCurrent="red";
+                      }
+                    }
+
                   }
-                }
               }
           }, 1000);
      // }    

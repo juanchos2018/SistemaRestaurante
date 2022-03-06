@@ -189,7 +189,7 @@
                <q-item-section>
               <q-item-label>Se pagara con: </q-item-label>
                 <q-item-label>  <q-radio name="shape" v-model="modelUser.tipopago" val="efectivo" label="Efectivo" />
-                <q-radio name="shape"   v-model="modelUser.tipopago" val="iziPay" label="IziPay" /></q-item-label>                
+                <!-- <q-radio name="shape"   v-model="modelUser.tipopago" val="iziPay" label="IziPay" />   -->   </q-item-label>              
               </q-item-section>                    
            </q-item>          
           </div>           
@@ -390,7 +390,7 @@ export default {
         this.modelUser.cod_auxiliar = obj.COD_AUXILIAR;    
         this.modelUser.token = obj.token;   
 
-        this.modelUser.area = obj.AREA;     
+     //   this.modelUser.area = obj.AREA;     
         const datoscli = localStorage.getItem("Qsesion");
         let objd = JSON.parse(datoscli);    
      
@@ -416,7 +416,7 @@ export default {
        /// console.log(e.data);      
         let json = JSON.parse(e.data);   
         if (json.tipo == "updateProducto") {       
-              this.GetProduct(json.id_categoria, json.nombre_categoria,json.horalimite);
+            this.GetProduct(json.id_categoria, json.nombre_categoria,json.horalimite);
         }else{
             //this.Error();
         } 
