@@ -770,56 +770,85 @@ export default {
         });
     },
     StorePedido() {
-    this.modelUser.hora_pedido=this.timeactual;
-    let valifecha =this.modelUser.fecha_pedido;   
-     if ( this.modelUser.hora_pedido=="") {
-        this.TipoMensaje('hora');
-     }
-     else if(this.modelUser.fecha_pedido==""){
-        this.TipoMensaje('fecha');
-     }  
-     else if(this.modelUser.fecha_pedido=="undefined-undefined-"){
-        this.TipoMensaje('fecha');
-     }   
-     else if(this.modelUser.area==""){
-        this.TipoMensaje('area');
-     }  
-     else if(this.modelUser.piso_especialidad==""){
-        this.TipoMensaje('piso');
-     }     
-     else{   
-        let fechas =this.fecha_hora.split('/');
-        let dia =fechas[0];
-        let mes =fechas[1];
-        let anio =fechas[2];
-        let fechaenviar =anio+'/'+mes+'/'+dia;
-        let lista = [];
-        this.modelUser.TotalPedido = this.SumTotal;     
-        const datoscli = localStorage.getItem("Qsesion");
-        const objd = JSON.parse(datoscli);
-        objd.Piso = this.modelUser.piso_especialidad;
-        const updateo = JSON.stringify(objd);
-        localStorage.setItem("Qsesion", updateo);
-  
-        this.arrayvacio.forEach((element) => {
-          lista.push({
-            id_categoria: element.id_categoria,
-            id_producto: element.id_producto,
-            cantidad_pedido: element.cantidad_pedido,
-            descripcion: element.descripcion,
-            usastock: element.usastock,
-            fecha_pedido: element.fecha_pedido,
-            entrada: element.entrada,
-          });
-        });   
-        this.modelUser.detallePedido = lista;
-        let data = this.modelUser;              
-        //envia al socket  php no borrar  
-        this.conn.send(JSON.stringify(data));
-        this.Enviado();
-        this.prompt = false;
-        this.Cancelar();
-      }       
+      let me =this;
+      me.modelUser.hora_pedido=me.timeactual;
+      let valifecha =me.modelUser.fecha_pedido;   
+      if ( me.modelUser.hora_pedido=="") {
+          me.TipoMensaje('hora');
+      }
+      else if(me.modelUser.fecha_pedido==""){
+          me.TipoMensaje('fecha');
+      }  
+      else if(me.modelUser.fecha_pedido=="undefined-undefined-"){
+          me.TipoMensaje('fecha');
+      }   
+      else if(me.modelUser.area==""){
+          me.TipoMensaje('area');
+      }  
+      else if(me.modelUser.piso_especialidad==""){
+          me.TipoMensaje('piso');
+      }     
+      else{   
+          let fechas =me.fecha_hora.split('/');
+          let dia =fechas[0];
+          let mes =fechas[1];
+          let anio =fechas[2];
+          let fechaenviar =anio+'/'+mes+'/'+dia;
+          let lista = [];
+          me.modelUser.TotalPedido = me.SumTotal;     
+        ///  const datoscli = localStorage.getItem("Qsesion");
+          //const objd = JSON.parse(datoscli);
+        // objd.Piso = me.modelUser.piso_especialidad;
+        // const updateo = JSON.stringify(objd);
+        //  localStorage.setItem("Qsesion", updateo);  
+          me.arrayvacio.forEach((element) => {
+            lista.push({
+              id_categoria: element.id_categoria,
+              id_producto: element.id_producto,
+              cantidad_pedido: element.cantidad_pedido,
+              descripcion: element.descripcion,
+              usastock: element.usastock,
+              fecha_pedido: element.fecha_pedido,
+              entrada: element.entrada,
+            });
+          });   
+          me.modelUser.detallePedido = lista;
+          let data = me.modelUser;              
+          //envia al socket  php no borrar  
+        //  this.conn.send(JSON.stringify(data));
+
+          let url = "/Controller/PedidoController.php";
+          let url_b=me.$q.platform.is.mobile==true?me.url_base:me.url_base2;
+        //  const data = this.modelUser;
+          me.$axios({
+            method: "POST",
+            url: url_b + url,
+            data: data,
+          })
+            .then(function (response) {
+              let result = response.data;   
+              if (result>0) {
+                  ///console.log(result);
+                  let datos={
+                    tipo:'Store',
+                    des_auxiliar: me.modelUser.des_auxiliar
+                  }
+                  me.conn.send(JSON.stringify(datos));
+                  me.Enviado();               
+                  me.prompt = false;
+                  me.Cancelar();     
+                } else {
+                  me.Error();
+              }
+            })
+            .catch((error) => {         
+              let message ="";
+              if(error.message == 'Network Error' && !error.response){
+              // console.log('There was a network error.');
+              }
+              me.Error();
+            });      
+        }        
     },
     MensajeToken(){
          const dialog = $q.dialog({
@@ -993,12 +1022,12 @@ export default {
         .onDismiss(() => {        
         });
     },
-    Error(){
+     Error(){
        this.$q
         .dialog({
           dark: true,
           title: "Perdon ",
-          message: "tu  pedido no se registro algun error con el servidor llama a (Central de datos)",
+          message: "Tu pedido no se registro",
         })
         .onOk(() => {         
         })
@@ -1040,14 +1069,12 @@ export default {
               me.Token=response.data.token;
         })
         .catch((error) => {
-          console.log(error); 
-              
+          console.log(error);               
         }); 
     },
     setTime () {
 				setInterval(() => {      
-					this.horaActual= moment().format('LTS')
-        
+					this.horaActual= moment().format('LTS')        
 				}, 1000)
 		},
     validateToken(token){

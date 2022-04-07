@@ -325,7 +325,7 @@ export default {
         //   console.log(e.data)
          //  console.log("sonido y notificacion")
              this.Sonido();
-             this.noti2();
+            this.noti2(jsonre.des_auxiliar);
            //  this.Sonido();
         }       
         this.rcv(e.data);
@@ -495,8 +495,8 @@ export default {
     noti2(use) {
       this.$q.notify({
         group: false,
-        message: "Tienes un Nuevo Pedido !",
-        color: "negative",
+        message: "Nuevo Pedido de: "+use,
+        color: "positive",
         position: "top-right",
       });
     },
